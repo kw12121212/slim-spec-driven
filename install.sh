@@ -30,6 +30,7 @@ LOCAL_SKILLS_DIR="$SCRIPT_DIR/skills"
 # Parse flags
 CLI="all"
 PROJECT_DIR=""
+UNINSTALL=false
 
 i=1
 while [ $i -le $# ]; do
@@ -52,6 +53,7 @@ while [ $i -le $# ]; do
         i=$((i - 1))
       fi
       ;;
+    --uninstall) UNINSTALL=true ;;
   esac
   i=$((i + 1))
 done
@@ -60,6 +62,39 @@ if [ -n "$PROJECT_DIR" ]; then
   TARGET_DIR="$PROJECT_DIR/${PROJECT_DIRS[$CLI]}"
 else
   TARGET_DIR="${GLOBAL_DIRS[$CLI]}"
+fi
+
+# Uninstall: remove symlinks (and empty curl-installed dirs)
+if $UNINSTALL; then
+  echo "Uninstalling skills from: $TARGET_DIR"
+  removed=0
+  skipped=0
+  for skill in "${SKILLS[@]}"; do
+    target="$TARGET_DIR/$skill"
+    if [ -L "$target" ]; then
+      rm "$target"
+      echo "  removed: $skill/"
+      removed=$((removed + 1))
+    elif [ -d "$target" ]; then
+      # curl-installed: only remove if directory contains only SKILL.md
+      contents=$(ls -A "$target")
+      if [ "$contents" = "SKILL.md" ]; then
+        rm -rf "$target"
+        echo "  removed: $skill/"
+        removed=$((removed + 1))
+      else
+        echo "  skipped: $skill/ (contains unexpected files, remove manually)"
+        skipped=$((skipped + 1))
+      fi
+    else
+      echo "  skipped: $skill/ (not installed)"
+      skipped=$((skipped + 1))
+    fi
+  done
+  echo ""
+  echo "Done. $removed skill(s) removed, $skipped skipped."
+  echo "Target: $TARGET_DIR"
+  exit 0
 fi
 
 echo "Installing skills to: $TARGET_DIR"
