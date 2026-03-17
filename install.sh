@@ -3,6 +3,13 @@ set -euo pipefail
 
 REPO="kw12121212/slim-spec-driven"
 BRANCH="main"
+SCRIPTS=(
+  propose
+  modify
+  apply
+  verify
+  archive
+)
 SKILLS=(
   spec-driven-propose
   spec-driven-modify
@@ -12,16 +19,16 @@ SKILLS=(
 )
 
 # Known CLI target directories
-# "all" installs to ~/.claude/skills/ which both Claude Code and OpenCode read
+# "all" installs to ~/.agents/skills/ — the shared Agent Skills standard path
 declare -A GLOBAL_DIRS=(
   [claude]="$HOME/.claude/skills"
   [opencode]="$HOME/.config/opencode/skills"
-  [all]="$HOME/.claude/skills"
+  [all]="$HOME/.agents/skills"
 )
 declare -A PROJECT_DIRS=(
   [claude]=".claude/skills"
   [opencode]=".opencode/skills"
-  [all]=".claude/skills"
+  [all]=".agents/skills"
 )
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -76,9 +83,9 @@ if $UNINSTALL; then
       echo "  removed: $skill/"
       removed=$((removed + 1))
     elif [ -d "$target" ]; then
-      # curl-installed: only remove if directory contains only SKILL.md
-      contents=$(ls -A "$target")
-      if [ "$contents" = "SKILL.md" ]; then
+      # curl-installed: only remove if directory contains SKILL.md and scripts/ only
+      extra=$(ls -A "$target" | grep -v '^SKILL\.md$' | grep -v '^scripts$') || true
+      if [ -z "$extra" ]; then
         rm -rf "$target"
         echo "  removed: $skill/"
         removed=$((removed + 1))
@@ -104,7 +111,8 @@ installed=0
 skipped=0
 
 if [ -d "$LOCAL_SKILLS_DIR" ]; then
-  # Running from a local clone — symlink directories for live updates
+  # Running from a local clone — symlink skill directories for live updates
+  # Structure: <target>/<skill>/ → repo/skills/<skill>/  (contains SKILL.md + scripts/ symlink)
   for skill in "${SKILLS[@]}"; do
     skill_dir="$LOCAL_SKILLS_DIR/$skill"
     target="$TARGET_DIR/$skill"
@@ -125,27 +133,33 @@ if [ -d "$LOCAL_SKILLS_DIR" ]; then
     installed=$((installed + 1))
   done
 else
-  # Running via curl — download SKILL.md files into local directories
+  # Running via curl — download SKILL.md and compiled scripts into each skill directory
   if ! command -v curl &>/dev/null; then
     echo "Error: curl is required for remote install"
     exit 1
   fi
 
-  BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH/skills"
+  BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
 
   for skill in "${SKILLS[@]}"; do
     target_dir="$TARGET_DIR/$skill"
     target_file="$target_dir/SKILL.md"
 
     if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
-      echo "  skipped: $skill/SKILL.md (non-symlink file exists)"
+      echo "  skipped: $skill/ (already installed)"
       skipped=$((skipped + 1))
       continue
     fi
 
-    mkdir -p "$target_dir"
-    curl -fsSL "$BASE_URL/$skill/SKILL.md" -o "$target_file"
-    echo "  fetched: $skill/SKILL.md"
+    mkdir -p "$target_dir/scripts"
+
+    curl -fsSL "$BASE_URL/skills/$skill/SKILL.md" -o "$target_file"
+
+    for script in "${SCRIPTS[@]}"; do
+      curl -fsSL "$BASE_URL/dist/scripts/$script.js" -o "$target_dir/scripts/$script.js"
+    done
+
+    echo "  fetched: $skill/ (SKILL.md + scripts/)"
     installed=$((installed + 1))
   done
 fi
