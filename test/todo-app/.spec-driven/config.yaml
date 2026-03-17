@@ -1,0 +1,9 @@
+schema: spec-driven
+context: |
+  A minimal Node.js todo CLI (todo.js). Commands: add <text>, list, done <n>.
+  Data stored in todos.json. Used as a test target for spec-driven workflows.
+rules:
+  specs:
+    - Requirements specify observable behavior, not implementation details
+  tasks:
+    - Tasks should be independently completable
