@@ -11,22 +11,45 @@ SKILLS=(
   spec-driven-archive
 )
 
+# Known CLI target directories
+# "all" installs to ~/.claude/skills/ which both Claude Code and OpenCode read
+declare -A GLOBAL_DIRS=(
+  [claude]="$HOME/.claude/skills"
+  [opencode]="$HOME/.config/opencode/skills"
+  [all]="$HOME/.claude/skills"
+)
+declare -A PROJECT_DIRS=(
+  [claude]=".claude/skills"
+  [opencode]=".opencode/skills"
+  [all]=".claude/skills"
+)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOCAL_SKILLS_DIR="$SCRIPT_DIR/skills"
 
 # Parse flags
+CLI="all"
 PROJECT_DIR=""
+
 i=1
 while [ $i -le $# ]; do
   arg="${!i}"
   case "$arg" in
+    --cli)
+      i=$((i + 1))
+      CLI="${!i}"
+      if [[ ! "${GLOBAL_DIRS[$CLI]+set}" ]]; then
+        echo "Error: unknown --cli value '$CLI'. Valid values: claude, opencode, all"
+        exit 1
+      fi
+      ;;
     --project)
       i=$((i + 1))
-      # Optional path argument after --project
       if [ $i -le $# ] && [[ "${!i}" != --* ]]; then
         PROJECT_DIR="${!i}"
       else
         PROJECT_DIR="$(pwd)"
+        i=$((i - 1))
       fi
       ;;
   esac
@@ -34,9 +57,9 @@ while [ $i -le $# ]; do
 done
 
 if [ -n "$PROJECT_DIR" ]; then
-  TARGET_DIR="$PROJECT_DIR/.agent/skills"
+  TARGET_DIR="$PROJECT_DIR/${PROJECT_DIRS[$CLI]}"
 else
-  TARGET_DIR="$HOME/.agents/skills"
+  TARGET_DIR="${GLOBAL_DIRS[$CLI]}"
 fi
 
 echo "Installing skills to: $TARGET_DIR"
@@ -46,29 +69,28 @@ installed=0
 skipped=0
 
 if [ -d "$LOCAL_SKILLS_DIR" ]; then
-  # Running from a local clone — symlink for live updates
+  # Running from a local clone — symlink directories for live updates
   for skill in "${SKILLS[@]}"; do
-    filename="${skill}.md"
-    skill_file="$LOCAL_SKILLS_DIR/$filename"
-    target="$TARGET_DIR/$filename"
+    skill_dir="$LOCAL_SKILLS_DIR/$skill"
+    target="$TARGET_DIR/$skill"
 
-    [ -f "$skill_file" ] || { echo "  missing: $filename (skipped)"; skipped=$((skipped + 1)); continue; }
+    [ -d "$skill_dir" ] || { echo "  missing: $skill/ (skipped)"; skipped=$((skipped + 1)); continue; }
 
     if [ -L "$target" ]; then
-      ln -sf "$skill_file" "$target"
-      echo "  updated: $filename"
+      ln -sfn "$skill_dir" "$target"
+      echo "  updated: $skill/"
     elif [ -e "$target" ]; then
-      echo "  skipped: $filename (non-symlink file exists)"
+      echo "  skipped: $skill/ (non-symlink already exists)"
       skipped=$((skipped + 1))
       continue
     else
-      ln -s "$skill_file" "$target"
-      echo "  linked:  $filename"
+      ln -s "$skill_dir" "$target"
+      echo "  linked:  $skill/"
     fi
     installed=$((installed + 1))
   done
 else
-  # Running via curl — download files directly
+  # Running via curl — download SKILL.md files into local directories
   if ! command -v curl &>/dev/null; then
     echo "Error: curl is required for remote install"
     exit 1
@@ -77,25 +99,22 @@ else
   BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH/skills"
 
   for skill in "${SKILLS[@]}"; do
-    filename="${skill}.md"
-    target="$TARGET_DIR/$filename"
+    target_dir="$TARGET_DIR/$skill"
+    target_file="$target_dir/SKILL.md"
 
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
-      echo "  skipped: $filename (non-symlink file exists)"
+    if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
+      echo "  skipped: $skill/SKILL.md (non-symlink file exists)"
       skipped=$((skipped + 1))
       continue
     fi
 
-    curl -fsSL "$BASE_URL/$filename" -o "$target"
-    echo "  fetched: $filename"
+    mkdir -p "$target_dir"
+    curl -fsSL "$BASE_URL/$skill/SKILL.md" -o "$target_file"
+    echo "  fetched: $skill/SKILL.md"
     installed=$((installed + 1))
   done
 fi
 
 echo ""
 echo "Done. $installed skill(s) installed, $skipped skipped."
-if [ -n "$PROJECT_DIR" ]; then
-  echo "Skills are available project-locally at: $TARGET_DIR"
-else
-  echo "Skills are available globally at: $TARGET_DIR"
-fi
+echo "Target: $TARGET_DIR"
