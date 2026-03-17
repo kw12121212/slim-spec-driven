@@ -1,0 +1,14 @@
+{
+  "name": "spec-driven",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "install-skills": "bash install.sh",
+    "install-skills:project": "bash install.sh --project"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

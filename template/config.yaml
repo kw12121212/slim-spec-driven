@@ -1,0 +1,8 @@
+schema: spec-driven
+context: |
+  [Project context — populated by user, injected into skill prompts]
+rules:
+  specs:
+    - Requirements specify observable behavior, not implementation details
+  tasks:
+    - Tasks should be independently completable
