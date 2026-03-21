@@ -12,7 +12,7 @@ You are helping the user initialize the spec-driven workflow in a project.
 
 2. **Run init** — run:
    ```
-   node {{SKILL_DIR}}/scripts/init.js [path]
+   node {{SKILL_DIR}}/scripts/spec-driven.js init [path]
    ```
    Pass the path only if it differs from the current directory.
 

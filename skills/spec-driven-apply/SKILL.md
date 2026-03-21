@@ -8,7 +8,7 @@ You are helping the user implement a spec-driven change.
 
 ## Steps
 
-1. **Select the change** — run `node {{SKILL_DIR}}/scripts/modify.js` to list active changes. Ask which change to apply. If already specified, use it.
+1. **Select the change** — run `node {{SKILL_DIR}}/scripts/spec-driven.js modify` to list active changes. Ask which change to apply. If already specified, use it.
 
 2. **Load context** — read all three artifacts:
    - `.spec-driven/changes/<name>/proposal.md` — what and why
@@ -18,7 +18,7 @@ You are helping the user implement a spec-driven change.
 
 3. **Check task status** — run:
    ```
-   node {{SKILL_DIR}}/scripts/apply.js <name>
+   node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
    ```
    Show the user the task summary (total, complete, remaining).
 
@@ -29,7 +29,7 @@ You are helping the user implement a spec-driven change.
    - Briefly confirm what was done before moving to the next task
 
 5. **On completion** — when all tasks are done:
-   - Run `node {{SKILL_DIR}}/scripts/apply.js <name>` again to confirm 0 remaining
+   - Run `node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>` again to confirm 0 remaining
    - Suggest running `/spec-driven-verify <name>` to verify the implementation
 
 ## Rules

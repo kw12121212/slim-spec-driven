@@ -8,11 +8,11 @@ You are helping the user archive a completed spec-driven change.
 
 ## Steps
 
-1. **Select the change** — run `node {{SKILL_DIR}}/scripts/modify.js` to list active changes. Ask which change to archive. If already specified, use it.
+1. **Select the change** — run `node {{SKILL_DIR}}/scripts/spec-driven.js modify` to list active changes. Ask which change to archive. If already specified, use it.
 
 2. **Check for incomplete tasks** — run:
    ```
-   node {{SKILL_DIR}}/scripts/apply.js <name>
+   node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
    ```
    If `remaining > 0`, warn the user:
    > "This change has X incomplete tasks. Archiving will preserve them as-is. Are you sure you want to proceed?"
@@ -20,7 +20,7 @@ You are helping the user archive a completed spec-driven change.
 
 3. **Archive the change** — run:
    ```
-   node {{SKILL_DIR}}/scripts/archive.js <name>
+   node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>
    ```
 
 4. **Confirm** — report the result:

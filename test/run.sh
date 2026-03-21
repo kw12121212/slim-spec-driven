@@ -6,7 +6,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT="$ROOT/test/todo-app"
-SCRIPTS="$ROOT/dist/scripts"
+CLI="node $ROOT/dist/scripts/spec-driven.js"
 CHANGE="add-delete-command"
 
 # Colors
@@ -54,20 +54,20 @@ reset_state
 echo -e "${BOLD}[0] init${RESET}"
 
 INIT_DIR="$(mktemp -d)"
-out=$(node "$SCRIPTS/init.js" "$INIT_DIR" 2>&1)
+out=$($CLI init "$INIT_DIR" 2>&1)
 assert_contains "creates .spec-driven/"  "Initialized:"  "$out"
 [ -f "$INIT_DIR/.spec-driven/config.yaml"    ] && pass "config.yaml exists"  || fail "config.yaml missing"
 [ -d "$INIT_DIR/.spec-driven/specs"          ] && pass "specs/ dir exists"   || fail "specs/ dir missing"
 [ -d "$INIT_DIR/.spec-driven/changes"        ] && pass "changes/ dir exists" || fail "changes/ dir missing"
 
-assert_exit "duplicate init exits 1" 1 node "$SCRIPTS/init.js" "$INIT_DIR"
+assert_exit "duplicate init exits 1" 1 $CLI init "$INIT_DIR"
 rm -rf "$INIT_DIR"
 
 # ── 1. propose ────────────────────────────────────────────────────────────────
 echo -e "${BOLD}[1] propose${RESET}"
 
 cd "$PROJECT"
-out=$(node "$SCRIPTS/propose.js" "$CHANGE" 2>&1)
+out=$($CLI propose "$CHANGE" 2>&1)
 assert_contains "creates change directory" "Created change:" "$out"
 assert_contains "reports proposal.md" "proposal.md" "$out"
 assert_contains "reports design.md"   "design.md"   "$out"
@@ -77,29 +77,29 @@ assert_contains "reports tasks.md"    "tasks.md"    "$out"
 [ -f ".spec-driven/changes/$CHANGE/tasks.md"    ] && pass "tasks.md exists"    || fail "tasks.md missing"
 
 # duplicate propose should fail
-assert_exit "duplicate propose exits 1" 1 node "$SCRIPTS/propose.js" "$CHANGE"
+assert_exit "duplicate propose exits 1" 1 $CLI propose "$CHANGE"
 
 # invalid name should fail
-assert_exit "invalid name exits 1" 1 node "$SCRIPTS/propose.js" "Bad_Name"
+assert_exit "invalid name exits 1" 1 $CLI propose "Bad_Name"
 
 # ── 2. modify ─────────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[2] modify${RESET}"
 
-out=$(node "$SCRIPTS/modify.js" 2>&1)
+out=$($CLI modify 2>&1)
 assert_contains "lists active changes" "$CHANGE" "$out"
 
-out=$(node "$SCRIPTS/modify.js" "$CHANGE" 2>&1)
+out=$($CLI modify "$CHANGE" 2>&1)
 assert_contains "shows proposal.md path" "proposal.md" "$out"
 assert_contains "shows design.md path"   "design.md"   "$out"
 assert_contains "shows tasks.md path"    "tasks.md"    "$out"
 
-out=$(node "$SCRIPTS/modify.js" "nonexistent" 2>&1; echo "EXIT:$?") || true
+out=$($CLI modify "nonexistent" 2>&1; echo "EXIT:$?") || true
 assert_contains "nonexistent change errors" "not found" "$out"
 
 # ── 3. apply ──────────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[3] apply${RESET}"
 
-out=$(node "$SCRIPTS/apply.js" "$CHANGE" 2>&1)
+out=$($CLI apply "$CHANGE" 2>&1)
 assert_json_field "total > 0"     "total"     "5" "$out"
 assert_json_field "complete = 0"  "complete"  "0" "$out"
 assert_json_field "remaining = 5" "remaining" "5" "$out"
@@ -108,42 +108,42 @@ assert_json_field "remaining = 5" "remaining" "5" "$out"
 TASKS_FILE=".spec-driven/changes/$CHANGE/tasks.md"
 sed -i '0,/- \[ \]/s/- \[ \]/- [x]/' "$TASKS_FILE"
 sed -i '0,/- \[ \]/s/- \[ \]/- [x]/' "$TASKS_FILE"
-out=$(node "$SCRIPTS/apply.js" "$CHANGE" 2>&1)
+out=$($CLI apply "$CHANGE" 2>&1)
 assert_json_field "complete = 2 after marking" "complete"  "2" "$out"
 assert_json_field "remaining = 3 after marking" "remaining" "3" "$out"
 
-assert_exit "missing change exits 1" 1 node "$SCRIPTS/apply.js" "nonexistent"
+assert_exit "missing change exits 1" 1 $CLI apply "nonexistent"
 
 # ── 4. verify ─────────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[4] verify${RESET}"
 
-out=$(node "$SCRIPTS/verify.js" "$CHANGE" 2>&1)
+out=$($CLI verify "$CHANGE" 2>&1)
 assert_json_field "valid=true for seeded change" "valid" "true" "$out"
 assert_contains   "warns about placeholders"  "placeholders" "$out"
 assert_contains   "warns about incomplete tasks" "incomplete" "$out"
 
 # Empty artifact → errors
 echo "" > "$TASKS_FILE"
-out=$(node "$SCRIPTS/verify.js" "$CHANGE" 2>&1)
+out=$($CLI verify "$CHANGE" 2>&1)
 assert_json_field "empty tasks.md → invalid" "valid" "false" "$out"
 
 # Restore tasks
-cd "$ROOT" && node "$SCRIPTS/propose.js" "/tmp/dummy-$$" 2>/dev/null || true
+cd "$ROOT" && $CLI propose "/tmp/dummy-$$" 2>/dev/null || true
 cd "$PROJECT"
 cp ".spec-driven/changes/$CHANGE/proposal.md" "/tmp/proposal-$$.bak"
-node "$SCRIPTS/propose.js" "${CHANGE}-fresh" &>/dev/null || true
+$CLI propose "${CHANGE}-fresh" &>/dev/null || true
 cp ".spec-driven/changes/${CHANGE}-fresh/tasks.md" "$TASKS_FILE"
 rm -rf ".spec-driven/changes/${CHANGE}-fresh"
 
-out=$(node "$SCRIPTS/verify.js" "$CHANGE" 2>&1)
+out=$($CLI verify "$CHANGE" 2>&1)
 assert_json_field "valid=true after restore" "valid" "true" "$out"
 
-assert_exit "nonexistent change exits 0 with errors" 0 node "$SCRIPTS/verify.js" "nonexistent"
+assert_exit "nonexistent change exits 0 with errors" 0 $CLI verify "nonexistent"
 
 # ── 5. archive ────────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[5] archive${RESET}"
 
-out=$(node "$SCRIPTS/archive.js" "$CHANGE" 2>&1)
+out=$($CLI archive "$CHANGE" 2>&1)
 assert_contains "reports archived path" "Archived:" "$out"
 assert_contains "includes date prefix"  "$(date +%Y-%m-%d)" "$out"
 
@@ -151,21 +151,21 @@ TODAY="$(date +%Y-%m-%d)"
 [ -d ".spec-driven/changes/archive/${TODAY}-${CHANGE}" ] && pass "archive dir exists" || fail "archive dir missing"
 [ ! -d ".spec-driven/changes/$CHANGE" ]                  && pass "source dir removed" || fail "source dir still exists"
 
-assert_exit "archive nonexistent exits 1" 1 node "$SCRIPTS/archive.js" "nonexistent"
-assert_exit "duplicate archive exits 1"   1 node "$SCRIPTS/archive.js" "$CHANGE"
+assert_exit "archive nonexistent exits 1" 1 $CLI archive "nonexistent"
+assert_exit "duplicate archive exits 1"   1 $CLI archive "$CHANGE"
 
 # ── 6. cancel ─────────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[6] cancel${RESET}"
 
 cd "$PROJECT"
-node "$SCRIPTS/propose.js" "to-cancel" &>/dev/null
+$CLI propose "to-cancel" &>/dev/null
 [ -d ".spec-driven/changes/to-cancel" ] && pass "change exists before cancel" || fail "change missing before cancel"
 
-out=$(node "$SCRIPTS/cancel.js" "to-cancel" 2>&1)
+out=$($CLI cancel "to-cancel" 2>&1)
 assert_contains "reports cancelled path" "Cancelled:" "$out"
 [ ! -d ".spec-driven/changes/to-cancel" ] && pass "change removed after cancel" || fail "change still exists after cancel"
 
-assert_exit "cancel nonexistent exits 1" 1 node "$SCRIPTS/cancel.js" "nonexistent"
+assert_exit "cancel nonexistent exits 1" 1 $CLI cancel "nonexistent"
 
 # ── Reset (leave repo clean) ──────────────────────────────────────────────────
 reset_state

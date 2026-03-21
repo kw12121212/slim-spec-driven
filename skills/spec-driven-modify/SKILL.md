@@ -8,9 +8,9 @@ You are helping the user modify an existing spec-driven change artifact.
 
 ## Steps
 
-1. **Select the change** — run `node {{SKILL_DIR}}/scripts/modify.js` to list active changes. Ask the user which change they want to modify. If they already specified one, use it.
+1. **Select the change** — run `node {{SKILL_DIR}}/scripts/spec-driven.js modify` to list active changes. Ask the user which change they want to modify. If they already specified one, use it.
 
-2. **Select the artifact** — run `node {{SKILL_DIR}}/scripts/modify.js <name>` to show artifact paths. Ask the user which artifact to modify: `proposal.md`, `design.md`, or `tasks.md`.
+2. **Select the artifact** — run `node {{SKILL_DIR}}/scripts/spec-driven.js modify <name>` to show artifact paths. Ask the user which artifact to modify: `proposal.md`, `design.md`, or `tasks.md`.
 
 3. **Read the current content** — read the selected artifact file.
 
