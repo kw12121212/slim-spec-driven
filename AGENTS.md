@@ -8,7 +8,7 @@ Instructions for AI agents working in this repository.
 
 - **5 Claude skills** (`skills/*/SKILL.md`) — AI prompts that drive the workflow
 - **5 TypeScript scripts** (`scripts/*.ts`) — filesystem mechanics only (create, move, parse, validate)
-- **`install.sh`** — symlinks skills to `~/.claude/skills/` or `~/.config/opencode/skills/`
+- **`install.sh`** — installs skills to `~/.agent/skills/` then symlinks into `~/.claude/skills/` / `~/.config/opencode/skills/`
 - **`template/`** — starter `.spec-driven/` directory for target projects
 - **`test/`** — automated test suite + todo-app fixture for dogfooding
 
@@ -88,15 +88,17 @@ Changes in progress live in `.spec-driven/changes/`. Completed changes are in `.
 ## install.sh Flags
 
 ```bash
-bash install.sh                          # global, both CLIs → ~/.claude/skills/
-bash install.sh --cli claude             # global, Claude Code only
-bash install.sh --cli opencode           # global, OpenCode → ~/.config/opencode/skills/
-bash install.sh --project                # project-local in CWD → .claude/skills/
+bash install.sh                          # global: store in ~/.agent/skills/, symlink into both CLIs
+bash install.sh --cli claude             # global: store in ~/.agent/skills/, symlink into ~/.claude/skills/ only
+bash install.sh --cli opencode           # global: store in ~/.agent/skills/, symlink into ~/.config/opencode/skills/ only
+bash install.sh --project                # project-local: store in .agent/skills/, symlink into .claude/skills/ + .opencode/skills/
 bash install.sh --project /path/to/proj  # project-local at path
-bash install.sh --uninstall              # remove installed skills (same --cli/--project flags)
+bash install.sh --uninstall              # remove symlinks and agent store entries (same --cli/--project flags)
 ```
 
-Local clone installs use symlinks (live updates). Curl installs copy files.
+Skills live in `~/.agent/skills/` (or `.agent/skills/` for project mode). CLI-specific directories only hold symlinks pointing there.
+
+Skills are always copied into the agent store (never symlinked), making the store git-friendly. CLI-specific directories hold symlinks pointing into the agent store.
 
 ## Conventions
 
