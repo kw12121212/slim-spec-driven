@@ -62,7 +62,7 @@ function propose() {
   );
   fs.writeFileSync(
     path.join(dir, "specs", "delta.md"),
-    `# Spec Delta: ${name}\n\nDescribe what this change adds, modifies, or removes from the system spec.\nLeave a section empty if it does not apply.\n\n## ADDED Requirements\n\n<!-- New observable behaviors introduced by this change -->\n\n## MODIFIED Requirements\n\n<!-- Existing requirements that changed. Include a "Previously:" note -->\n\n## REMOVED Requirements\n\n<!-- Requirements that no longer apply. Include a reason -->\n`
+    `# Spec Delta: ${name}\n\nLeave a section empty if it does not apply.\nUse RFC 2119 keywords: MUST (required), SHOULD (recommended), MAY (optional).\n\n## ADDED Requirements\n\n<!--\n### Requirement: <name>\nThe system MUST <observable behavior>.\n\n#### Scenario: <name>\n- GIVEN <precondition>\n- WHEN <action>\n- THEN <expected outcome>\n-->\n\n## MODIFIED Requirements\n\n<!--\n### Requirement: <existing-name>\nPreviously: <old behavior>\nThe system MUST <new behavior>.\n-->\n\n## REMOVED Requirements\n\n<!--\n### Requirement: <name>\nReason: <why it no longer applies>\n-->\n`
   );
   fs.writeFileSync(
     path.join(dir, "design.md"),
@@ -155,16 +155,20 @@ function verify() {
   if (!fs.existsSync(deltaPath)) {
     errors.push("Missing required artifact: specs/delta.md");
   } else {
+    const raw = fs.readFileSync(deltaPath, "utf-8");
+    const stripped = raw.replace(/<!--[\s\S]*?-->/g, "");
     const skipLines = new Set([
       "Leave a section empty if it does not apply.",
-      "Describe what this change adds, modifies, or removes from the system spec.",
+      "Use RFC 2119 keywords: MUST (required), SHOULD (recommended), MAY (optional).",
     ]);
-    const hasContent = fs.readFileSync(deltaPath, "utf-8").split("\n").some(l => {
+    const hasContent = stripped.split("\n").some(l => {
       const t = l.trim();
-      return t && !t.startsWith("#") && !t.startsWith("<!--") && !t.startsWith("-->") && !skipLines.has(t);
+      return t && !t.startsWith("#") && !skipLines.has(t);
     });
     if (!hasContent) {
       warnings.push("specs/delta.md has no content — fill in ADDED/MODIFIED/REMOVED or confirm no spec changes");
+    } else if (!/^### Requirement:/m.test(stripped)) {
+      warnings.push("specs/delta.md has content but no '### Requirement:' headings — use the spec format");
     }
   }
 
@@ -234,7 +238,7 @@ function init() {
   );
   fs.writeFileSync(
     path.join(specDir, "specs", "README.md"),
-    `# Specs\n\nSpecs describe the current state of the system — what it does, not how it was built.\n\n## Organization\n\nGroup specs by domain area. Use kebab-case directory names (e.g. \`core/\`, \`api/\`, \`auth/\`).\n\n## Conventions\n\n- Write in present tense ("the system does X")\n- Describe observable behavior, not implementation details\n- Keep each spec focused on one area\n`
+    `# Specs\n\nSpecs describe the current state of the system — what it does, not how it was built.\n\n## Format\n\n\`\`\`markdown\n### Requirement: <name>\nThe system MUST/SHOULD/MAY <observable behavior>.\n\n#### Scenario: <name>\n- GIVEN <precondition>\n- WHEN <action>\n- THEN <expected outcome>\n\`\`\`\n\n**Keywords**: MUST = required, SHOULD = recommended, MAY = optional (RFC 2119).\n\n## Organization\n\nGroup specs by domain area. Use kebab-case directory names (e.g. \`core/\`, \`api/\`, \`auth/\`).\n\n## Conventions\n\n- Write in present tense ("the system does X")\n- Describe observable behavior, not implementation details\n- Keep each spec focused on one area\n`
   );
 
   console.log(`Initialized: ${specDir}`);

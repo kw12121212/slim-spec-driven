@@ -21,9 +21,9 @@ You are helping the user archive a completed spec-driven change.
 3. **Merge delta specs** — read `.spec-driven/changes/<name>/specs/delta.md`:
    - If the file has no content (all sections empty): ask the user to confirm this change has no observable spec impact before continuing.
    - If any section has content, merge into `.spec-driven/specs/`:
-     - **ADDED**: find or create the appropriate spec file and append the new requirements
-     - **MODIFIED**: locate the existing requirement by name and update it in place
-     - **REMOVED**: locate the requirement and delete it; remove the file if it becomes empty
+     - **ADDED**: find or create the appropriate spec file and append the `### Requirement:` blocks
+     - **MODIFIED**: locate the existing `### Requirement: <name>` block by name and replace it in place
+     - **REMOVED**: locate the `### Requirement: <name>` block by name and delete it; remove the file if it becomes empty
    - Briefly summarize what changed in `specs/` after merging.
 
 4. **Archive the change** — run:

@@ -28,12 +28,12 @@ You are helping the user create a new spec-driven change proposal.
    - **Key Decisions**: Significant choices and their rationale
    - **Alternatives Considered**: What was ruled out and why
 
-6. **Fill specs/delta.md** — describe the spec impact of this change:
-   - **ADDED Requirements**: new observable behaviors introduced
-   - **MODIFIED Requirements**: existing requirements that change (include a `Previously:` note)
-   - **REMOVED Requirements**: behaviors that will no longer apply (include a reason)
+6. **Fill specs/delta.md** — describe the spec impact of this change using the standard format:
+   - Each requirement uses a `### Requirement: <name>` heading and RFC 2119 keywords (MUST/SHOULD/MAY)
+   - Add `#### Scenario:` blocks (GIVEN/WHEN/THEN) for behaviors that benefit from examples
+   - **ADDED**: new observable behaviors; **MODIFIED**: changed requirements (include `Previously:` note); **REMOVED**: behaviors that no longer apply (include reason)
    - Leave a section empty if it does not apply — do not add placeholder text
-   - If this change has no observable spec impact, write a brief note explaining why under the first section header
+   - If this change has no observable spec impact, write a brief note explaining why under `## ADDED Requirements`
 
 7. **Fill tasks.md** — write a concrete implementation checklist:
    - Use `- [ ]` checkboxes for every task
