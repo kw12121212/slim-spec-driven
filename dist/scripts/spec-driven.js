@@ -79,6 +79,44 @@ function propose() {
     console.log(`  ${path.join(dir, "design.md")}`);
     console.log(`  ${path.join(dir, "tasks.md")}`);
 }
+function getStatus(name) {
+    const dir = changeDir(name);
+    // Check for [NEEDS CLARIFICATION] markers
+    for (const file of ["proposal.md", "design.md"]) {
+        const p = path.join(dir, file);
+        if (fs.existsSync(p) && fs.readFileSync(p, "utf-8").includes("[NEEDS CLARIFICATION")) {
+            return "blocked";
+        }
+    }
+    const specsDir = path.join(dir, "specs");
+    for (const f of findMdFiles(specsDir)) {
+        if (fs.readFileSync(path.join(specsDir, f), "utf-8").includes("[NEEDS CLARIFICATION")) {
+            return "blocked";
+        }
+    }
+    // Check task completion
+    const tasksPath = path.join(dir, "tasks.md");
+    if (!fs.existsSync(tasksPath))
+        return "proposed";
+    const content = fs.readFileSync(tasksPath, "utf-8");
+    let total = 0, complete = 0;
+    for (const line of content.split("\n")) {
+        if (/^\s*-\s*\[x\]\s+/i.test(line)) {
+            total++;
+            complete++;
+        }
+        else if (/^\s*-\s*\[ \]\s+/i.test(line)) {
+            total++;
+        }
+    }
+    if (total === 0)
+        return "proposed";
+    if (complete === 0)
+        return "proposed";
+    if (complete === total)
+        return "done";
+    return `in-progress (${complete}/${total})`;
+}
 function modify() {
     const name = args[0];
     if (!name) {
@@ -96,7 +134,7 @@ function modify() {
         else {
             console.log("Active changes:");
             for (const c of changes)
-                console.log(`  ${c}`);
+                console.log(`  ${c}    ${getStatus(c)}`);
         }
         process.exit(0);
     }
