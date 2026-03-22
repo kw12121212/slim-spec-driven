@@ -11,7 +11,7 @@ You are helping the user cancel and remove an in-progress spec-driven change.
 1. **Select the change** — run `node {{SKILL_DIR}}/scripts/spec-driven.js modify` to list active changes. Ask which change to cancel. If already specified, use it.
 
 2. **Warn the user** — this is permanent and cannot be undone. Show:
-   > "Cancelling will permanently delete `.spec-driven/changes/<name>/` and all its contents (proposal.md, design.md, tasks.md). This cannot be undone. Proceed?"
+   > "Cancelling will permanently delete `.spec-driven/changes/<name>/` and all its contents (proposal.md, specs/delta.md, design.md, tasks.md). This cannot be undone. Proceed?"
    Wait for explicit confirmation before continuing.
 
 3. **Cancel the change** — run:
