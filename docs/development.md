@@ -499,7 +499,7 @@ Curl-installed directories: only removed if the directory contains exactly `SKIL
 
 ### test/run.sh
 
-Fully repeatable — resets state before and after. All 47 tests must pass before committing script changes.
+Fully repeatable — resets state before and after. All 50 tests must pass before committing script changes.
 
 **Structure:**
 ```bash

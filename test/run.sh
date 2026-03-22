@@ -100,6 +100,22 @@ assert_contains "shows tasks.md path"    "tasks.md"    "$out"
 out=$($CLI modify "nonexistent" 2>&1; echo "EXIT:$?") || true
 assert_contains "nonexistent change errors" "not found" "$out"
 
+# ── 2b. list ─────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[2b] list${RESET}"
+
+out=$($CLI list 2>&1)
+assert_contains "list shows active changes" "$CHANGE" "$out"
+assert_contains "list shows proposed status" "proposed" "$out"
+
+# Mark a task to get in-progress status
+TASKS_FILE=".spec-driven/changes/$CHANGE/tasks.md"
+sed -i '0,/- \[ \]/s/- \[ \]/- [x]/' "$TASKS_FILE"
+out=$($CLI list 2>&1)
+assert_contains "list shows in-progress status" "in-progress" "$out"
+
+# Restore task
+sed -i '0,/- \[x\]/s/- \[x\]/- [ ]/' "$TASKS_FILE"
+
 # ── 3. apply ──────────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[3] apply${RESET}"
 

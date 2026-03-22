@@ -21,7 +21,7 @@ slim-spec-driven/
 │   └── <name>/SKILL.md
 ├── template/         # .spec-driven/ starter template
 ├── test/
-│   ├── run.sh        # Test runner (47 tests, fully repeatable)
+│   ├── run.sh        # Test runner (50 tests, fully repeatable)
 │   └── todo-app/     # Fixture project used by tests
 ├── .spec-driven/     # This repo uses its own workflow (dogfooding)
 ├── install.sh
@@ -72,6 +72,7 @@ All subcommands run as `node dist/scripts/spec-driven.js <cmd>` from the project
 | `archive <name>` | change name | moves change to `.spec-driven/changes/archive/YYYY-MM-DD-<name>/` |
 | `cancel <name>` | change name | deletes `.spec-driven/changes/<name>/` |
 | `init [path]` | optional path | creates `.spec-driven/` scaffold at path (or CWD) |
+| `list` | none | stdout: all changes (active with status, archived) |
 
 All subcommands exit `0` on success, `1` on error (except `verify` which always exits `0` and reports errors in JSON).
 

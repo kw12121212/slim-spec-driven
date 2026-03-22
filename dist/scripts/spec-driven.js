@@ -53,9 +53,12 @@ switch (command) {
     case "init":
         init();
         break;
+    case "list":
+        list();
+        break;
     default:
         console.error("Usage: node spec-driven.js <command> [args]");
-        console.error("Commands: propose, modify, apply, verify, archive, cancel, init");
+        console.error("Commands: propose, modify, apply, verify, archive, cancel, init, list");
         process.exit(1);
 }
 function propose() {
@@ -327,4 +330,33 @@ function init() {
     console.log(`  ${path.join(specDir, "specs", "INDEX.md")}`);
     console.log(`  ${path.join(specDir, "specs", "README.md")}`);
     console.log(`  Edit config.yaml to add project context`);
+}
+function list() {
+    if (!fs.existsSync(changesDir)) {
+        console.log("No .spec-driven/changes/ directory found.");
+        process.exit(0);
+    }
+    const entries = fs.readdirSync(changesDir, { withFileTypes: true });
+    const active = entries
+        .filter((e) => e.isDirectory() && e.name !== "archive")
+        .map((e) => e.name);
+    if (active.length > 0) {
+        console.log("Active:");
+        for (const c of active)
+            console.log(`  ${c}    ${getStatus(c)}`);
+    }
+    const archiveDir = path.join(changesDir, "archive");
+    if (fs.existsSync(archiveDir)) {
+        const archived = fs.readdirSync(archiveDir, { withFileTypes: true })
+            .filter((e) => e.isDirectory())
+            .map((e) => e.name);
+        if (archived.length > 0) {
+            console.log("Archived:");
+            for (const a of archived)
+                console.log(`  ${a}`);
+        }
+    }
+    if (active.length === 0 && (!fs.existsSync(archiveDir) || fs.readdirSync(archiveDir).length === 0)) {
+        console.log("No changes.");
+    }
 }
