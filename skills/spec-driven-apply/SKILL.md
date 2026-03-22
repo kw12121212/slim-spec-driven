@@ -15,7 +15,10 @@ You are helping the user implement a spec-driven change.
    - `.spec-driven/changes/<name>/specs/` — delta spec files (mirror of main specs/ structure)
    - `.spec-driven/changes/<name>/design.md` — approach and decisions
    - `.spec-driven/changes/<name>/tasks.md` — the checklist
-   Also read `.spec-driven/config.yaml` for project context and `.spec-driven/specs/` for current state specs. If config.yaml has a `rules` field, treat those rules as binding constraints throughout implementation.
+   Also read:
+   - `.spec-driven/config.yaml` — project context; treat `rules` as binding constraints
+   - `.spec-driven/specs/INDEX.md` — identifies all existing spec files
+   - Every spec file in INDEX.md that is relevant to this change — read full content to understand current requirements before writing code
 
 3. **Check task status** — run:
    ```

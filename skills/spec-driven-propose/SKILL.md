@@ -10,7 +10,10 @@ You are helping the user create a new spec-driven change proposal.
 
 1. **Get the change name** — ask the user for a short kebab-case name describing the change (e.g. `add-auth`, `refactor-db-layer`). If they already provided one, use it.
 
-2. **Read project context** — read `.spec-driven/config.yaml` if it exists. Use the `context` field to inform the content you generate. If a `rules` field exists, apply those rules when filling the artifacts: `rules.tasks` constrains how tasks.md is written; `rules.specs` constrains how specs and proposals describe behavior. If config.yaml doesn't exist, note that and proceed with what you know from the codebase.
+2. **Read project context and existing specs** — read the following before generating anything:
+   - `.spec-driven/config.yaml` — use `context` to inform content; treat `rules` as binding constraints
+   - `.spec-driven/specs/INDEX.md` — identifies all existing spec files and their scope
+   - Every spec file referenced in INDEX.md that this change is likely to touch — read the full content to understand existing requirements before writing MODIFIED or ADDED entries
 
 3. **Scaffold the change** — run:
    ```
