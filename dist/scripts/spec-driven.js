@@ -21,6 +21,16 @@ function requireChange(name) {
     }
     return dir;
 }
+function findMdFiles(dir, base = "") {
+    if (!fs.existsSync(dir))
+        return [];
+    return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+        const rel = base ? `${base}/${e.name}` : e.name;
+        if (e.isDirectory())
+            return findMdFiles(path.join(dir, e.name), rel);
+        return e.name.endsWith(".md") ? [rel] : [];
+    });
+}
 switch (command) {
     case "propose":
         propose();
@@ -61,12 +71,11 @@ function propose() {
     }
     fs.mkdirSync(path.join(dir, "specs"), { recursive: true });
     fs.writeFileSync(path.join(dir, "proposal.md"), `# ${name}\n\n## What\n\n[Describe what this change does]\n\n## Why\n\n[Describe the motivation and context]\n\n## Scope\n\n[List what is in scope and out of scope]\n`);
-    fs.writeFileSync(path.join(dir, "specs", "delta.md"), `# Spec Delta: ${name}\n\nLeave a section empty if it does not apply.\nUse RFC 2119 keywords: MUST (required), SHOULD (recommended), MAY (optional).\n\n## ADDED Requirements\n\n<!--\n### Requirement: <name>\nThe system MUST <observable behavior>.\n\n#### Scenario: <name>\n- GIVEN <precondition>\n- WHEN <action>\n- THEN <expected outcome>\n-->\n\n## MODIFIED Requirements\n\n<!--\n### Requirement: <existing-name>\nPreviously: <old behavior>\nThe system MUST <new behavior>.\n-->\n\n## REMOVED Requirements\n\n<!--\n### Requirement: <name>\nReason: <why it no longer applies>\n-->\n`);
     fs.writeFileSync(path.join(dir, "design.md"), `# Design: ${name}\n\n## Approach\n\n[Describe the implementation approach]\n\n## Key Decisions\n\n[List significant decisions and their rationale]\n\n## Alternatives Considered\n\n[Describe alternatives that were ruled out]\n`);
     fs.writeFileSync(path.join(dir, "tasks.md"), `# Tasks: ${name}\n\n## Implementation\n\n- [ ] Task 1\n- [ ] Task 2\n- [ ] Task 3\n\n## Verification\n\n- [ ] Verify implementation matches proposal\n`);
     console.log(`Created change: ${dir}`);
     console.log(`  ${path.join(dir, "proposal.md")}`);
-    console.log(`  ${path.join(dir, "specs", "delta.md")}`);
+    console.log(`  ${path.join(dir, "specs")}/ (populate to mirror .spec-driven/specs/ structure)`);
     console.log(`  ${path.join(dir, "design.md")}`);
     console.log(`  ${path.join(dir, "tasks.md")}`);
 }
@@ -97,9 +106,19 @@ function modify() {
         process.exit(1);
     }
     console.log(`Artifacts for '${name}':`);
-    for (const artifact of ["proposal.md", "specs/delta.md", "design.md", "tasks.md"]) {
+    for (const artifact of ["proposal.md", "design.md", "tasks.md"]) {
         const p = path.join(dir, artifact);
         console.log(`  ${p}${fs.existsSync(p) ? "" : " (missing)"}`);
+    }
+    const specsDir = path.join(dir, "specs");
+    const specFiles = findMdFiles(specsDir);
+    if (specFiles.length === 0) {
+        console.log(`  ${specsDir}/ (empty)`);
+    }
+    else {
+        for (const f of specFiles) {
+            console.log(`  ${path.join(specsDir, f)}`);
+        }
     }
 }
 function apply() {
@@ -131,26 +150,34 @@ function verify() {
         console.log(JSON.stringify({ valid: false, warnings, errors }, null, 2));
         process.exit(0);
     }
-    const deltaPath = path.join(dir, "specs", "delta.md");
-    if (!fs.existsSync(deltaPath)) {
-        errors.push("Missing required artifact: specs/delta.md");
+    const specsDir = path.join(dir, "specs");
+    if (!fs.existsSync(specsDir)) {
+        errors.push("Missing required directory: specs/");
     }
     else {
-        const raw = fs.readFileSync(deltaPath, "utf-8");
-        const stripped = raw.replace(/<!--[\s\S]*?-->/g, "");
-        const skipLines = new Set([
-            "Leave a section empty if it does not apply.",
-            "Use RFC 2119 keywords: MUST (required), SHOULD (recommended), MAY (optional).",
-        ]);
-        const hasContent = stripped.split("\n").some(l => {
-            const t = l.trim();
-            return t && !t.startsWith("#") && !skipLines.has(t);
-        });
-        if (!hasContent) {
-            warnings.push("specs/delta.md has no content — fill in ADDED/MODIFIED/REMOVED or confirm no spec changes");
+        const specFiles = findMdFiles(specsDir);
+        if (specFiles.length === 0) {
+            warnings.push("specs/ is empty — add delta files mirroring the main .spec-driven/specs/ structure");
         }
-        else if (!/^### Requirement:/m.test(stripped)) {
-            errors.push("specs/delta.md has content but no '### Requirement:' headings — use the spec format");
+        else {
+            const skipLines = new Set([
+                "Leave a section empty if it does not apply.",
+                "Use RFC 2119 keywords: MUST (required), SHOULD (recommended), MAY (optional).",
+            ]);
+            for (const file of specFiles) {
+                const raw = fs.readFileSync(path.join(specsDir, file), "utf-8");
+                const stripped = raw.replace(/<!--[\s\S]*?-->/g, "");
+                const hasContent = stripped.split("\n").some((l) => {
+                    const t = l.trim();
+                    return t && !t.startsWith("#") && !skipLines.has(t);
+                });
+                if (!hasContent) {
+                    warnings.push(`specs/${file} has no content`);
+                }
+                else if (!/^### Requirement:/m.test(stripped)) {
+                    errors.push(`specs/${file} has content but no '### Requirement:' headings — use the spec format`);
+                }
+            }
         }
     }
     for (const file of ["proposal.md", "design.md", "tasks.md"]) {

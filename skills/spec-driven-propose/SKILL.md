@@ -28,12 +28,14 @@ You are helping the user create a new spec-driven change proposal.
    - **Key Decisions**: Significant choices and their rationale
    - **Alternatives Considered**: What was ruled out and why
 
-6. **Fill specs/delta.md** — describe the spec impact of this change using the standard format:
-   - Each requirement uses a `### Requirement: <name>` heading and RFC 2119 keywords (MUST/SHOULD/MAY)
-   - Add `#### Scenario:` blocks (GIVEN/WHEN/THEN) for behaviors that benefit from examples
-   - **ADDED**: new observable behaviors; **MODIFIED**: changed requirements (include `Previously:` note); **REMOVED**: behaviors that no longer apply (include reason)
-   - Leave a section empty if it does not apply — do not add placeholder text
-   - If this change has no observable spec impact, write a brief note explaining why under `## ADDED Requirements`
+6. **Populate specs/ delta files** — look at the project's `.spec-driven/specs/` directory structure. For each spec file that this change touches, create a corresponding file under `.spec-driven/changes/<name>/specs/` mirroring the same relative path (e.g. `specs/auth/login.md` → `changes/<name>/specs/auth/login.md`).
+
+   Each delta file uses ADDED/MODIFIED/REMOVED sections with the standard format:
+   - `### Requirement: <name>` headings and RFC 2119 keywords (MUST/SHOULD/MAY)
+   - `#### Scenario:` blocks (GIVEN/WHEN/THEN) where helpful
+   - **ADDED**: new requirements; **MODIFIED**: changed requirements (include `Previously:` note); **REMOVED**: removed requirements (include reason)
+   - Omit sections that don't apply — do not leave empty sections
+   - If this change has no observable spec impact, create a file with a brief explanation
 
 7. **Fill tasks.md** — write a concrete implementation checklist:
    - Use `- [ ]` checkboxes for every task

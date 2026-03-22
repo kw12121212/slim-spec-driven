@@ -18,10 +18,10 @@ You are helping the user archive a completed spec-driven change.
    > "This change has X incomplete tasks. Archiving will preserve them as-is. Are you sure you want to proceed?"
    Wait for confirmation before continuing.
 
-3. **Merge delta specs** — read `.spec-driven/changes/<name>/specs/delta.md`:
-   - If the file has no content (all sections empty): ask the user to confirm this change has no observable spec impact before continuing.
-   - If any section has content, merge into `.spec-driven/specs/`:
-     - **ADDED**: find or create the appropriate spec file and append the `### Requirement:` blocks
+3. **Merge delta specs** — list all files in `.spec-driven/changes/<name>/specs/`:
+   - If `specs/` is empty: ask the user to confirm this change has no observable spec impact before continuing.
+   - For each delta file (e.g. `specs/install/install-behavior.md`), merge into the corresponding main spec file (e.g. `.spec-driven/specs/install/install-behavior.md`):
+     - **ADDED**: append the `### Requirement:` blocks to the target file (create it if it doesn't exist)
      - **MODIFIED**: locate the existing `### Requirement: <name>` block by name and replace it in place
      - **REMOVED**: locate the `### Requirement: <name>` block by name and delete it; remove the file if it becomes empty
    - Briefly summarize what changed in `specs/` after merging.

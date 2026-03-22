@@ -69,14 +69,14 @@ echo -e "${BOLD}[1] propose${RESET}"
 cd "$PROJECT"
 out=$($CLI propose "$CHANGE" 2>&1)
 assert_contains "creates change directory" "Created change:" "$out"
-assert_contains "reports proposal.md"    "proposal.md"    "$out"
-assert_contains "reports specs/delta.md" "specs/delta.md" "$out"
-assert_contains "reports design.md"      "design.md"      "$out"
-assert_contains "reports tasks.md"       "tasks.md"       "$out"
-[ -f ".spec-driven/changes/$CHANGE/proposal.md"    ] && pass "proposal.md exists"    || fail "proposal.md missing"
-[ -f ".spec-driven/changes/$CHANGE/specs/delta.md" ] && pass "specs/delta.md exists" || fail "specs/delta.md missing"
-[ -f ".spec-driven/changes/$CHANGE/design.md"      ] && pass "design.md exists"      || fail "design.md missing"
-[ -f ".spec-driven/changes/$CHANGE/tasks.md"       ] && pass "tasks.md exists"       || fail "tasks.md missing"
+assert_contains "reports proposal.md" "proposal.md" "$out"
+assert_contains "reports specs/ dir"  "specs/"      "$out"
+assert_contains "reports design.md"   "design.md"   "$out"
+assert_contains "reports tasks.md"    "tasks.md"    "$out"
+[ -f ".spec-driven/changes/$CHANGE/proposal.md" ] && pass "proposal.md exists" || fail "proposal.md missing"
+[ -d ".spec-driven/changes/$CHANGE/specs"       ] && pass "specs/ dir exists"  || fail "specs/ dir missing"
+[ -f ".spec-driven/changes/$CHANGE/design.md"   ] && pass "design.md exists"   || fail "design.md missing"
+[ -f ".spec-driven/changes/$CHANGE/tasks.md"    ] && pass "tasks.md exists"    || fail "tasks.md missing"
 
 # duplicate propose should fail
 assert_exit "duplicate propose exits 1" 1 $CLI propose "$CHANGE"
@@ -91,10 +91,10 @@ out=$($CLI modify 2>&1)
 assert_contains "lists active changes" "$CHANGE" "$out"
 
 out=$($CLI modify "$CHANGE" 2>&1)
-assert_contains "shows proposal.md path"    "proposal.md"    "$out"
-assert_contains "shows specs/delta.md path" "specs/delta.md" "$out"
-assert_contains "shows design.md path"      "design.md"      "$out"
-assert_contains "shows tasks.md path"       "tasks.md"       "$out"
+assert_contains "shows proposal.md path" "proposal.md" "$out"
+assert_contains "shows specs/ dir"       "specs/"      "$out"
+assert_contains "shows design.md path"   "design.md"   "$out"
+assert_contains "shows tasks.md path"    "tasks.md"    "$out"
 
 out=$($CLI modify "nonexistent" 2>&1; echo "EXIT:$?") || true
 assert_contains "nonexistent change errors" "not found" "$out"
@@ -124,7 +124,7 @@ out=$($CLI verify "$CHANGE" 2>&1)
 assert_json_field "valid=true for seeded change" "valid" "true" "$out"
 assert_contains   "warns about placeholders"     "placeholders" "$out"
 assert_contains   "warns about incomplete tasks"  "incomplete"   "$out"
-assert_contains   "warns about empty delta spec"  "delta.md"     "$out"
+assert_contains   "warns about empty specs dir"   "specs/ is empty" "$out"
 
 # Empty artifact → errors
 echo "" > "$TASKS_FILE"
