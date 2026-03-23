@@ -106,8 +106,8 @@ bash install.sh                                  # 全局，所有 CLI
 bash install.sh --cli claude                     # 全局，仅 Claude Code（~/.claude/skills/）
 bash install.sh --cli opencode                   # 全局，仅 OpenCode（~/.config/opencode/skills/）
 bash install.sh --cli trae                       # 全局，仅 Trae（~/.trae/skills/）
-bash install.sh --cli codex                      # 全局，仅 Codex（~/.codex/skills/）
-bash install.sh --cli gemini                     # 全局，仅 Gemini CLI（~/.gemini/skills/）
+bash install.sh --cli codex                      # 全局，仅 Codex（通过 ~/.agents/skills/）
+bash install.sh --cli gemini                     # 全局，仅 Gemini CLI（通过 ~/.agents/skills/）
 bash install.sh --project                        # 项目本地，当前目录
 bash install.sh --project /path/to/project       # 项目本地，指定路径
 ```
@@ -116,12 +116,12 @@ bash install.sh --project /path/to/project       # 项目本地，指定路径
 
 | `--cli` | 全局路径 | 项目本地路径 |
 |---------|---------|------------|
-| `all`（默认） | `~/.claude/skills/` + `~/.config/opencode/skills/` + `~/.trae/skills/` + `~/.codex/skills/` + `~/.gemini/skills/` | `.claude/skills/` + `.opencode/skills/` + `.trae/skills/` + `.codex/skills/` + `.gemini/skills/` + `.agents/skills/` |
+| `all`（默认） | `~/.claude/skills/` + `~/.config/opencode/skills/` + `~/.trae/skills/` + `~/.agents/skills/` | `.claude/skills/` + `.opencode/skills/` + `.trae/skills/` + `.codex/skills/` + `.gemini/skills/` + `.agents/skills/` |
 | `claude` | `~/.claude/skills/` | `.claude/skills/` |
 | `opencode` | `~/.config/opencode/skills/` | `.opencode/skills/` |
 | `trae` | `~/.trae/skills/` | `.trae/skills/` |
-| `codex` | `~/.codex/skills/` | `.codex/skills/` |
-| `gemini` | `~/.gemini/skills/` | `.gemini/skills/` |
+| `codex` | `~/.agents/skills/` | `.codex/skills/` |
+| `gemini` | `~/.agents/skills/` | `.gemini/skills/` |
 
 ## 工作流
 

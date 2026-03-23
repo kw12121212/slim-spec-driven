@@ -106,8 +106,8 @@ bash install.sh                                  # global, all CLIs
 bash install.sh --cli claude                     # global, Claude Code only (~/.claude/skills/)
 bash install.sh --cli opencode                   # global, OpenCode only (~/.config/opencode/skills/)
 bash install.sh --cli trae                       # global, Trae only (~/.trae/skills/)
-bash install.sh --cli codex                      # global, Codex only (~/.codex/skills/)
-bash install.sh --cli gemini                     # global, Gemini CLI only (~/.gemini/skills/)
+bash install.sh --cli codex                      # global, Codex via ~/.agents/skills/
+bash install.sh --cli gemini                     # global, Gemini CLI via ~/.agents/skills/
 bash install.sh --project                        # project-local in CWD
 bash install.sh --project /path/to/project       # project-local at specified path
 ```
@@ -116,12 +116,12 @@ bash install.sh --project /path/to/project       # project-local at specified pa
 
 | `--cli` | Global | Project-local |
 |---------|--------|---------------|
-| `all` (default) | `~/.claude/skills/` + `~/.config/opencode/skills/` + `~/.trae/skills/` + `~/.codex/skills/` + `~/.gemini/skills/` | `.claude/skills/` + `.opencode/skills/` + `.trae/skills/` + `.codex/skills/` + `.gemini/skills/` + `.agents/skills/` |
+| `all` (default) | `~/.claude/skills/` + `~/.config/opencode/skills/` + `~/.trae/skills/` + `~/.agents/skills/` | `.claude/skills/` + `.opencode/skills/` + `.trae/skills/` + `.codex/skills/` + `.gemini/skills/` + `.agents/skills/` |
 | `claude` | `~/.claude/skills/` | `.claude/skills/` |
 | `opencode` | `~/.config/opencode/skills/` | `.opencode/skills/` |
 | `trae` | `~/.trae/skills/` | `.trae/skills/` |
-| `codex` | `~/.codex/skills/` | `.codex/skills/` |
-| `gemini` | `~/.gemini/skills/` | `.gemini/skills/` |
+| `codex` | `~/.agents/skills/` | `.codex/skills/` |
+| `gemini` | `~/.agents/skills/` | `.gemini/skills/` |
 
 ## Workflow
 

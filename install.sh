@@ -24,8 +24,8 @@ declare -A GLOBAL_CLI_DIRS=(
   [claude]="$HOME/.claude/skills"
   [opencode]="$HOME/.config/opencode/skills"
   [trae]="$HOME/.trae/skills"
-  [codex]="$HOME/.codex/skills"
-  [gemini]="$HOME/.gemini/skills"
+  [codex]="$HOME/.agents/skills"
+  [gemini]="$HOME/.agents/skills"
 )
 declare -A PROJECT_CLI_DIRS=(
   [claude]=".claude/skills"
