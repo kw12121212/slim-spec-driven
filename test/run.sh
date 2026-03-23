@@ -67,7 +67,10 @@ assert_contains "creates .spec-driven/"  "Initialized:"  "$out"
 [ -d "$INIT_DIR/.spec-driven/specs"                ] && pass "specs/ dir exists"   || fail "specs/ dir missing"
 [ -d "$INIT_DIR/.spec-driven/changes"              ] && pass "changes/ dir exists" || fail "changes/ dir missing"
 
-assert_exit "duplicate init exits 1" 1 $CLI init "$INIT_DIR"
+out2=$($CLI init "$INIT_DIR" 2>&1)
+assert_contains "duplicate init exits 0 (idempotent)" "Initialized:" "$out2"
+assert_contains "duplicate init reports index regeneration" "INDEX.md" "$out2"
+[ -f "$INIT_DIR/.spec-driven/config.yaml" ] && pass "duplicate init preserves config.yaml" || fail "duplicate init removed config.yaml"
 rm -rf "$INIT_DIR"
 
 # ── 0b. migrate ───────────────────────────────────────────────────────────────

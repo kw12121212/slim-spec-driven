@@ -351,23 +351,13 @@ function cancel() {
 function init() {
   const targetDir = args[0] ? path.resolve(args[0]) : process.cwd();
   const specDir = path.join(targetDir, ".spec-driven");
+  const lines: string[] = [];
 
-  if (fs.existsSync(specDir)) {
-    console.error(`Error: .spec-driven/ already exists at ${specDir}`);
-    process.exit(1);
-  }
-
-  fs.mkdirSync(path.join(specDir, "changes"), { recursive: true });
-  fs.mkdirSync(path.join(specDir, "specs"), { recursive: true });
-
-  fs.writeFileSync(path.join(specDir, "config.yaml"), INIT_CONFIG_YAML);
-  fs.writeFileSync(path.join(specDir, "specs", "INDEX.md"), INIT_INDEX_MD);
-  fs.writeFileSync(path.join(specDir, "specs", "README.md"), INIT_README_MD);
+  ensureSpecDrivenScaffold(specDir, lines);
+  regenerateIndexMd(path.join(specDir, "specs"), lines);
 
   console.log(`Initialized: ${specDir}`);
-  console.log(`  ${path.join(specDir, "config.yaml")}`);
-  console.log(`  ${path.join(specDir, "specs", "INDEX.md")}`);
-  console.log(`  ${path.join(specDir, "specs", "README.md")}`);
+  for (const line of lines) console.log(`  ${line}`);
   console.log(`  Edit config.yaml to add project context`);
 }
 
@@ -522,6 +512,25 @@ function ensureSpecDrivenScaffold(specDir: string, lines: string[]): number {
   }
 
   return changed;
+}
+
+function regenerateIndexMd(specsDir: string, lines: string[]): void {
+  if (!fs.existsSync(specsDir)) return;
+
+  const excluded = new Set(["INDEX.md", "README.md"]);
+  const mdFiles = findMdFiles(specsDir).filter((f) => !excluded.has(f) && !excluded.has(path.basename(f)));
+
+  const indexPath = path.join(specsDir, "INDEX.md");
+  let content = "# Specs Index\n\n<!-- One entry per spec file. Updated by /spec-driven-archive after each change. -->\n";
+  if (mdFiles.length > 0) {
+    content += "\n";
+    for (const f of mdFiles.sort()) {
+      content += `- [${f}](${f})\n`;
+    }
+  }
+
+  fs.writeFileSync(indexPath, content);
+  lines.push(`Regenerated specs/INDEX.md (${mdFiles.length} file(s) listed)`);
 }
 
 function resolveBundledSkillsDir(): string | null {
