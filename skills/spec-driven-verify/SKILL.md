@@ -23,10 +23,9 @@ You are helping the user verify a spec-driven change before archiving.
    If `remaining > 0`, list the incomplete tasks. These are CRITICAL issues.
    If the script warns about a missing `## Testing` section, this is also a CRITICAL — every change must include test tasks.
 
-4. **Clarification check** — scan proposal.md, design.md, and all delta spec files for `[NEEDS CLARIFICATION]` markers:
-   - Any unresolved marker in proposal.md or design.md is a CRITICAL — implementation cannot proceed with ambiguous requirements
-   - Any unresolved marker in delta spec files is a CRITICAL — the spec cannot be archived in an ambiguous state
-   - The script also reports these as warnings; treat them as CRITICALs here
+4. **Open questions check** — read `.spec-driven/changes/<name>/questions.md` and scan for `- [ ] Q:` entries:
+   - Any open (unanswered) question is a CRITICAL — implementation cannot be verified with unresolved ambiguity
+   - The script also reports these as errors; treat them as CRITICALs here
 
 6. **Implementation evidence check** — for each completed task in tasks.md:
    - Identify what code or files the task should have changed
@@ -57,7 +56,7 @@ You are helping the user verify a spec-driven change before archiving.
 9. **Recommend next step**:
    - If CRITICAL issues: address them before archiving
    - If only WARNINGs: ask user if they want to address them or proceed
-   - If clean: suggest `/spec-driven-archive <name>`
+   - If clean: suggest `/spec-driven-review <name>`
 
 ## Rules
 - Be honest — don't pass a change just because tasks are checked off
