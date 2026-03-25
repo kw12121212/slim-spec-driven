@@ -73,8 +73,18 @@ assert_contains "duplicate init reports index regeneration" "INDEX.md" "$out2"
 [ -f "$INIT_DIR/.spec-driven/config.yaml" ] && pass "duplicate init preserves config.yaml" || fail "duplicate init removed config.yaml"
 rm -rf "$INIT_DIR"
 
-# ── 0b. migrate ───────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[0b] migrate${RESET}"
+# ── 0b. install ───────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[0b] install${RESET}"
+
+INSTALL_HOME="$(mktemp -d)"
+out=$(HOME="$INSTALL_HOME" bash "$ROOT/install.sh" --cli codex 2>&1)
+assert_contains "install reports spec-content skill copy" "copied: spec-driven-spec-content/" "$out"
+[ -f "$INSTALL_HOME/.slim-spec-driven/skills/spec-driven-spec-content/SKILL.md" ] && pass "install copies spec-content skill into agent store" || fail "install missing spec-content skill in agent store"
+[ -L "$INSTALL_HOME/.agents/skills/spec-driven-spec-content" ] && pass "install links spec-content skill for codex" || fail "install missing spec-content symlink for codex"
+rm -rf "$INSTALL_HOME"
+
+# ── 0c. migrate ───────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[0c] migrate${RESET}"
 
 MIGRATE_DIR="$(mktemp -d)"
 mkdir -p "$MIGRATE_DIR/openspec/specs"

@@ -1,6 +1,6 @@
 # spec-driven
 
-A lightweight spec-driven development framework: 7 Claude skills + thin TypeScript scaffolding.
+A lightweight spec-driven development framework: 10 agent skills + thin TypeScript scaffolding.
 
 ## How It Helps AI Programming
 
@@ -12,7 +12,7 @@ Instead of reading the entire codebase to understand what the system does, the A
 
 - `INDEX.md` navigates the full spec collection at a glance
 - Each spec file describes observable behavior using RFC 2119 format (`### Requirement:`, GIVEN/WHEN/THEN scenarios)
-- Both `propose` and `apply` are required to read INDEX.md and all relevant spec files before generating anything
+- `propose`, `apply`, and `spec-content` are required to read INDEX.md and the relevant spec files before generating anything
 
 This prevents the AI from introducing conflicting or duplicate behavior — it knows what already exists.
 
@@ -28,7 +28,7 @@ Every change is a folder with five files, each serving a distinct purpose:
 | `tasks.md` | `- [ ]` checklist | Controls pace — one task at a time, marked complete immediately |
 | `questions.md` | Open/resolved Q&A | Centralizes ambiguities; open questions block apply and archive |
 
-### Layer 3: 7 skills — explicit constraints on AI behavior
+### Layer 3: 10 skills — explicit constraints on AI behavior
 
 Each skill is a precise prompt that specifies:
 - Exactly which files to read (no vague "read the codebase")
@@ -57,7 +57,7 @@ The TypeScript CLI handles all filesystem operations; the AI handles content and
 | | spec-driven | OpenSpec |
 |--|-------------|----------|
 | Spec format | RFC 2119 enforced — `### Requirement:` + MUST/SHOULD/MAY + GIVEN/WHEN/THEN; violations are script errors | No required format |
-| AI reads existing specs | Explicit: `propose` and `apply` must read INDEX.md then every relevant spec file before generating anything | "Searches existing specs" (vague) |
+| AI reads existing specs | Explicit: `propose`, `apply`, and `spec-content` must read INDEX.md then every relevant spec file before generating anything | "Searches existing specs" (vague) |
 | Delta spec structure | Mirrors `specs/` by path — `changes/<name>/specs/auth/login.md` maps to `specs/auth/login.md` | Not path-bound |
 | Archive spec merge | Hard gate: merge each delta file by path into main `specs/` using ADDED/MODIFIED/REMOVED markers before moving | File organization only |
 | Runtime dependencies | Node.js stdlib only — one 280-line TypeScript file | Global npm package (`npm install -g`, Node 20.19+) |
@@ -119,7 +119,9 @@ init → propose → apply → verify → archive
 4. **verify** — check task completion, implementation evidence, spec format, and alignment
 5. **archive** — merge delta specs into `specs/` by file path, update INDEX.md, move to archive/
 
-Use **modify** to refine any artifact mid-flight. Use **cancel** to abandon a change.
+Use **modify** to refine any artifact mid-flight. Use **spec-content** when the
+content is clear but the correct spec category/file is not. Use **cancel** to
+abandon a change.
 
 ## Skills
 
@@ -128,8 +130,10 @@ Use **modify** to refine any artifact mid-flight. Use **cancel** to abandon a ch
 | `/spec-driven-init` | Initialize `.spec-driven/` in a project and fill config.yaml |
 | `/spec-driven-propose` | Read existing specs, scaffold a new change with all five artifacts |
 | `/spec-driven-modify` | Edit an existing change artifact |
+| `/spec-driven-spec-content` | Read `specs/INDEX.md`, classify spec content, and place it in the correct delta spec file |
 | `/spec-driven-apply` | Implement tasks one by one, update delta specs when done |
 | `/spec-driven-verify` | Check completion, implementation evidence, and spec alignment |
+| `/spec-driven-review` | Review a completed change for code quality before archive |
 | `/spec-driven-archive` | Merge delta specs into specs/, update INDEX.md, move to archive/ |
 | `/spec-driven-cancel` | Permanently delete an in-progress change (with confirmation) |
 | `/spec-driven-auto` | Run full workflow automatically (propose → apply → verify → review → archive) with one confirmation checkpoint. Best for small, well-scoped changes. |
