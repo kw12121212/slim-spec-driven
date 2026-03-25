@@ -1,7 +1,7 @@
 ---
 name: spec-driven-review
 description: Review the code quality of a spec-driven change. Checks readability, security, performance, and best practices before archiving.
-version: 0.1.0
+version: 0.2.0
 ---
 
 You are reviewing the code quality of a completed spec-driven change.

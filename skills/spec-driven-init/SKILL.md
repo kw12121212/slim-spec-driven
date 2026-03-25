@@ -1,7 +1,7 @@
 ---
 name: spec-driven-init
 description: Initialize a .spec-driven/ directory in a project. Creates config.yaml and specs/ scaffold, then guides the user to fill in project context.
-version: 0.1.0
+version: 0.2.0
 ---
 
 You are helping the user initialize the spec-driven workflow in a project.

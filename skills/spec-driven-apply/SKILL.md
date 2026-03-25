@@ -1,7 +1,7 @@
 ---
 name: spec-driven-apply
 description: Implement the tasks in a spec-driven change. Works through incomplete tasks one by one, marking each complete as it goes.
-version: 0.1.0
+version: 0.2.0
 ---
 
 You are helping the user implement a spec-driven change.

@@ -1,7 +1,7 @@
 ---
 name: spec-driven-verify
 description: Verify a spec-driven change is complete and correctly implemented. Checks task completion, implementation evidence, and spec alignment.
-version: 0.1.0
+version: 0.2.0
 ---
 
 You are helping the user verify a spec-driven change before archiving.

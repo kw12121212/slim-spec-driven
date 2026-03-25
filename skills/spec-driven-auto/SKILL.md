@@ -1,7 +1,7 @@
 ---
 name: spec-driven-auto
 description: Run the full spec-driven workflow automatically. Proposes, implements, verifies, reviews, and archives a change with one confirmation checkpoint.
-version: 0.1.0
+version: 0.2.0
 ---
 
 You are running the full spec-driven workflow end-to-end for a single change.

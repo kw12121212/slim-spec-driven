@@ -1,7 +1,7 @@
 ---
 name: spec-driven-archive
 description: Archive a completed spec-driven change. Warns on incomplete tasks, moves change to archive/ with a date prefix.
-version: 0.1.0
+version: 0.2.0
 ---
 
 You are helping the user archive a completed spec-driven change.
