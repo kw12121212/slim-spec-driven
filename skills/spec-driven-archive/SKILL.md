@@ -1,7 +1,7 @@
 ---
 name: spec-driven-archive
-description: Archive a completed spec-driven change. Warns on incomplete tasks, moves change to archive/ with a date prefix.
-version: 0.2.0
+description: Archive a completed spec-driven change. Requires completed tasks, merges delta specs into main specs, then moves the change to archive/ with a date prefix.
+version: 0.3.0
 ---
 
 You are helping the user archive a completed spec-driven change.
@@ -22,9 +22,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    ```
    node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
    ```
-   If `remaining > 0`, warn the user:
-   > "This change has X incomplete tasks. Archiving will preserve them as-is. Are you sure you want to proceed?"
-   Wait for confirmation before continuing.
+   If `remaining > 0`, stop — archiving is not allowed until all tasks are complete. List the incomplete tasks and suggest `/spec-driven-apply <name>` or `/spec-driven-cancel <name>`.
 
 3. **Merge delta specs** — list all files in `.spec-driven/changes/<name>/specs/`:
    - If `specs/` is empty: ask the user to confirm this change has no observable spec impact before continuing.
@@ -51,6 +49,8 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 ## Rules
 - Always check for incomplete tasks before archiving
+- Never archive a change with incomplete tasks
 - Always merge delta specs before archiving — this is a hard gate, not optional
-- Do not skip the incomplete-task warning — let the user make an informed decision
-- Do not delete anything — archive only moves, never deletes
+- If `changes/<name>/specs/` is empty, require explicit human confirmation that the change has no observable spec impact
+- Deleting requirements or empty spec files in `.spec-driven/specs/` is allowed when applying `REMOVED` delta entries
+- Do not delete the change directory manually — archive the change by running the archive command

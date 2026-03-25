@@ -1,7 +1,7 @@
 ---
 name: spec-driven-verify
 description: Verify a spec-driven change is complete and correctly implemented. Checks task completion, implementation evidence, and spec alignment.
-version: 0.2.0
+version: 0.3.0
 ---
 
 You are helping the user verify a spec-driven change before archiving.
@@ -23,24 +23,24 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
    ```
    Report any errors (blocking) or warnings (non-blocking).
+   - If the script warns that `tasks.md` has no `## Testing` section, promote that to a CRITICAL — every change must include test tasks
 
 3. **Task completion check** — run:
    ```
    node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
    ```
    If `remaining > 0`, list the incomplete tasks. These are CRITICAL issues.
-   If the script warns about a missing `## Testing` section, this is also a CRITICAL — every change must include test tasks.
 
 4. **Open questions check** — read `.spec-driven/changes/<name>/questions.md` and scan for `- [ ] Q:` entries:
    - Any open (unanswered) question is a CRITICAL — implementation cannot be verified with unresolved ambiguity
    - The script also reports these as errors; treat them as CRITICALs here
 
-6. **Implementation evidence check** — for each completed task in tasks.md:
+5. **Implementation evidence check** — for each completed task in tasks.md:
    - Identify what code or files the task should have changed
    - Verify the change actually exists (read relevant files)
    - Note any tasks with no visible evidence as WARNINGs
 
-7. **Spec alignment check** — read `.spec-driven/specs/`, `.spec-driven/config.yaml`, `.spec-driven/changes/<name>/proposal.md`, and all files in `.spec-driven/changes/<name>/specs/`:
+6. **Spec alignment check** — read `.spec-driven/specs/`, `.spec-driven/config.yaml`, `.spec-driven/changes/<name>/proposal.md`, and all files in `.spec-driven/changes/<name>/specs/`:
    - Does the implementation match what was proposed?
    - Do the delta files in `changes/<name>/specs/` accurately describe what was implemented? Empty `specs/` with real behavior changes is a CRITICAL.
    - Does each delta file mirror its corresponding main spec file path? Mismatched paths mean the merge will fail.
@@ -49,7 +49,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    - If proposal.md has an **Unchanged Behavior** section with content, verify the implementation has not violated any listed behaviors — violations are CRITICALs
    - Flag misalignments as WARNINGs or CRITICALs
 
-8. **Output a tiered report**:
+7. **Output a tiered report**:
    ```
    CRITICAL (blocks archive):
      - [list or "none"]
@@ -61,7 +61,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
      - [list or "none"]
    ```
 
-9. **Recommend next step**:
+8. **Recommend next step**:
    - If CRITICAL issues: address them before archiving
    - If only WARNINGs: ask user if they want to address them or proceed
    - If clean: suggest `/spec-driven-review <name>`

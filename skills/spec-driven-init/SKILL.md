@@ -1,7 +1,7 @@
 ---
 name: spec-driven-init
 description: Initialize a .spec-driven/ directory in a project. Creates config.yaml and specs/ scaffold, then guides the user to fill in project context.
-version: 0.2.0
+version: 0.3.0
 ---
 
 You are helping the user initialize the spec-driven workflow in a project.
@@ -15,6 +15,8 @@ You are helping the user initialize the spec-driven workflow in a project.
    node {{SKILL_DIR}}/scripts/spec-driven.js init [path]
    ```
    Pass the path only if it differs from the current directory.
+   - If `.spec-driven/` does not exist, this bootstraps it from scratch
+   - If `.spec-driven/` already exists, this repairs any missing scaffold files and regenerates `specs/INDEX.md` without overwriting existing files
 
 3. **Draft context** — read any existing project files that describe the project (`README.md`, `AGENTS.md`, `CLAUDE.md`, `package.json`, `pom.xml`, etc.). Draft a `context` value of 3–5 sentences covering:
    - What the project does
@@ -36,4 +38,4 @@ You are helping the user initialize the spec-driven workflow in a project.
 ## Rules
 - Do not create any changes — initialization only
 - Keep the context field concise: 3–5 sentences is enough for the AI to work from
-- If .spec-driven/ already exists, do not reinitialize — suggest `/spec-driven-propose` instead
+- If `.spec-driven/` already exists, do not overwrite existing files — repair missing scaffold files only

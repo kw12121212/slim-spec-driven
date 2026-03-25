@@ -1,7 +1,7 @@
 ---
 name: spec-driven-review
 description: Review the code quality of a spec-driven change. Checks readability, security, performance, and best practices before archiving.
-version: 0.2.0
+version: 0.3.0
 ---
 
 You are reviewing the code quality of a completed spec-driven change.
@@ -26,8 +26,10 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 3. **Load context** — read:
    - `.spec-driven/changes/<name>/proposal.md` — scope and unchanged behavior
+   - `.spec-driven/changes/<name>/specs/` — delta specs describing the intended behavior changes
    - `.spec-driven/changes/<name>/design.md` — approach and decisions
    - `.spec-driven/changes/<name>/tasks.md` — what was implemented
+   - `.spec-driven/changes/<name>/questions.md` — resolved answers that may explain decisions or tradeoffs
    - `.spec-driven/config.yaml` — project context and rules (including `test` rules and any `fileMatch` entries)
 
 4. **Identify changed files** — from the completed tasks, determine which files were created or modified. Read each file fully.

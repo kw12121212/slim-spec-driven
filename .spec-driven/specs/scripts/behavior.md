@@ -2,13 +2,13 @@
 
 ### Requirement: propose-creates-artifacts
 `spec-driven.js propose <name>` MUST create `.spec-driven/changes/<name>/` containing
-`proposal.md`, `specs/` directory, `design.md`, and `tasks.md` with seed content.
+`proposal.md`, `specs/` directory, `design.md`, `tasks.md`, and `questions.md` with seed content.
 The name MUST match `^[a-z0-9]+(-[a-z0-9]+)*$`. Exits 1 if invalid or already exists.
 
 ### Requirement: modify-lists-and-shows
 `spec-driven.js modify` with no argument MUST list all active change directories,
-excluding `archive/`. With a name argument, MUST print paths to all four artifacts
-(`proposal.md`, `specs/`, `design.md`, `tasks.md`).
+excluding `archive/`. With a name argument, MUST print paths to all five artifacts
+(`proposal.md`, `specs/`, `design.md`, `tasks.md`, `questions.md`).
 Exits 1 if the named change does not exist.
 
 ### Requirement: apply-tracks-tasks
@@ -17,8 +17,8 @@ and output JSON `{ total, complete, remaining, tasks[] }`.
 Exits 1 if the change or tasks.md does not exist.
 
 ### Requirement: verify-checks-artifacts
-`spec-driven.js verify <name>` MUST check that `proposal.md`, `design.md`, and `tasks.md`
-exist and are non-empty, and that `specs/` directory exists.
+`spec-driven.js verify <name>` MUST check that `proposal.md`, `design.md`, `tasks.md`,
+and `questions.md` exist and are non-empty, and that `specs/` directory exists.
 Output is always `{ valid, warnings[], errors[] }` and exits 0.
 `valid` is false only when `errors` is non-empty.
 
@@ -42,10 +42,10 @@ Output is always `{ valid, warnings[], errors[] }` and exits 0.
 - WHEN verify is run
 - THEN errors contains a missing section marker message and valid is false
 
-#### Scenario: unresolved-clarification-markers
-- GIVEN an artifact or spec file contains `[NEEDS CLARIFICATION]` markers
+#### Scenario: open-questions-block-verify
+- GIVEN `questions.md` contains one or more open `- [ ] Q:` entries
 - WHEN verify is run
-- THEN warnings contains an unresolved markers message
+- THEN errors contains an open questions message and valid is false
 
 ### Requirement: archive-moves-change
 `spec-driven.js archive <name>` MUST move `.spec-driven/changes/<name>/` to
