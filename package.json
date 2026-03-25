@@ -5,13 +5,19 @@
   "scripts": {
     "build": "tsc",
     "test": "bash test/run.sh",
+    "validate-skills": "npm run build && node dist/test/validate-skills.js",
     "install-skills": "bash install.sh",
     "install-skills:project": "bash install.sh --project",
     "uninstall-skills": "bash install.sh --uninstall",
     "uninstall-skills:project": "bash install.sh --uninstall --project"
   },
   "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^20.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
     "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "unified": "^11.0.5",
+    "yaml": "^2.8.3"
   }
 }

@@ -7,6 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT="$ROOT/test/todo-app"
 CLI="node $ROOT/dist/scripts/spec-driven.js"
+SKILL_VALIDATOR="node $ROOT/dist/test/validate-skills.js"
 CHANGE="add-delete-command"
 
 # Colors
@@ -56,8 +57,21 @@ create_skill() {
 echo -e "\n${BOLD}spec-driven test suite${RESET} — project: test/todo-app\n"
 reset_state
 
-# ── 0. init ───────────────────────────────────────────────────────────────────
-echo -e "${BOLD}[0] init${RESET}"
+# ── 0. validate-skills ────────────────────────────────────────────────────────
+echo -e "${BOLD}[0] validate-skills${RESET}"
+
+for skill in "$ROOT"/skills/*/SKILL.md; do
+  out=$($SKILL_VALIDATOR "$skill" 2>&1) && code=0 || code=$?
+  if [ "$code" = "0" ]; then
+    pass "skill schema valid: $(basename "$(dirname "$skill")")"
+  else
+    fail "skill schema invalid: $(basename "$(dirname "$skill")")"
+    echo "$out"
+  fi
+done
+
+# ── 1. init ───────────────────────────────────────────────────────────────────
+echo -e "${BOLD}[1] init${RESET}"
 
 INIT_DIR="$(mktemp -d)"
 out=$($CLI init "$INIT_DIR" 2>&1)
@@ -73,8 +87,8 @@ assert_contains "duplicate init reports index regeneration" "INDEX.md" "$out2"
 [ -f "$INIT_DIR/.spec-driven/config.yaml" ] && pass "duplicate init preserves config.yaml" || fail "duplicate init removed config.yaml"
 rm -rf "$INIT_DIR"
 
-# ── 0b. install ───────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[0b] install${RESET}"
+# ── 1b. install ───────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[1b] install${RESET}"
 
 INSTALL_HOME="$(mktemp -d)"
 out=$(HOME="$INSTALL_HOME" bash "$ROOT/install.sh" --cli codex 2>&1)
@@ -83,8 +97,8 @@ assert_contains "install reports spec-content skill copy" "copied: spec-driven-s
 [ -L "$INSTALL_HOME/.agents/skills/spec-driven-spec-content" ] && pass "install links spec-content skill for codex" || fail "install missing spec-content symlink for codex"
 rm -rf "$INSTALL_HOME"
 
-# ── 0c. migrate ───────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[0c] migrate${RESET}"
+# ── 1c. migrate ───────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[1c] migrate${RESET}"
 
 MIGRATE_DIR="$(mktemp -d)"
 mkdir -p "$MIGRATE_DIR/openspec/specs"
@@ -119,8 +133,8 @@ out=$($CLI migrate "$MIGRATE_DIR" 2>&1)
 assert_contains "migrate skips rename when spec-driven exists" "Skipped openspec/ rename" "$out"
 rm -rf "$MIGRATE_DIR"
 
-# ── 1. propose ────────────────────────────────────────────────────────────────
-echo -e "${BOLD}[1] propose${RESET}"
+# ── 2. propose ────────────────────────────────────────────────────────────────
+echo -e "${BOLD}[2] propose${RESET}"
 
 cd "$PROJECT"
 out=$($CLI propose "$CHANGE" 2>&1)
@@ -142,8 +156,8 @@ assert_exit "duplicate propose exits 1" 1 $CLI propose "$CHANGE"
 # invalid name should fail
 assert_exit "invalid name exits 1" 1 $CLI propose "Bad_Name"
 
-# ── 2. modify ─────────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[2] modify${RESET}"
+# ── 3. modify ─────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[3] modify${RESET}"
 
 out=$($CLI modify 2>&1)
 assert_contains "lists active changes" "$CHANGE" "$out"
@@ -158,8 +172,8 @@ assert_contains "shows questions.md path" "questions.md" "$out"
 out=$($CLI modify "nonexistent" 2>&1; echo "EXIT:$?") || true
 assert_contains "nonexistent change errors" "not found" "$out"
 
-# ── 2b. list ─────────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[2b] list${RESET}"
+# ── 3b. list ─────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[3b] list${RESET}"
 
 out=$($CLI list 2>&1)
 assert_contains "list shows active changes" "$CHANGE" "$out"
@@ -183,8 +197,8 @@ assert_contains "list shows blocked status on open questions" "blocked" "$out"
 # Restore questions.md
 printf '# Questions: %s\n\n## Open\n\n## Resolved\n' "$CHANGE" > "$QUESTIONS_FILE"
 
-# ── 3. apply ──────────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[3] apply${RESET}"
+# ── 4. apply ──────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[4] apply${RESET}"
 
 out=$($CLI apply "$CHANGE" 2>&1)
 assert_json_field "total > 0"     "total"     "6" "$out"
@@ -201,8 +215,8 @@ assert_json_field "remaining = 4 after marking" "remaining" "4" "$out"
 
 assert_exit "missing change exits 1" 1 $CLI apply "nonexistent"
 
-# ── 4. verify ─────────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[4] verify${RESET}"
+# ── 5. verify ─────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[5] verify${RESET}"
 
 out=$($CLI verify "$CHANGE" 2>&1)
 assert_json_field "valid=true for seeded change" "valid" "true" "$out"
@@ -248,8 +262,8 @@ assert_json_field "verify passes when questions resolved" "valid" "true" "$out"
 # Restore questions.md
 printf '# Questions: %s\n\n## Open\n\n## Resolved\n' "$CHANGE" > "$QUESTIONS_FILE"
 
-# ── 5. archive ────────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[5] archive${RESET}"
+# ── 6. archive ────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[6] archive${RESET}"
 
 out=$($CLI archive "$CHANGE" 2>&1)
 assert_contains "reports archived path" "Archived:" "$out"
@@ -262,8 +276,8 @@ TODAY="$(date +%Y-%m-%d)"
 assert_exit "archive nonexistent exits 1" 1 $CLI archive "nonexistent"
 assert_exit "duplicate archive exits 1"   1 $CLI archive "$CHANGE"
 
-# ── 6. cancel ─────────────────────────────────────────────────────────────────
-echo -e "\n${BOLD}[6] cancel${RESET}"
+# ── 7. cancel ─────────────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[7] cancel${RESET}"
 
 cd "$PROJECT"
 $CLI propose "to-cancel" &>/dev/null

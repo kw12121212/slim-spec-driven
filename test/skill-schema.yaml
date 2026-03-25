@@ -1,0 +1,193 @@
+# =========================================================================
+# Ultimate Polymorphic Skill Markdown Strict Validation Specification
+# Supported Types: api, cli_script, ai_prompt, container_job,
+#                  interactive_view, orchestration_script, native_bin,
+#                  agent_skill
+# =========================================================================
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Universal Strict Skill Specification"
+description: "Defines metadata and strict AST structure validation rules for all types of skill.md"
+type: "object"
+required: ["frontmatter", "ast_structure"]
+
+# ==========================================
+# 1. Base Global Constraints (Applies to all)
+# ==========================================
+properties:
+  frontmatter:
+    type: "object"
+    required: ["skill_id", "name", "description", "version", "type", "author"]
+    properties:
+      skill_id:
+        type: "string"
+        pattern: "^[a-z0-9_]{5,64}$"
+        description: "Global unique identifier, lowercase letters, numbers, and underscores only"
+      name:
+        type: "string"
+        minLength: 2
+        maxLength: 32
+      description:
+        type: "string"
+        minLength: 2
+        maxLength: 1000
+      version:
+        type: "string"
+        pattern: "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+        description: "Must follow Semantic Versioning (e.g., 1.0.0)"
+      author:
+        type: "string"
+      type: 
+        type: "string"
+        enum: 
+          - "api"
+          - "cli_script"
+          - "ai_prompt"
+          - "container_job"
+          - "interactive_view"
+          - "orchestration_script"
+          - "native_bin"
+          - "agent_skill"
+
+  ast_structure:
+    type: "array"
+    description: "Markdown Node Tree Validation"
+
+# ==========================================
+# 2. Polymorphic Constraints (Based on 'type')
+# ==========================================
+allOf:
+  # ----------------------------------------
+  # [1] API Interface (api)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "api" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["endpoint", "method"]
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. Core Definition" } } }
+            - { properties: { exact_text: { const: "2. Request Protocol" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "3. Response Structure" }, followed_by: { const: "code_block" } } }
+            - { properties: { exact_text: { const: "4. Error Codes & Retry Strategy" }, followed_by: { const: "table" } } }
+
+  # ----------------------------------------
+  # [2] CLI Script (cli_script)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "cli_script" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["runtime", "entrypoint"]
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. Core Definition" } } }
+            - { properties: { exact_text: { const: "2. Environment Variables & Arguments" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "3. Standard Output Protocol" }, followed_by: { const: "code_block" } } }
+            - { properties: { exact_text: { const: "4. Exit Codes" }, followed_by: { const: "table" } } }
+
+  # ----------------------------------------
+  # [3] AI Prompt (ai_prompt)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "ai_prompt" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["recommended_model", "temperature"]
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. Core Intent" } } }
+            - { properties: { exact_text: { const: "2. Injected Variables" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "3. Prompt Template" }, followed_by: { const: "code_block" } } }
+            - { properties: { exact_text: { const: "4. Negative Constraints" }, followed_by: { const: "list" } } }
+
+  # ----------------------------------------
+  # [4] Containerized Job (container_job)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "container_job" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["image", "network"]
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. Core Definition" } } }
+            - { properties: { exact_text: { const: "2. Volume Mounts" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "3. Container Environment Variables" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "4. Resource Limits" }, followed_by: { const: "table" } } }
+
+  # ----------------------------------------
+  # [5] Interactive View / TUI (interactive_view)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "interactive_view" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["render_target", "is_blocking"]
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. View Description" } } }
+            - { properties: { exact_text: { const: "2. State & Data Sources" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "3. Keybindings & Events" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "4. Rendering Fallbacks" }, followed_by: { const: "paragraph" } } }
+
+  # ----------------------------------------
+  # [6] Orchestration Script (orchestration_script)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "orchestration_script" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["interpreter", "required_binaries"]
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. Orchestration Goal" } } }
+            - { properties: { exact_text: { const: "2. External Binary Dependencies" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "3. State Machine Flow" }, followed_by: { const: "list" } } }
+            - { properties: { exact_text: { const: "4. Interruption & State Cleanup" }, followed_by: { const: "paragraph" } } }
+
+  # ----------------------------------------
+  # [7] Native Binary (native_bin)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "native_bin" } } } }
+    then:
+      properties:
+        frontmatter:
+          required: ["supported_os", "supported_arch"]
+          properties:
+            supported_os: { type: "array", items: { enum: ["darwin", "linux", "windows"] } }
+            supported_arch: { type: "array", items: { enum: ["amd64", "arm64"] } }
+        ast_structure:
+          items:
+            - { properties: { exact_text: { const: "1. Core Definition" } } }
+            - { properties: { exact_text: { const: "2. Build & Compilation Instructions" }, followed_by: { const: "code_block" } } }
+            - { properties: { exact_text: { const: "3. Execution Arguments" }, followed_by: { const: "table" } } }
+            - { properties: { exact_text: { const: "4. Signal Handling Mechanism" }, followed_by: { const: "table" } } }
+
+  # ----------------------------------------
+  # [8] Agent Skill Prompt (agent_skill)
+  # ----------------------------------------
+  - if:
+      properties: { frontmatter: { properties: { type: { const: "agent_skill" } } } }
+    then:
+      properties:
+        ast_structure:
+          allow_preamble: true
+          require_preamble: true
+          preamble_type: "paragraph"
+          anyOf:
+            - items:
+                - { properties: { exact_text: { const: "Prerequisites" }, followed_by: { const: "paragraph" } } }
+                - { properties: { exact_text: { const: "Steps" }, followed_by: { const: "list" } } }
+                - { properties: { exact_text: { const: "Rules" }, followed_by: { const: "list" } } }
+            - items:
+                - { properties: { exact_text: { const: "Steps" }, followed_by: { const: "list" } } }
+                - { properties: { exact_text: { const: "Rules" }, followed_by: { const: "list" } } }

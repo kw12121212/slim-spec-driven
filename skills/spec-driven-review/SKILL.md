@@ -1,7 +1,10 @@
 ---
+skill_id: spec_driven_review
 name: spec-driven-review
 description: Review the code quality of a spec-driven change. Checks readability, security, performance, and best practices before archiving.
-version: 0.3.0
+author: slim-spec-driven
+type: agent_skill
+version: 1.0.0
 ---
 
 You are reviewing the code quality of a completed spec-driven change.
