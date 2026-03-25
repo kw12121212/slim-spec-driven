@@ -6,6 +6,14 @@ version: 0.1.0
 
 You are helping the user create a new spec-driven change proposal.
 
+## Prerequisites
+
+The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:
+```
+ls .spec-driven/
+```
+If this fails, the project is not initialized. Run `/spec-driven-init` first.
+
 ## Steps
 
 1. **Get the change name** — ask the user for a short kebab-case name describing the change (e.g. `add-auth`, `refactor-db-layer`). If they already provided one, use it.

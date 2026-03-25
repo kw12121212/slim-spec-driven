@@ -6,6 +6,14 @@ version: 0.1.0
 
 You are helping the user archive a completed spec-driven change.
 
+## Prerequisites
+
+The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:
+```
+ls .spec-driven/
+```
+If this fails, the project is not initialized. Run `/spec-driven-init` first.
+
 ## Steps
 
 1. **Select the change** — run `node {{SKILL_DIR}}/scripts/spec-driven.js modify` to list active changes. Ask which change to archive. If already specified, use it.

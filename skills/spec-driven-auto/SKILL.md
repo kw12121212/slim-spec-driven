@@ -6,6 +6,14 @@ version: 0.1.0
 
 You are running the full spec-driven workflow end-to-end for a single change.
 
+## Prerequisites
+
+The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:
+```
+ls .spec-driven/
+```
+If this fails, the project is not initialized. Run `/spec-driven-init` first.
+
 ## Steps
 
 1. **Assess complexity** — before doing anything, evaluate whether this change is suitable for the auto workflow:
