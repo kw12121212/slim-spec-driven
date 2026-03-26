@@ -4,6 +4,7 @@ set -euo pipefail
 REPO="kw12121212/slim-spec-driven"
 BRANCH="main"
 SKILLS=(
+  spec-driven-brainstorm
   spec-driven-propose
   spec-driven-modify
   spec-driven-spec-content

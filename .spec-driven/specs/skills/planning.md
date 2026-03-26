@@ -16,6 +16,24 @@ initial current-state specs under `.spec-driven/specs/`.
 `design.md`, `tasks.md`, and `questions.md`, populated from project context.
 It MUST NOT modify implementation code while proposing.
 
+### Requirement: brainstorm-converges-before-proposing
+`spec-driven-brainstorm` MUST accept a rough idea without requiring a change name
+up front. It MUST read `.spec-driven/config.yaml`, `.spec-driven/specs/INDEX.md`,
+and each relevant main spec file before locking scope. It MUST help the user
+converge on goal, scope, non-goals, unchanged behavior, and likely spec impact
+before generating proposal artifacts.
+
+### Requirement: brainstorm-confirms-before-scaffolding
+Before creating any files, `spec-driven-brainstorm` MUST propose a kebab-case
+change name and summarize the intended change for explicit user confirmation. It
+MUST NOT scaffold proposal artifacts until that confirmation is received.
+
+### Requirement: brainstorm-produces-the-same-proposal-artifacts
+After confirmation, `spec-driven-brainstorm` MUST generate the same five planning
+artifacts as `spec-driven-propose`, follow the same delta-spec formatting rules,
+record unresolved ambiguity in `questions.md`, and run `verify` before presenting
+the proposal as ready.
+
 ### Requirement: propose-reads-context-before-writing
 Before filling a proposal, `spec-driven-propose` MUST read `.spec-driven/config.yaml`,
 `.spec-driven/specs/INDEX.md`, and each relevant main spec file needed to understand

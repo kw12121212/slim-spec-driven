@@ -1,6 +1,6 @@
 # spec-driven
 
-轻量级规范驱动开发框架：7 个 Claude 技能 + 少量 TypeScript 脚手架。
+轻量级规范驱动开发框架：11 个 agent skills + 少量 TypeScript 脚手架。
 
 ## 如何辅助 AI 编程
 
@@ -12,13 +12,13 @@ AI 不靠通读代码来理解"系统做什么"，而是读 `specs/`：
 
 - `INDEX.md` 一眼导航全部规格文件
 - 每个规格文件用 RFC 2119 格式描述可观测行为（`### Requirement:`、GIVEN/WHEN/THEN 场景）
-- `propose` 和 `apply` 都必须先读 INDEX.md 和相关规格文件，才能生成内容或写代码
+- `brainstorm`、`propose`、`apply` 和 `spec-content` 都必须先读 INDEX.md 和相关规格文件，才能生成内容或写代码
 
 这样 AI 就知道哪些行为已经存在，不会引入冲突或重复。
 
 ### 第二层：变更 artifacts——单次变更的结构化上下文
 
-每个变更是一个目录，包含四个文件，各司其职：
+每个变更是一个目录，包含五个文件，各司其职：
 
 | 文件 | 内容 | 对 AI 的约束 |
 |------|------|------------|
@@ -26,8 +26,9 @@ AI 不靠通读代码来理解"系统做什么"，而是读 `specs/`：
 | `specs/` | 规格变化（ADDED/MODIFIED/REMOVED） | 明确本次变更的规格意图 |
 | `design.md` | 如何实现——方案与决策 | 防止 AI 中途另起炉灶 |
 | `tasks.md` | `- [ ]` 任务清单 | 控制步伐，一次一个任务 |
+| `questions.md` | 开放/已解决问题 | 把歧义集中管理，未解决问题会阻塞 apply 和 archive |
 
-### 第三层：7 个技能——AI 行为的精确约束
+### 第三层：11 个技能——AI 行为的精确约束
 
 每个技能都是一份精确的提示词，明确指定：
 - 读哪些文件（逐一列出，不模糊）
@@ -109,26 +110,32 @@ bash install.sh --project /path/to/project       # 项目本地，指定路径
 ## 工作流
 
 ```
-init → propose → apply → verify → archive
+init → [brainstorm] → propose → apply → verify → archive
 ```
 
 1. **init** — 初始化 `.spec-driven/`，生成 config.yaml、specs/INDEX.md 和 specs/
-2. **propose** — 读取现有规格，生成四个变更 artifacts，填写 delta specs
-3. **apply** — 逐任务实现，完成后更新 delta specs 使其与实际实现一致
-4. **verify** — 检查任务完整性、实现证据、规格格式和对齐情况
-5. **archive** — 按文件路径将 delta specs 合并进 `specs/`，更新 INDEX.md，移至 archive/
+2. **brainstorm** — 先讨论模糊想法，收敛范围并确认变更名，再进入 proposal 脚手架
+3. **propose** — 读取现有规格，生成五个变更 artifacts，填写 delta specs
+4. **apply** — 逐任务实现，完成后更新 delta specs 使其与实际实现一致
+5. **verify** — 检查任务完整性、实现证据、规格格式和对齐情况
+6. **archive** — 按文件路径将 delta specs 合并进 `specs/`，更新 INDEX.md，移至 archive/
 
-中途可用 **modify** 调整任意 artifact，用 **cancel** 放弃变更。
+想法还不清晰时先用 **brainstorm**，需求已经明确时直接用 **propose**。中途可用
+**modify** 调整任意 artifact，用 **spec-content** 只改规格内容归位，用
+**cancel** 放弃变更。
 
 ## 技能列表
 
 | 技能 | 功能 |
 |------|------|
+| `/spec-driven-brainstorm` | 从模糊想法开始讨论，收敛范围与变更名，确认后生成完整的五个 proposal artifacts |
 | `/spec-driven-init` | 初始化 `.spec-driven/`，填写 config.yaml |
-| `/spec-driven-propose` | 读取现有规格，生成全部四个变更 artifacts |
+| `/spec-driven-propose` | 读取现有规格，生成全部五个变更 artifacts |
 | `/spec-driven-modify` | 编辑现有变更的某个 artifact |
+| `/spec-driven-spec-content` | 读取 `specs/INDEX.md`，把 spec 内容放到正确的 delta spec 文件 |
 | `/spec-driven-apply` | 逐任务实现，完成后更新 delta specs |
 | `/spec-driven-verify` | 检查完整性、实现证据和规格对齐 |
+| `/spec-driven-review` | 在归档前审查已完成变更的代码质量 |
 | `/spec-driven-archive` | 将 delta specs 合并进 specs/，更新 INDEX.md，移至 archive/ |
 | `/spec-driven-cancel` | 永久删除进行中的变更（需确认） |
 | `/spec-driven-auto` | 自动运行完整工作流（propose → apply → verify → review → archive），仅需一次确认。适合小型、边界清晰的变更。 |
@@ -153,6 +160,18 @@ init → propose → apply → verify → archive
 
 唯一必须的确认点在 proposal 之后——其余步骤自动执行，除非遇到阻塞问题。
 
+### Brainstorm 工作流
+
+`/spec-driven-brainstorm` 适合还在探索方向的需求：
+
+```bash
+/spec-driven-brainstorm 改进大型变更的任务规划方式
+```
+
+它会先读取项目上下文和相关 specs，帮助收敛目标、范围与取舍，给出
+kebab-case 变更名，并在显式确认后再生成与 `/spec-driven-propose`
+相同的五个 proposal artifacts。
+
 ## 项目结构
 
 ```
@@ -170,7 +189,8 @@ init → propose → apply → verify → archive
     │   │   └── <分类>/
     │   │       └── <主题>.md  # ADDED / MODIFIED / REMOVED Requirements
     │   ├── design.md        # 如何实现（方案、决策、备选方案）
-    │   └── tasks.md         # 实现任务清单
+    │   ├── tasks.md         # 实现任务清单
+    │   └── questions.md     # 开放问题与已解决问答
     └── archive/             # 已归档变更（YYYY-MM-DD-<名称>/）
 ```
 

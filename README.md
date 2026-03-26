@@ -1,6 +1,6 @@
 # spec-driven
 
-A lightweight spec-driven development framework: 10 agent skills + thin TypeScript scaffolding.
+A lightweight spec-driven development framework: 11 agent skills + thin TypeScript scaffolding.
 
 ## How It Helps AI Programming
 
@@ -12,7 +12,7 @@ Instead of reading the entire codebase to understand what the system does, the A
 
 - `INDEX.md` navigates the full spec collection at a glance
 - Each spec file describes observable behavior using RFC 2119 format (`### Requirement:`, GIVEN/WHEN/THEN scenarios)
-- `propose`, `apply`, and `spec-content` are required to read INDEX.md and the relevant spec files before generating anything
+- `brainstorm`, `propose`, `apply`, and `spec-content` are required to read INDEX.md and the relevant spec files before generating anything
 
 This prevents the AI from introducing conflicting or duplicate behavior — it knows what already exists.
 
@@ -28,7 +28,7 @@ Every change is a folder with five files, each serving a distinct purpose:
 | `tasks.md` | `- [ ]` checklist | Controls pace — one task at a time, marked complete immediately |
 | `questions.md` | Open/resolved Q&A | Centralizes ambiguities; open questions block apply and archive |
 
-### Layer 3: 10 skills — explicit constraints on AI behavior
+### Layer 3: 11 skills — explicit constraints on AI behavior
 
 Each skill is a precise prompt that specifies:
 - Exactly which files to read (no vague "read the codebase")
@@ -57,7 +57,7 @@ The TypeScript CLI handles all filesystem operations; the AI handles content and
 | | spec-driven | OpenSpec |
 |--|-------------|----------|
 | Spec format | RFC 2119 enforced — `### Requirement:` + MUST/SHOULD/MAY + GIVEN/WHEN/THEN; violations are script errors | No required format |
-| AI reads existing specs | Explicit: `propose`, `apply`, and `spec-content` must read INDEX.md then every relevant spec file before generating anything | "Searches existing specs" (vague) |
+| AI reads existing specs | Explicit: `brainstorm`, `propose`, `apply`, and `spec-content` must read INDEX.md then every relevant spec file before generating anything | "Searches existing specs" (vague) |
 | Delta spec structure | Mirrors `specs/` by path — `changes/<name>/specs/auth/login.md` maps to `specs/auth/login.md` | Not path-bound |
 | Archive spec merge | Hard gate: merge each delta file by path into main `specs/` using ADDED/MODIFIED/REMOVED markers before moving | File organization only |
 | Runtime dependencies | Node.js stdlib only — one 280-line TypeScript file | Global npm package (`npm install -g`, Node 20.19+) |
@@ -110,23 +110,26 @@ bash install.sh --project /path/to/project       # project-local at specified pa
 ## Workflow
 
 ```
-init → propose → apply → verify → archive
+init → [brainstorm] → propose → apply → verify → archive
 ```
 
 1. **init** — create `.spec-driven/` with config.yaml, specs/INDEX.md, and specs/
-2. **propose** — read existing specs, scaffold all five artifacts, populate delta specs
-3. **apply** — implement tasks one by one; update delta specs to match what was built
-4. **verify** — check task completion, implementation evidence, spec format, and alignment
-5. **archive** — merge delta specs into `specs/` by file path, update INDEX.md, move to archive/
+2. **brainstorm** — discuss a rough idea, converge on scope, and confirm a proposed change name before scaffolding
+3. **propose** — read existing specs, scaffold all five artifacts, populate delta specs
+4. **apply** — implement tasks one by one; update delta specs to match what was built
+5. **verify** — check task completion, implementation evidence, spec format, and alignment
+6. **archive** — merge delta specs into `specs/` by file path, update INDEX.md, move to archive/
 
-Use **modify** to refine any artifact mid-flight. Use **spec-content** when the
-content is clear but the correct spec category/file is not. Use **cancel** to
-abandon a change.
+Use **brainstorm** when the idea is still fuzzy and **propose** when the change
+is already concrete. Use **modify** to refine any artifact mid-flight. Use
+**spec-content** when the content is clear but the correct spec category/file is
+not. Use **cancel** to abandon a change.
 
 ## Skills
 
 | Skill | What it does |
 |-------|-------------|
+| `/spec-driven-brainstorm` | Discuss a rough idea, converge on scope and a change name, then generate the full five-artifact proposal after confirmation |
 | `/spec-driven-init` | Initialize `.spec-driven/` in a project and fill config.yaml |
 | `/spec-driven-propose` | Read existing specs, scaffold a new change with all five artifacts |
 | `/spec-driven-modify` | Edit an existing change artifact |
@@ -157,6 +160,18 @@ abandon a change.
 - High-risk areas (auth, payments, multi-repo)
 
 The only mandatory checkpoint is after the proposal — everything else runs automatically unless blocked.
+
+### Brainstorm Workflow
+
+`/spec-driven-brainstorm` is the discussion-first entrypoint for fuzzy requests:
+
+```bash
+/spec-driven-brainstorm improve task planning for large changes
+```
+
+It reads project context and relevant specs, helps narrow scope and tradeoffs,
+proposes a kebab-case change name, and waits for explicit confirmation before it
+creates the same five proposal artifacts as `/spec-driven-propose`.
 
 ## Project Structure
 
