@@ -2,7 +2,7 @@
 skill_id: spec_driven_spec_content
 name: spec-driven-spec-content
 description: Route spec content into the correct delta spec file. Reads .spec-driven/specs/INDEX.md first, then decides whether to update an existing spec file, create a new spec file, create a new category, modify requirements, or remove specific requirements.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

@@ -426,7 +426,7 @@ function migrate() {
     lines.push(`Migrated ${tool.name} tool config:`);
     if (removedSkills > 0) lines.push(`  removed ${removedSkills} openspec skill artifact(s)`);
     if (removedCommands > 0) lines.push(`  removed ${removedCommands} openspec command artifact(s)`);
-    if (installed > 0) lines.push(`  installed ${installed} slim-spec-driven skill(s)`);
+    if (installed > 0) lines.push(`  installed ${installed} auto-spec-driven skill(s)`);
     if (removedSkills === 0 && removedCommands === 0 && installed === 0) {
       lines.push(`  no changes needed`);
     }

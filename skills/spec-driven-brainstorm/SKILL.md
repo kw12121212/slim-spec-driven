@@ -2,7 +2,7 @@
 skill_id: spec_driven_brainstorm
 name: spec-driven-brainstorm
 description: Discuss and brainstorm a spec-driven change from a rough idea, then propose a change name and, after explicit confirmation, generate the same five proposal artifacts as spec-driven-propose.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

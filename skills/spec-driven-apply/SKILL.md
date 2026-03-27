@@ -2,7 +2,7 @@
 skill_id: spec_driven_apply
 name: spec-driven-apply
 description: Implement the tasks in a spec-driven change. Works through incomplete tasks one by one, marking each complete as it goes.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

@@ -2,7 +2,7 @@
 skill_id: spec_driven_auto
 name: spec-driven-auto
 description: Run the full spec-driven workflow automatically. Proposes, implements, verifies, reviews, and archives a change with one mandatory proposal checkpoint plus any extra confirmations required by blocking conditions.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

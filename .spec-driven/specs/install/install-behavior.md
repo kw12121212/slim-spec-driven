@@ -1,13 +1,13 @@
 # Install Behavior
 
 ### Requirement: global-install-destination
-The installer MUST copy skills to `~/.slim-spec-driven/skills/<name>/` by default.
+The installer MUST copy skills to `~/.auto-spec-driven/skills/<name>/` by default.
 Each skill directory contains `SKILL.md` and a `scripts/` directory.
 
 ### Requirement: cli-symlinks
 The installer MUST create symlinks from CLI-specific directories into the agent store:
-- `~/.claude/skills/<name>` → `~/.slim-spec-driven/skills/<name>` for Claude Code
-- `~/.config/opencode/skills/<name>` → `~/.slim-spec-driven/skills/<name>` for OpenCode
+- `~/.claude/skills/<name>` → `~/.auto-spec-driven/skills/<name>` for Claude Code
+- `~/.config/opencode/skills/<name>` → `~/.auto-spec-driven/skills/<name>` for OpenCode
 
 ### Requirement: cli-targeting
 The `--cli` flag restricts which CLI symlinks are created.

@@ -4,18 +4,18 @@ Instructions for AI agents working in this repository.
 
 ## What This Repo Is
 
-`slim-spec-driven` is a lightweight spec-driven development framework. It ships:
+`auto-spec-driven` is a lightweight spec-driven development framework. It ships:
 
 - **11 Claude skills** (`skills/*/SKILL.md`) — AI prompts that drive the workflow
 - **1 TypeScript CLI** (`scripts/spec-driven.ts`) — filesystem mechanics only (create, move, parse, validate); 9 subcommands
-- **`install.sh`** — installs skills to `~/.slim-spec-driven/skills/` then symlinks into `~/.claude/skills/` / `~/.config/opencode/skills/` / `~/.trae/skills/` / `~/.agents/skills/`
+- **`install.sh`** — installs skills to `~/.auto-spec-driven/skills/` then symlinks into `~/.claude/skills/` / `~/.config/opencode/skills/` / `~/.trae/skills/` / `~/.agents/skills/`
 - **`template/`** — starter `.spec-driven/` directory for target projects
 - **`test/`** — automated test suite + todo-app fixture for dogfooding
 
 ## Directory Structure
 
 ```
-slim-spec-driven/
+auto-spec-driven/
 ├── scripts/          # TypeScript source — compiled to dist/scripts/*.js
 ├── skills/           # Skill prompt files (Agent Skills standard)
 │   └── <name>/SKILL.md
@@ -72,7 +72,7 @@ All subcommands run as `node dist/scripts/spec-driven.js <cmd>` from the project
 | `archive <name>` | change name | moves change to `.spec-driven/changes/archive/YYYY-MM-DD-<name>/` |
 | `cancel <name>` | change name | deletes `.spec-driven/changes/<name>/` |
 | `init [path]` | optional path | creates `.spec-driven/` scaffold at path (or CWD) |
-| `migrate [path]` | optional path | migrates `openspec/` artifacts to slim-spec-driven where supported |
+| `migrate [path]` | optional path | migrates `openspec/` artifacts to auto-spec-driven where supported |
 | `list` | none | stdout: all changes (active with status, archived) |
 
 All subcommands exit `0` on success, `1` on error (except `verify` which always exits `0` and reports errors in JSON).
@@ -95,18 +95,18 @@ Changes in progress live in `.spec-driven/changes/`. Completed changes are in `.
 ## install.sh Flags
 
 ```bash
-bash install.sh                          # global: store in ~/.slim-spec-driven/skills/, symlink into all CLIs
-bash install.sh --cli claude             # global: store in ~/.slim-spec-driven/skills/, symlink into ~/.claude/skills/ only
-bash install.sh --cli opencode           # global: store in ~/.slim-spec-driven/skills/, symlink into ~/.config/opencode/skills/ only
-bash install.sh --cli trae               # global: store in ~/.slim-spec-driven/skills/, symlink into ~/.trae/skills/ only
-bash install.sh --cli codex              # global: store in ~/.slim-spec-driven/skills/, symlink into ~/.agents/skills/ for Codex
-bash install.sh --cli gemini             # global: store in ~/.slim-spec-driven/skills/, symlink into ~/.agents/skills/ for Gemini CLI
+bash install.sh                          # global: store in ~/.auto-spec-driven/skills/, symlink into all CLIs
+bash install.sh --cli claude             # global: store in ~/.auto-spec-driven/skills/, symlink into ~/.claude/skills/ only
+bash install.sh --cli opencode           # global: store in ~/.auto-spec-driven/skills/, symlink into ~/.config/opencode/skills/ only
+bash install.sh --cli trae               # global: store in ~/.auto-spec-driven/skills/, symlink into ~/.trae/skills/ only
+bash install.sh --cli codex              # global: store in ~/.auto-spec-driven/skills/, symlink into ~/.agents/skills/ for Codex
+bash install.sh --cli gemini             # global: store in ~/.auto-spec-driven/skills/, symlink into ~/.agents/skills/ for Gemini CLI
 bash install.sh --project                # project-local: store in .agent/skills/, symlink into .claude/skills/ + .opencode/skills/ + .trae/skills/ + .codex/skills/ + .gemini/skills/ + .agents/skills/
 bash install.sh --project /path/to/proj  # project-local at path
 bash install.sh --uninstall              # remove symlinks and agent store entries (same --cli/--project flags)
 ```
 
-Skills live in `~/.slim-spec-driven/skills/` (or `.agent/skills/` for project mode). CLI-specific directories only hold symlinks pointing there.
+Skills live in `~/.auto-spec-driven/skills/` (or `.agent/skills/` for project mode). CLI-specific directories only hold symlinks pointing there.
 
 Skills are always copied into the agent store (never symlinked), making the store git-friendly. CLI-specific directories hold symlinks pointing into the agent store.
 

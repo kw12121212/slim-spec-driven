@@ -2,7 +2,7 @@
 skill_id: spec_driven_init
 name: spec-driven-init
 description: Initialize a .spec-driven/ directory in a project. Creates config.yaml and specs/ scaffold, then guides the user to fill in project context.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

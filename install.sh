@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="kw12121212/slim-spec-driven"
-BRANCH="main"
 SKILLS=(
   spec-driven-brainstorm
   spec-driven-propose
@@ -18,7 +16,7 @@ SKILLS=(
 )
 
 # Central agent skills store (skills live here)
-GLOBAL_AGENT_DIR="$HOME/.slim-spec-driven/skills"
+GLOBAL_AGENT_DIR="$HOME/.auto-spec-driven/skills"
 PROJECT_AGENT_SUBDIR=".agent/skills"
 
 # CLI-specific symlink directories (point into the agent store)
@@ -85,7 +83,7 @@ if [ -n "$PROJECT_DIR" ]; then
   fi
 else
   AGENT_DIR="$GLOBAL_AGENT_DIR"
-  SKILL_DIR_REF="~/.slim-spec-driven/skills"  # tilde expands at runtime, works across users
+  SKILL_DIR_REF="~/.auto-spec-driven/skills"  # tilde expands at runtime, works across users
   if [ "$CLI" = "all" ]; then
     CLI_LINK_DIRS=("${GLOBAL_CLI_DIRS[claude]}" "${GLOBAL_CLI_DIRS[opencode]}" "${GLOBAL_CLI_DIRS[trae]}" "${GLOBAL_CLI_DIRS[codex]}" "${GLOBAL_CLI_DIRS[gemini]}")
   else
@@ -178,54 +176,30 @@ link_cli_dirs() {
   done
 }
 
-if [ -d "$LOCAL_SKILLS_DIR" ]; then
-  # Running from a local clone — ensure dist/ is built
-  if [ ! -d "$SCRIPT_DIR/dist/scripts" ]; then
-    echo "Building scripts (dist/ not found)..."
-    (cd "$SCRIPT_DIR" && npm run build) || {
-      echo "Error: build failed. Run 'npm run build' manually."
-      exit 1
-    }
-  fi
-
-  for skill in "${SKILLS[@]}"; do
-    skill_dir="$LOCAL_SKILLS_DIR/$skill"
-    [ -d "$skill_dir" ] || { echo "  missing: $skill/ (skipped)"; skipped=$((skipped + 1)); continue; }
-
-    copy_skill_to_agent_store "$skill" "$skill_dir" "$SCRIPT_DIR/dist/scripts"
-    echo "  copied: $skill/"
-    link_cli_dirs "$skill"
-    installed=$((installed + 1))
-  done
-else
-  # Running via curl — download files into agent store
-  if ! command -v curl &>/dev/null; then
-    echo "Error: curl is required for remote install"
-    exit 1
-  fi
-
-  BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-
-  # Download into a temp dir then copy into agent store
-  tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
-
-  # Download the single shared script
-  tmp_scripts_dir="$tmp_dir/scripts"
-  mkdir -p "$tmp_scripts_dir"
-  curl -fsSL "$BASE_URL/dist/scripts/spec-driven.js" -o "$tmp_scripts_dir/spec-driven.js"
-
-  for skill in "${SKILLS[@]}"; do
-    tmp_skill_dir="$tmp_dir/$skill"
-    mkdir -p "$tmp_skill_dir"
-
-    curl -fsSL "$BASE_URL/skills/$skill/SKILL.md" -o "$tmp_skill_dir/SKILL.md"
-    copy_skill_to_agent_store "$skill" "$tmp_skill_dir" "$tmp_scripts_dir"
-    echo "  fetched: $skill/"
-    link_cli_dirs "$skill"
-    installed=$((installed + 1))
-  done
+if [ ! -d "$LOCAL_SKILLS_DIR" ]; then
+  echo "Error: skills/ directory not found. This script must be run from a git clone of the repo."
+  echo "For remote install, use: npx skills add auto-spec-driven"
+  exit 1
 fi
+
+# Ensure dist/ is built
+if [ ! -d "$SCRIPT_DIR/dist/scripts" ]; then
+  echo "Building scripts (dist/ not found)..."
+  (cd "$SCRIPT_DIR" && npm run build) || {
+    echo "Error: build failed. Run 'npm run build' manually."
+    exit 1
+  }
+fi
+
+for skill in "${SKILLS[@]}"; do
+  skill_dir="$LOCAL_SKILLS_DIR/$skill"
+  [ -d "$skill_dir" ] || { echo "  missing: $skill/ (skipped)"; skipped=$((skipped + 1)); continue; }
+
+  copy_skill_to_agent_store "$skill" "$skill_dir" "$SCRIPT_DIR/dist/scripts"
+  echo "  copied: $skill/"
+  link_cli_dirs "$skill"
+  installed=$((installed + 1))
+done
 
 # Initialize .spec-driven/ in project directory when using --project
 if [ -n "$PROJECT_DIR" ]; then

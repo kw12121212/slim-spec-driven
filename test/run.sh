@@ -93,10 +93,10 @@ echo -e "\n${BOLD}[1b] install${RESET}"
 INSTALL_HOME="$(mktemp -d)"
 out=$(HOME="$INSTALL_HOME" bash "$ROOT/install.sh" --cli codex 2>&1)
 assert_contains "install reports brainstorm skill copy" "copied: spec-driven-brainstorm/" "$out"
-[ -f "$INSTALL_HOME/.slim-spec-driven/skills/spec-driven-brainstorm/SKILL.md" ] && pass "install copies brainstorm skill into agent store" || fail "install missing brainstorm skill in agent store"
+[ -f "$INSTALL_HOME/.auto-spec-driven/skills/spec-driven-brainstorm/SKILL.md" ] && pass "install copies brainstorm skill into agent store" || fail "install missing brainstorm skill in agent store"
 [ -L "$INSTALL_HOME/.agents/skills/spec-driven-brainstorm" ] && pass "install links brainstorm skill for codex" || fail "install missing brainstorm symlink for codex"
 assert_contains "install reports spec-content skill copy" "copied: spec-driven-spec-content/" "$out"
-[ -f "$INSTALL_HOME/.slim-spec-driven/skills/spec-driven-spec-content/SKILL.md" ] && pass "install copies spec-content skill into agent store" || fail "install missing spec-content skill in agent store"
+[ -f "$INSTALL_HOME/.auto-spec-driven/skills/spec-driven-spec-content/SKILL.md" ] && pass "install copies spec-content skill into agent store" || fail "install missing spec-content skill in agent store"
 [ -L "$INSTALL_HOME/.agents/skills/spec-driven-spec-content" ] && pass "install links spec-content skill for codex" || fail "install missing spec-content symlink for codex"
 rm -rf "$INSTALL_HOME"
 

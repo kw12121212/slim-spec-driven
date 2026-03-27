@@ -75,7 +75,7 @@ In both cases, it regenerates `specs/INDEX.md` to list all `.md` files currently
 
 ### Requirement: migrate-openspec-project
 `spec-driven.js migrate [path]` MUST migrate an OpenSpec-style project in the given path (or CWD)
-to slim-spec-driven conventions.
+to auto-spec-driven conventions.
 It MUST rename `openspec/` to `.spec-driven/` when `.spec-driven/` does not already exist,
 ensure `.spec-driven/config.yaml`, `.spec-driven/specs/INDEX.md`, `.spec-driven/specs/README.md`,
 and `.spec-driven/changes/` exist, remove OpenSpec skills and command files for supported tools,

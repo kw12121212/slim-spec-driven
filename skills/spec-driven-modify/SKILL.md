@@ -2,7 +2,7 @@
 skill_id: spec_driven_modify
 name: spec-driven-modify
 description: Modify an existing spec-driven change artifact (proposal.md, specs/ delta files, design.md, tasks.md, or questions.md). Preserves completed task state.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

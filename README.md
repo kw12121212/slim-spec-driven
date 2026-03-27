@@ -78,15 +78,15 @@ The TypeScript CLI handles all filesystem operations; the AI handles content and
 
 **Install via [skills.sh](https://skills.sh) (recommended — no extra files in your project):**
 ```bash
-npx skills add kw12121212/slim-spec-driven
+npx skills add kw12121212/auto-spec-driven
 ```
 
 When prompted by `skills`, select the AI tools you actually use. For installation scope, prefer the shared/global option so you avoid duplicating skill files inside each project.
 
 **From source (for development or live-edit):**
 ```bash
-git clone https://github.com/kw12121212/slim-spec-driven ~/Code/slim-spec-driven
-cd ~/Code/slim-spec-driven
+git clone https://github.com/kw12121212/auto-spec-driven ~/Code/auto-spec-driven
+cd ~/Code/auto-spec-driven
 npm install && npm run build
 
 bash install.sh                                  # global, all CLIs

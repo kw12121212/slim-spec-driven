@@ -1,12 +1,12 @@
 schema: spec-driven
 context: |
-  slim-spec-driven is a lightweight spec-driven development framework.
+  auto-spec-driven is a lightweight spec-driven development framework.
   It provides 10 agent skills (init, propose, modify, spec-content, apply,
   verify, review, archive, cancel, auto) and thin TypeScript scaffolding
   scripts for filesystem operations.
   Skills are markdown files (skills/*/SKILL.md) following the Agent Skills standard.
   Scripts are in scripts/*.ts, compiled to dist/scripts/*.js via tsc.
-  install.sh copies skills into ~/.slim-spec-driven/skills/ and symlinks them into
+  install.sh copies skills into ~/.auto-spec-driven/skills/ and symlinks them into
   supported CLI directories such as ~/.claude/skills/, ~/.config/opencode/skills/,
   ~/.trae/skills/, and ~/.agents/skills/. Supports --cli, --project,
   --uninstall, and --migrate flags.

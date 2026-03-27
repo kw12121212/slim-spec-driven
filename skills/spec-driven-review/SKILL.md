@@ -2,7 +2,7 @@
 skill_id: spec_driven_review
 name: spec-driven-review
 description: Review the code quality of a spec-driven change. Checks readability, security, performance, and best practices before archiving.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---

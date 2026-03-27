@@ -2,7 +2,7 @@
 skill_id: spec_driven_verify
 name: spec-driven-verify
 description: Verify a spec-driven change is complete and correctly implemented. Checks task completion, implementation evidence, and spec alignment.
-author: slim-spec-driven
+author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
 ---
