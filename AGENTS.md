@@ -87,7 +87,7 @@ This repo uses its own workflow. To propose a change to this project:
 /spec-driven-verify    → checks completion and spec alignment
 /spec-driven-review    → reviews code quality
 /spec-driven-archive   → moves to archive/
-/spec-driven-auto      → runs the full workflow (propose→apply→verify→review→archive)
+/spec-driven-auto      → runs the full workflow (propose→apply→verify→review→archive); suggests brainstorm for vague scope
 ```
 
 Changes in progress live in `.spec-driven/changes/`. Completed changes are in `.spec-driven/changes/archive/`.

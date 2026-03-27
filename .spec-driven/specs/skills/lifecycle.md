@@ -36,8 +36,10 @@ starting using a three-tier model:
   with data transformation, auth/authz/payment changes that modify existing logic,
   cross-cutting changes — MUST show the assessment to the user and require explicit
   confirmation before proceeding.
-- **Red** (block): requires multi-service/multi-repo coordination, vague/open-ended
-  scope, no clear definition of done — MUST reject and suggest the step-by-step workflow.
+- **Red** (suggest brainstorm): requires multi-service/multi-repo coordination,
+  vague/open-ended scope, no clear definition of done — MUST suggest running
+  `/spec-driven-brainstorm` first to converge the idea, then entering auto to
+  execute the resulting proposal.
 
 If the change falls into the Yellow tier, `spec-driven-auto` MUST list the specific
 risk factors and wait for the user to confirm before proceeding.

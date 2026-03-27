@@ -26,9 +26,9 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    - **Classify the change into one of three tiers:**
      - **Green** (proceed): touches ≤ 6 modules or packages, modifies ≤ 20 files, clear scope, straightforward schema migrations (add column, create table, simple backfill), additive auth/authz/payment changes (e.g., adding a new role or permission) — proceed without additional confirmation beyond the standard proposal checkpoint
      - **Yellow** (warn and ask): touches 7-15 modules or packages, modifies 21-50 files, schema migrations involving data transformation, auth/authz/payment changes that modify existing logic, cross-cutting changes touching multiple subsystems — show the user the specific risk factors and require explicit confirmation before proceeding
-     - **Red** (block): requires coordinating across multiple services or repositories, scope is vague or open-ended (e.g. "refactor the codebase", "improve performance"), no clear definition of done — explain why and suggest using the step-by-step workflow (`/spec-driven-propose` → `/spec-driven-apply` → ...) instead
+     - **Red** (suggest brainstorm): requires coordinating across multiple services or repositories, scope is vague or open-ended (e.g. "refactor the codebase", "improve performance"), no clear definition of done — explain why and suggest running `/spec-driven-brainstorm` first to converge the idea, then entering `/spec-driven-auto` to execute the resulting proposal
    - If the change spans multiple tiers (e.g., module count is Green but file count is Yellow), use the highest applicable tier
-   - If Red, stop and suggest the step-by-step workflow
+   - If Red, stop and suggest brainstorm
    - If Yellow, list the risk factors and wait for the user to confirm before proceeding
    - If Green, proceed
 

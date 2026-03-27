@@ -34,6 +34,12 @@ artifacts as `spec-driven-propose`, follow the same delta-spec formatting rules,
 record unresolved ambiguity in `questions.md`, and run `verify` before presenting
 the proposal as ready.
 
+### Requirement: brainstorm-offers-auto-handoff
+After presenting the proposal and listing open questions, `spec-driven-brainstorm`
+MUST ask the user whether to enter `/spec-driven-auto` to execute the proposal or
+continue modifying the proposal artifacts with `/spec-driven-modify`. It MUST NOT
+auto-enter auto without the user's explicit choice.
+
 ### Requirement: propose-reads-context-before-writing
 Before filling a proposal, `spec-driven-propose` MUST read `.spec-driven/config.yaml`,
 `.spec-driven/specs/INDEX.md`, and each relevant main spec file needed to understand

@@ -90,6 +90,11 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    the final proposed scope, and list any open questions that must be answered
    before `/spec-driven-apply`.
 
+10. **Offer auto hand-off** — after the hand-off, ask the user whether to enter
+    `/spec-driven-auto` to execute the proposal end-to-end, or continue modifying
+    the proposal with `/spec-driven-modify`. Do not auto-enter auto without the
+    user's explicit choice.
+
 ## Rules
 
 - Do not implement code — this skill is planning only
