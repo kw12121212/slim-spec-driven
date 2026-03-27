@@ -19,19 +19,18 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 ## Steps
 
-1. **Assess complexity** — before doing anything, evaluate whether this change is suitable for the auto workflow:
+1. **Assess complexity** — before doing anything, evaluate the change using a three-tier model:
    - Read `.spec-driven/config.yaml` for project context
    - Read `.spec-driven/specs/INDEX.md` and relevant spec files to understand the current system
    - Read the codebase files that the change will likely touch — estimate the number of files, modules, and cross-cutting concerns involved
-   - **Reject if any of these are true:**
-     - The change touches more than 3 modules or packages
-     - The change requires modifying more than ~10 files
-     - The change involves database schema migrations
-     - The change affects authentication, authorization, or payment flows
-     - The change requires coordinating across multiple services or repositories
-     - The scope is vague or open-ended (e.g. "refactor the codebase", "improve performance")
-   - If rejected, explain why and suggest using the step-by-step workflow (`/spec-driven-propose` → `/spec-driven-apply` → ...) instead
-   - If suitable, proceed
+   - **Classify the change into one of three tiers:**
+     - **Green** (proceed): touches ≤ 6 modules or packages, modifies ≤ 20 files, clear scope, straightforward schema migrations (add column, create table, simple backfill), additive auth/authz/payment changes (e.g., adding a new role or permission) — proceed without additional confirmation beyond the standard proposal checkpoint
+     - **Yellow** (warn and ask): touches 7-15 modules or packages, modifies 21-50 files, schema migrations involving data transformation, auth/authz/payment changes that modify existing logic, cross-cutting changes touching multiple subsystems — show the user the specific risk factors and require explicit confirmation before proceeding
+     - **Red** (block): requires coordinating across multiple services or repositories, scope is vague or open-ended (e.g. "refactor the codebase", "improve performance"), no clear definition of done — explain why and suggest using the step-by-step workflow (`/spec-driven-propose` → `/spec-driven-apply` → ...) instead
+   - If the change spans multiple tiers (e.g., module count is Green but file count is Yellow), use the highest applicable tier
+   - If Red, stop and suggest the step-by-step workflow
+   - If Yellow, list the risk factors and wait for the user to confirm before proceeding
+   - If Green, proceed
 
 2. **Propose** — run `/spec-driven-propose`:
    - Run `node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>`
