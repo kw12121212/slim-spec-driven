@@ -189,21 +189,22 @@ Use **modify** to refine any artifact mid-flight. Use **spec-content** when the 
 
 ### Auto Workflow
 
-`/spec-driven-auto` is a convenience for small, well-defined changes:
+`/spec-driven-auto` is a convenience for well-defined single-repo changes:
 
 ```bash
 /spec-driven-auto add user avatar upload
 ```
 
 **Suitable when:**
-- Change touches ≤3 modules and ≤10 files
-- No database migrations, auth/payments, or cross-service coordination
-- Scope is specific and bounded
+- Scope is specific, bounded, and has a clear definition of done
+- Change stays within a single repository
+- Even if it is larger or cross-cutting, the work is still concrete enough to propose and execute automatically
+- This can include schema migrations, auth/payment changes, and multi-subsystem changes when the scope is still well-defined
 
 **Redirects to brainstorm when:**
 - Scope is vague ("refactor the codebase")
-- Change is large or cross-cutting
-- High-risk areas (auth, payments, multi-repo)
+- No clear definition of done
+- Change requires multi-repo or multi-service coordination
 
 After brainstorm produces a proposal, you can enter `/spec-driven-auto` to execute it.
 
