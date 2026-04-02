@@ -89,7 +89,8 @@ out2=$($CLI init "$INIT_DIR" 2>&1)
 assert_contains "duplicate init exits 0 (idempotent)" "Initialized:" "$out2"
 assert_contains "duplicate init reports index regeneration" "INDEX.md" "$out2"
 [ -f "$INIT_DIR/.spec-driven/config.yaml" ] && pass "duplicate init preserves config.yaml" || fail "duplicate init removed config.yaml"
-[ "$(cat "$INIT_DIR/.spec-driven/roadmap/INDEX.md")" = "# custom roadmap" ] && pass "duplicate init preserves roadmap index content" || fail "duplicate init overwrote roadmap index"
+assert_contains "duplicate init repairs roadmap index heading" "# Roadmap Index" "$(cat "$INIT_DIR/.spec-driven/roadmap/INDEX.md")"
+assert_contains "duplicate init repairs roadmap milestones section" "## Milestones" "$(cat "$INIT_DIR/.spec-driven/roadmap/INDEX.md")"
 rm -rf "$INIT_DIR"
 
 # ── 1a. verify-roadmap ────────────────────────────────────────────────────────
@@ -97,6 +98,12 @@ echo -e "\n${BOLD}[1a] verify-roadmap${RESET}"
 
 ROADMAP_DIR="$(mktemp -d)"
 $CLI init "$ROADMAP_DIR" >/dev/null
+cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/INDEX.md"
+# Roadmap Index
+
+## Milestones
+- [m1-foundation.md](milestones/m1-foundation.md) - m1-foundation - active
+EOF
 cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m1-foundation.md"
 # m1-foundation
 
@@ -115,7 +122,7 @@ Ship the first roadmap milestone
 - roadmap must stay separate from changes
 
 ## Status
-in-progress
+- Declared: active
 EOF
 
 out=$($CLI verify-roadmap "$ROADMAP_DIR" 2>&1)
@@ -129,8 +136,15 @@ assert_json_field "roadmap-status valid=true for bounded milestone" "valid" "tru
 assert_contains "roadmap-status reports archived planned change" '"name": "add-roadmap-milestones"' "$out"
 assert_contains "roadmap-status reports archived state" '"state": "archived"' "$out"
 assert_contains "roadmap-status reports active state" '"state": "active"' "$out"
-assert_contains "roadmap-status derives in-progress milestone state" '"derivedStatus": "in-progress"' "$out"
+assert_contains "roadmap-status derives active milestone state" '"derivedStatus": "active"' "$out"
 
+cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/INDEX.md"
+# Roadmap Index
+
+## Milestones
+- [m1-foundation.md](milestones/m1-foundation.md) - m1-foundation - active
+- [m3-missing.md](milestones/m3-missing.md) - m3-missing - complete
+EOF
 cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m3-missing.md"
 # m3-missing
 
@@ -147,7 +161,7 @@ Detect missing change references
 - names can drift
 
 ## Status
-complete
+- Declared: complete
 EOF
 
 out=$($CLI roadmap-status "$ROADMAP_DIR" 2>&1)
@@ -175,12 +189,82 @@ Too much work in one stage
 - too much scope
 
 ## Status
-proposed
+- Declared: proposed
 EOF
 
 out=$($CLI verify-roadmap "$ROADMAP_DIR" 2>&1)
 assert_json_field "verify-roadmap valid=false for oversized milestone" "valid" "false" "$out"
 assert_contains "verify-roadmap reports split guidance" "split it into smaller milestones" "$out"
+
+cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/INDEX.md"
+# Roadmap Index
+
+## Milestones
+- [m1-foundation.md](milestones/m1-foundation.md) - m1-foundation - active
+- [m2-too-large.md](milestones/m2-too-large.md) - m2-too-large - proposed
+- [m3-missing.md](milestones/m3-missing.md) - m3-missing - complete
+EOF
+
+cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m4-bad-status.md"
+# m4-bad-status
+
+## Goal
+Use invalid status shape
+
+## Done Criteria
+- Validation rejects it
+
+## Planned Changes
+- change-1
+
+## Dependencies / Risks
+- malformed markdown
+
+## Status
+- Declared: someday
+EOF
+
+out=$($CLI verify-roadmap "$ROADMAP_DIR" 2>&1)
+assert_json_field "verify-roadmap rejects invalid declared status" "valid" "false" "$out"
+assert_contains "verify-roadmap reports invalid milestone status" "invalid status" "$out"
+
+ARCHIVE_ROADMAP_DIR="$(mktemp -d)"
+$CLI init "$ARCHIVE_ROADMAP_DIR" >/dev/null
+mkdir -p "$ARCHIVE_ROADMAP_DIR/.spec-driven/changes/archive"
+cat <<'EOF' > "$ARCHIVE_ROADMAP_DIR/.spec-driven/roadmap/milestones/m1-archive-sync.md"
+# m1-archive-sync
+
+## Goal
+Complete a roadmap milestone via archive
+
+## Done Criteria
+- All planned changes are archived
+
+## Planned Changes
+- archive-sync-change
+
+## Dependencies / Risks
+- archive must update roadmap
+
+## Status
+- Declared: active
+EOF
+cat <<'EOF' > "$ARCHIVE_ROADMAP_DIR/.spec-driven/roadmap/INDEX.md"
+# Roadmap Index
+
+## Milestones
+- [m1-archive-sync.md](milestones/m1-archive-sync.md) - m1-archive-sync - active
+EOF
+
+(
+  cd "$ARCHIVE_ROADMAP_DIR"
+  $CLI propose archive-sync-change >/dev/null
+  $CLI archive archive-sync-change >/dev/null
+)
+
+assert_contains "archive reconciles milestone declared status" "- Declared: complete" "$(cat "$ARCHIVE_ROADMAP_DIR/.spec-driven/roadmap/milestones/m1-archive-sync.md")"
+assert_contains "archive reconciles roadmap index status" "m1-archive-sync - complete" "$(cat "$ARCHIVE_ROADMAP_DIR/.spec-driven/roadmap/INDEX.md")"
+rm -rf "$ARCHIVE_ROADMAP_DIR"
 rm -rf "$ROADMAP_DIR"
 
 # ── 1b. install ───────────────────────────────────────────────────────────────

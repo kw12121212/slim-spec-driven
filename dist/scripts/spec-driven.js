@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 const [command, ...args] = process.argv.slice(2);
 const changesDir = path.join(".spec-driven", "changes");
+const DECLARED_ROADMAP_STATUSES = ["proposed", "active", "blocked", "complete"];
 const INIT_CONFIG_YAML = [
     "schema: spec-driven",
     "context: |",
@@ -38,9 +39,9 @@ const INIT_CONFIG_YAML = [
     "#       - Tests must cover happy path, error cases, and edge cases",
     "",
 ].join("\n");
-const INIT_INDEX_MD = `# Specs Index\n\n<!-- One entry per spec file. Updated by /spec-driven-archive after each change. -->\n`;
+const INIT_INDEX_MD = "# Specs Index\n";
 const INIT_README_MD = `# Specs\n\nSpecs describe the current state of the system — what it does, not how it was built.\n\n## Format\n\n\`\`\`markdown\n### Requirement: <name>\nThe system MUST/SHOULD/MAY <observable behavior>.\n\n#### Scenario: <name>\n- GIVEN <precondition>\n- WHEN <action>\n- THEN <expected outcome>\n\`\`\`\n\n**Keywords**: MUST = required, SHOULD = recommended, MAY = optional (RFC 2119).\n\n## Organization\n\nGroup specs by domain area. Use kebab-case directory names (e.g. \`core/\`, \`api/\`, \`auth/\`).\n\n## Conventions\n\n- Write in present tense ("the system does X")\n- Describe observable behavior, not implementation details\n- Keep each spec focused on one area\n`;
-const INIT_ROADMAP_INDEX_MD = `# Roadmap Index\n\n<!-- One entry per milestone file in execution order. -->\n`;
+const INIT_ROADMAP_INDEX_MD = "# Roadmap Index\n\n## Milestones\n";
 const DEFAULT_MAINTENANCE_CHANGE_PREFIX = "maintenance";
 const DEFAULT_MAINTENANCE_BRANCH_PREFIX = "maintenance";
 const DEFAULT_MAINTENANCE_COMMIT_PREFIX = "chore: maintenance";
@@ -85,6 +86,207 @@ function findMdFiles(dir, base = "") {
             return findMdFiles(path.join(dir, e.name), rel);
         return e.name.endsWith(".md") ? [rel] : [];
     });
+}
+function extractMarkdownTitle(content, fallback) {
+    const title = content.match(/^#\s+(.+?)\s*$/m)?.[1]?.trim();
+    return title && title.length > 0 ? title : fallback;
+}
+function normalizePathForMarkdown(value) {
+    return value.split(path.sep).join("/");
+}
+function readSpecSummary(specsDir, relativePath) {
+    const filePath = path.join(specsDir, relativePath);
+    const fallback = path.basename(relativePath, ".md");
+    return extractMarkdownTitle(fs.readFileSync(filePath, "utf-8"), fallback);
+}
+function buildSpecsIndexContent(specsDir) {
+    const excluded = new Set(["INDEX.md", "README.md"]);
+    const mdFiles = findMdFiles(specsDir)
+        .filter((file) => !excluded.has(file) && !excluded.has(path.basename(file)))
+        .sort();
+    if (mdFiles.length === 0) {
+        return `${INIT_INDEX_MD}`;
+    }
+    const grouped = new Map();
+    for (const file of mdFiles) {
+        const category = normalizePathForMarkdown(path.dirname(file));
+        const key = category === "." ? "root" : category;
+        const files = grouped.get(key) ?? [];
+        files.push(file);
+        grouped.set(key, files);
+    }
+    const lines = ["# Specs Index", ""];
+    const categories = Array.from(grouped.keys()).sort();
+    for (const category of categories) {
+        lines.push(`## ${category}`);
+        for (const file of grouped.get(category).sort()) {
+            const relativePath = normalizePathForMarkdown(file);
+            const summary = readSpecSummary(specsDir, file);
+            lines.push(`- [${path.basename(file)}](${relativePath}) - ${summary}`);
+        }
+        lines.push("");
+    }
+    return `${lines.join("\n").trimEnd()}\n`;
+}
+function parseDeclaredRoadmapStatus(lines) {
+    if (!lines) {
+        return { declaredStatus: null, error: "missing status section" };
+    }
+    const nonEmpty = lines.map((line) => line.trim()).filter((line) => line.length > 0);
+    if (nonEmpty.length !== 1) {
+        return {
+            declaredStatus: null,
+            error: "Status section must contain exactly one bullet in the form '- Declared: <status>'",
+        };
+    }
+    const match = nonEmpty[0].match(/^-\s+Declared:\s+([a-z-]+)$/);
+    if (!match) {
+        return {
+            declaredStatus: null,
+            error: "Status section must contain exactly one bullet in the form '- Declared: <status>'",
+        };
+    }
+    const status = match[1];
+    if (!DECLARED_ROADMAP_STATUSES.includes(status)) {
+        return {
+            declaredStatus: null,
+            error: `unsupported declared roadmap status '${match[1]}'`,
+        };
+    }
+    return { declaredStatus: status, error: null };
+}
+function readPlannedChangeStates(specDir, plannedChangeNames) {
+    const activeChanges = new Set();
+    const archivedChanges = new Set();
+    const targetChangesDir = path.join(specDir, "changes");
+    if (fs.existsSync(targetChangesDir) && fs.statSync(targetChangesDir).isDirectory()) {
+        for (const entry of fs.readdirSync(targetChangesDir, { withFileTypes: true })) {
+            if (entry.isDirectory() && entry.name !== "archive") {
+                activeChanges.add(entry.name);
+            }
+        }
+    }
+    const archiveDir = path.join(targetChangesDir, "archive");
+    if (fs.existsSync(archiveDir) && fs.statSync(archiveDir).isDirectory()) {
+        for (const entry of fs.readdirSync(archiveDir, { withFileTypes: true })) {
+            if (!entry.isDirectory())
+                continue;
+            const match = entry.name.match(/^\d{4}-\d{2}-\d{2}-(.+)$/);
+            archivedChanges.add(match ? match[1] : entry.name);
+        }
+    }
+    return plannedChangeNames.map((name) => {
+        if (archivedChanges.has(name))
+            return "archived";
+        if (activeChanges.has(name))
+            return "active";
+        return "missing";
+    });
+}
+function deriveMilestoneStatus(plannedChangeStates) {
+    if (plannedChangeStates.length === 0)
+        return "proposed";
+    if (plannedChangeStates.every((state) => state === "archived"))
+        return "complete";
+    if (plannedChangeStates.some((state) => state === "active"))
+        return "active";
+    return "proposed";
+}
+function readMilestoneIndexMetadata(filePath) {
+    const content = fs.readFileSync(filePath, "utf-8");
+    const sections = readLevel2Sections(content);
+    const parsedStatus = parseDeclaredRoadmapStatus(sections.get("Status"));
+    return {
+        title: extractMarkdownTitle(content, path.basename(filePath, ".md")),
+        declaredStatus: parsedStatus.declaredStatus ?? "proposed",
+    };
+}
+function buildRoadmapIndexContent(roadmapDir) {
+    const milestonesDir = path.join(roadmapDir, "milestones");
+    const milestoneFiles = findMdFiles(milestonesDir).sort();
+    const lines = ["# Roadmap Index", "", "## Milestones"];
+    for (const file of milestoneFiles) {
+        const relativePath = normalizePathForMarkdown(path.join("milestones", file));
+        const { title, declaredStatus } = readMilestoneIndexMetadata(path.join(milestonesDir, file));
+        lines.push(`- [${path.basename(file)}](${relativePath}) - ${title} - ${declaredStatus}`);
+    }
+    return `${lines.join("\n")}\n`;
+}
+function regenerateRoadmapIndex(roadmapDir, lines) {
+    if (!fs.existsSync(roadmapDir))
+        return;
+    const content = buildRoadmapIndexContent(roadmapDir);
+    fs.writeFileSync(path.join(roadmapDir, "INDEX.md"), content);
+    lines.push("Regenerated roadmap/INDEX.md");
+}
+function validateRoadmapIndex(roadmapDir, errors) {
+    const indexPath = path.join(roadmapDir, "INDEX.md");
+    if (!fs.existsSync(indexPath)) {
+        errors.push(`Missing roadmap index: ${path.join(".spec-driven", "roadmap", "INDEX.md")}`);
+        return;
+    }
+    const lines = fs.readFileSync(indexPath, "utf-8").replace(/\r\n?/g, "\n").split("\n");
+    if (lines[0] !== "# Roadmap Index") {
+        errors.push("roadmap/INDEX.md must start with '# Roadmap Index'");
+    }
+    const milestoneHeadings = lines.filter((line) => /^##\s+/.test(line));
+    if (milestoneHeadings.length !== 1 || milestoneHeadings[0] !== "## Milestones") {
+        errors.push("roadmap/INDEX.md must contain exactly one '## Milestones' section");
+        return;
+    }
+    const milestoneHeadingIndex = lines.indexOf("## Milestones");
+    const seenEntries = new Set();
+    for (const line of lines.slice(1, milestoneHeadingIndex)) {
+        if (line.trim().length > 0) {
+            errors.push("roadmap/INDEX.md may only contain blank lines before '## Milestones'");
+            break;
+        }
+    }
+    for (const line of lines.slice(milestoneHeadingIndex + 1)) {
+        const trimmed = line.trim();
+        if (!trimmed)
+            continue;
+        const match = trimmed.match(/^- \[([^\]]+)\]\(milestones\/([^)]+)\) - (.+) - (proposed|active|blocked|complete)$/);
+        if (!match) {
+            errors.push("roadmap/INDEX.md entries must match '- [<file>](milestones/<file>) - <title> - <declared-status>'");
+            continue;
+        }
+        const [, label, relativePath] = match;
+        if (label !== path.basename(relativePath)) {
+            errors.push(`roadmap/INDEX.md entry label '${label}' must match '${path.basename(relativePath)}'`);
+        }
+        if (seenEntries.has(relativePath)) {
+            errors.push(`roadmap/INDEX.md contains duplicate entry for '${relativePath}'`);
+        }
+        seenEntries.add(relativePath);
+    }
+}
+function replaceMilestoneDeclaredStatus(content, declaredStatus) {
+    return content.replace(/(^## Status\s*\n)([\s\S]*?)(?=^##\s|$)/m, `$1- Declared: ${declaredStatus}\n\n`);
+}
+function reconcileRoadmapAfterArchive(targetDir, name) {
+    const specDir = path.join(targetDir, ".spec-driven");
+    const roadmapDir = path.join(specDir, "roadmap");
+    const milestonesDir = path.join(roadmapDir, "milestones");
+    if (!fs.existsSync(roadmapDir) || !fs.existsSync(milestonesDir)) {
+        return;
+    }
+    const milestoneFiles = findMdFiles(milestonesDir).sort();
+    for (const file of milestoneFiles) {
+        const filePath = path.join(milestonesDir, file);
+        const content = fs.readFileSync(filePath, "utf-8");
+        const sections = readLevel2Sections(content);
+        const plannedChangeNames = readBulletItems(sections.get("Planned Changes"));
+        if (!plannedChangeNames.includes(name) || !sections.has("Status"))
+            continue;
+        const plannedChangeStates = readPlannedChangeStates(specDir, plannedChangeNames);
+        const derivedStatus = deriveMilestoneStatus(plannedChangeStates);
+        const parsedStatus = parseDeclaredRoadmapStatus(sections.get("Status"));
+        if (parsedStatus.declaredStatus === derivedStatus)
+            continue;
+        fs.writeFileSync(filePath, replaceMilestoneDeclaredStatus(content, derivedStatus));
+    }
+    fs.writeFileSync(path.join(roadmapDir, "INDEX.md"), buildRoadmapIndexContent(roadmapDir));
 }
 switch (command) {
     case "propose":
@@ -366,22 +568,9 @@ function readBulletItems(lines) {
         .map((line) => line.match(/^\s*-\s+(.+)$/)?.[1].trim() ?? "")
         .filter((line) => line.length > 0);
 }
-function normalizeRoadmapStatus(status) {
-    return status.trim().toLowerCase();
-}
-function deriveMilestoneStatus(plannedChangeStates) {
-    if (plannedChangeStates.length === 0)
-        return "proposed";
-    if (plannedChangeStates.every((state) => state === "archived"))
-        return "complete";
-    if (plannedChangeStates.some((state) => state === "active" || state === "archived"))
-        return "in-progress";
-    return "proposed";
-}
 function roadmapStatus() {
     const targetDir = args[0] ? path.resolve(args[0]) : process.cwd();
     const specDir = path.join(targetDir, ".spec-driven");
-    const targetChangesDir = path.join(specDir, "changes");
     const milestonesDir = path.join(specDir, "roadmap", "milestones");
     const warnings = [];
     const errors = [];
@@ -402,23 +591,6 @@ function roadmapStatus() {
         console.log(JSON.stringify({ valid: true, warnings, errors, milestones }, null, 2));
         process.exit(0);
     }
-    const activeChanges = new Set();
-    if (fs.existsSync(targetChangesDir) && fs.statSync(targetChangesDir).isDirectory()) {
-        for (const entry of fs.readdirSync(targetChangesDir, { withFileTypes: true })) {
-            if (entry.isDirectory() && entry.name !== "archive")
-                activeChanges.add(entry.name);
-        }
-    }
-    const archivedChanges = new Set();
-    const archiveDir = path.join(targetChangesDir, "archive");
-    if (fs.existsSync(archiveDir) && fs.statSync(archiveDir).isDirectory()) {
-        for (const entry of fs.readdirSync(archiveDir, { withFileTypes: true })) {
-            if (!entry.isDirectory())
-                continue;
-            const match = entry.name.match(/^\d{4}-\d{2}-\d{2}-(.+)$/);
-            archivedChanges.add(match ? match[1] : entry.name);
-        }
-    }
     const requiredSections = [
         "Goal",
         "Done Criteria",
@@ -435,18 +607,18 @@ function roadmapStatus() {
             continue;
         }
         const goal = firstNonEmptyLine(sections.get("Goal"));
-        const declaredStatus = firstNonEmptyLine(sections.get("Status"));
+        const parsedStatus = parseDeclaredRoadmapStatus(sections.get("Status"));
+        if (!parsedStatus.declaredStatus) {
+            errors.push(`roadmap/milestones/${file} has invalid status: ${parsedStatus.error}`);
+            continue;
+        }
+        const declaredStatus = parsedStatus.declaredStatus;
         const plannedChangeNames = readBulletItems(sections.get("Planned Changes"));
-        const plannedChanges = plannedChangeNames.map((name) => {
-            if (archivedChanges.has(name))
-                return { name, state: "archived" };
-            if (activeChanges.has(name))
-                return { name, state: "active" };
-            return { name, state: "missing" };
-        });
-        const derivedStatus = deriveMilestoneStatus(plannedChanges.map((change) => change.state));
+        const plannedChangeStates = readPlannedChangeStates(specDir, plannedChangeNames);
+        const plannedChanges = plannedChangeNames.map((name, index) => ({ name, state: plannedChangeStates[index] }));
+        const derivedStatus = deriveMilestoneStatus(plannedChangeStates);
         const mismatches = [];
-        if (normalizeRoadmapStatus(declaredStatus) !== derivedStatus) {
+        if (declaredStatus !== derivedStatus) {
             mismatches.push(`declared status '${declaredStatus}' does not match derived status '${derivedStatus}'`);
         }
         milestones.push({ file, goal, declaredStatus, derivedStatus, plannedChanges, mismatches });
@@ -456,6 +628,7 @@ function roadmapStatus() {
 function verifyRoadmap() {
     const targetDir = args[0] ? path.resolve(args[0]) : process.cwd();
     const specDir = path.join(targetDir, ".spec-driven");
+    const roadmapDir = path.join(specDir, "roadmap");
     const milestonesDir = path.join(specDir, "roadmap", "milestones");
     const warnings = [];
     const errors = [];
@@ -470,6 +643,7 @@ function verifyRoadmap() {
         console.log(JSON.stringify({ valid: false, warnings, errors, milestones }, null, 2));
         process.exit(0);
     }
+    validateRoadmapIndex(roadmapDir, errors);
     const milestoneFiles = findMdFiles(milestonesDir).sort();
     if (milestoneFiles.length === 0) {
         warnings.push("roadmap/milestones/ is empty");
@@ -493,8 +667,13 @@ function verifyRoadmap() {
         }
         const doneCriteria = countBulletItems(sections.get("Done Criteria"));
         const plannedChanges = countBulletItems(sections.get("Planned Changes"));
-        const status = firstNonEmptyLine(sections.get("Status"));
+        const parsedStatus = parseDeclaredRoadmapStatus(sections.get("Status"));
         const goal = firstNonEmptyLine(sections.get("Goal"));
+        if (!parsedStatus.declaredStatus) {
+            errors.push(`roadmap/milestones/${file} has invalid status: ${parsedStatus.error}`);
+            continue;
+        }
+        const status = parsedStatus.declaredStatus;
         milestones.push({ file, goal, doneCriteria, plannedChanges, status });
         if (plannedChanges > 5) {
             errors.push(`roadmap/milestones/${file} has ${plannedChanges} planned changes; split it into smaller milestones`);
@@ -513,6 +692,7 @@ function archive() {
     }
     fs.mkdirSync(path.join(changesDir, "archive"), { recursive: true });
     fs.renameSync(src, archivePath);
+    reconcileRoadmapAfterArchive(process.cwd(), name);
     console.log(`Archived: ${src} → ${archivePath}`);
 }
 function cancel() {
@@ -527,6 +707,7 @@ function init() {
     const lines = [];
     ensureSpecDrivenScaffold(specDir, lines);
     regenerateIndexMd(path.join(specDir, "specs"), lines);
+    regenerateRoadmapIndex(path.join(specDir, "roadmap"), lines);
     console.log(`Initialized: ${specDir}`);
     for (const line of lines)
         console.log(`  ${line}`);
@@ -996,6 +1177,7 @@ function tryArchiveChange(name) {
     try {
         fs.mkdirSync(path.join(changesDir, "archive"), { recursive: true });
         fs.renameSync(src, archivePath);
+        reconcileRoadmapAfterArchive(process.cwd(), name);
         return { ok: true, archivePath };
     }
     catch (error) {
@@ -1059,17 +1241,9 @@ function ensureSpecDrivenScaffold(specDir, lines) {
 function regenerateIndexMd(specsDir, lines) {
     if (!fs.existsSync(specsDir))
         return;
-    const excluded = new Set(["INDEX.md", "README.md"]);
-    const mdFiles = findMdFiles(specsDir).filter((f) => !excluded.has(f) && !excluded.has(path.basename(f)));
     const indexPath = path.join(specsDir, "INDEX.md");
-    let content = "# Specs Index\n\n<!-- One entry per spec file. Updated by /spec-driven-archive after each change. -->\n";
-    if (mdFiles.length > 0) {
-        content += "\n";
-        for (const f of mdFiles.sort()) {
-            content += `- [${f}](${f})\n`;
-        }
-    }
-    fs.writeFileSync(indexPath, content);
+    const mdFiles = findMdFiles(specsDir).filter((file) => !new Set(["INDEX.md", "README.md"]).has(file) && !new Set(["INDEX.md", "README.md"]).has(path.basename(file)));
+    fs.writeFileSync(indexPath, buildSpecsIndexContent(specsDir));
     lines.push(`Regenerated specs/INDEX.md (${mdFiles.length} file(s) listed)`);
 }
 function resolveBundledSkillsDir() {
