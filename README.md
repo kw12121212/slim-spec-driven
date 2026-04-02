@@ -330,6 +330,7 @@ node dist/scripts/spec-driven.js propose <name>  # Create change scaffold
 node dist/scripts/spec-driven.js modify [name]   # List changes or show artifact paths
 node dist/scripts/spec-driven.js apply <name>    # Parse tasks.md → JSON status
 node dist/scripts/spec-driven.js verify <name>   # Validate artifact format → JSON
+node dist/scripts/spec-driven.js verify-roadmap [path]  # Validate roadmap milestone size/shape → JSON
 node dist/scripts/spec-driven.js archive <name>  # Move to archive/YYYY-MM-DD-<name>/
 node dist/scripts/spec-driven.js cancel <name>   # Delete change (no archive)
 node dist/scripts/spec-driven.js init [path]     # Bootstrap .spec-driven/ scaffold

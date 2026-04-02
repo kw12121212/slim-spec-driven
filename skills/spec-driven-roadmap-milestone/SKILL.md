@@ -43,6 +43,13 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    - `Planned Changes`
    - `Dependencies / Risks`
    - derived `Status`
+   Use these standard section headings in the file:
+   - `## Goal`
+   - `## Done Criteria`
+   - `## Candidate Ideas`
+   - `## Planned Changes`
+   - `## Dependencies / Risks`
+   - `## Status`
 
 4. **Write the milestone file** — create or update the milestone markdown file
    and keep it focused on that milestone only.
@@ -54,7 +61,14 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    archived, the milestone is not complete. Do not add manual completion
    overrides.
 
-7. **Report the result** — summarize what changed in the milestone and identify
+7. **Validate roadmap size before finish** — run:
+   ```
+   node {{SKILL_DIR}}/scripts/spec-driven.js verify-roadmap
+   ```
+   If validation reports that the milestone is too large, stop and tell the user
+   to split it instead of presenting the milestone as ready.
+
+8. **Report the result** — summarize what changed in the milestone and identify
    any candidate ideas that still need promotion into concrete changes.
 
 ## Rules

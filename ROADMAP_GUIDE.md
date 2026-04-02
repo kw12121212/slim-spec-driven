@@ -97,6 +97,23 @@ Expected effect:
 - reconciles milestone status against real change state
 - updates stale roadmap state
 
+## Script Validation
+
+If you want an explicit repository-level check, run:
+
+```bash
+node dist/scripts/spec-driven.js verify-roadmap
+```
+
+This validates milestone structure and size.
+
+Today it enforces:
+- standard milestone section headings
+- no more than 5 bullet items under `## Planned Changes`
+
+If a milestone exceeds that size, the command reports it as invalid and tells
+you to split it into smaller milestones.
+
 ## Recommended Workflow
 
 A common pattern is:
@@ -278,4 +295,3 @@ Expected result:
 - Use `roadmap-sync` after real execution progress.
 - Keep `Candidate Ideas` and `Planned Changes` separate.
 - Do not manually treat a milestone as done if archive state does not support it.
-

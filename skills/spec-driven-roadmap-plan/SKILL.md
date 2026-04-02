@@ -57,11 +57,25 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
 
 6. **Preserve roadmap rules** — in every milestone file:
    - keep `Candidate Ideas` separate from `Planned Changes`
-   - record `Goal`, `Done Criteria`, `Dependencies / Risks`, and `Status`
+   - use these standard section headings:
+     - `## Goal`
+     - `## Done Criteria`
+     - `## Candidate Ideas`
+     - `## Planned Changes`
+     - `## Dependencies / Risks`
+     - `## Status`
    - derive milestone completion from archived planned changes rather than
      manual toggles
 
-7. **Summarize the result** — report the milestone structure created or changed,
+7. **Validate roadmap size before finish** — run:
+   ```
+   node {{SKILL_DIR}}/scripts/spec-driven.js verify-roadmap
+   ```
+   - If validation reports a milestone is too large, stop and tell the user to
+     split it into smaller milestones
+   - Do not present the roadmap as ready while size validation fails
+
+8. **Summarize the result** — report the milestone structure created or changed,
    what moved between candidate ideas and planned changes, and any remaining
    planning gaps.
 

@@ -99,6 +99,9 @@ switch (command) {
     case "verify":
         verify();
         break;
+    case "verify-roadmap":
+        verifyRoadmap();
+        break;
     case "archive":
         archive();
         break;
@@ -119,7 +122,7 @@ switch (command) {
         break;
     default:
         console.error("Usage: node spec-driven.js <command> [args]");
-        console.error("Commands: propose, modify, apply, verify, archive, cancel, init, run-maintenance, migrate, list");
+        console.error("Commands: propose, modify, apply, verify, verify-roadmap, archive, cancel, init, run-maintenance, migrate, list");
         process.exit(1);
 }
 function propose() {
@@ -321,6 +324,88 @@ function verify() {
         }
     }
     console.log(JSON.stringify({ valid: errors.length === 0, warnings, errors }, null, 2));
+}
+function readLevel2Sections(content) {
+    const sections = new Map();
+    let current = null;
+    for (const line of content.split("\n")) {
+        const heading = line.match(/^##\s+(.+?)\s*$/);
+        if (heading) {
+            current = heading[1].trim();
+            sections.set(current, []);
+            continue;
+        }
+        if (current) {
+            sections.get(current).push(line);
+        }
+    }
+    return sections;
+}
+function countBulletItems(lines) {
+    if (!lines)
+        return 0;
+    return lines.filter((line) => /^\s*-\s+/.test(line)).length;
+}
+function firstNonEmptyLine(lines) {
+    if (!lines)
+        return "";
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed)
+            return trimmed;
+    }
+    return "";
+}
+function verifyRoadmap() {
+    const targetDir = args[0] ? path.resolve(args[0]) : process.cwd();
+    const specDir = path.join(targetDir, ".spec-driven");
+    const milestonesDir = path.join(specDir, "roadmap", "milestones");
+    const warnings = [];
+    const errors = [];
+    const milestones = [];
+    if (!fs.existsSync(specDir) || !fs.statSync(specDir).isDirectory()) {
+        errors.push(`.spec-driven/ not found in ${targetDir}`);
+        console.log(JSON.stringify({ valid: false, warnings, errors, milestones }, null, 2));
+        process.exit(0);
+    }
+    if (!fs.existsSync(milestonesDir) || !fs.statSync(milestonesDir).isDirectory()) {
+        errors.push(`Missing roadmap milestones directory: ${path.join(".spec-driven", "roadmap", "milestones")}/`);
+        console.log(JSON.stringify({ valid: false, warnings, errors, milestones }, null, 2));
+        process.exit(0);
+    }
+    const milestoneFiles = findMdFiles(milestonesDir).sort();
+    if (milestoneFiles.length === 0) {
+        warnings.push("roadmap/milestones/ is empty");
+        console.log(JSON.stringify({ valid: true, warnings, errors, milestones }, null, 2));
+        process.exit(0);
+    }
+    const requiredSections = [
+        "Goal",
+        "Done Criteria",
+        "Candidate Ideas",
+        "Planned Changes",
+        "Dependencies / Risks",
+        "Status",
+    ];
+    for (const file of milestoneFiles) {
+        const content = fs.readFileSync(path.join(milestonesDir, file), "utf-8");
+        const sections = readLevel2Sections(content);
+        const missingSections = requiredSections.filter((section) => !sections.has(section));
+        if (missingSections.length > 0) {
+            errors.push(`roadmap/milestones/${file} is missing required sections: ${missingSections.join(", ")}`);
+            continue;
+        }
+        const doneCriteria = countBulletItems(sections.get("Done Criteria"));
+        const candidateIdeas = countBulletItems(sections.get("Candidate Ideas"));
+        const plannedChanges = countBulletItems(sections.get("Planned Changes"));
+        const status = firstNonEmptyLine(sections.get("Status"));
+        const goal = firstNonEmptyLine(sections.get("Goal"));
+        milestones.push({ file, goal, doneCriteria, candidateIdeas, plannedChanges, status });
+        if (plannedChanges > 5) {
+            errors.push(`roadmap/milestones/${file} has ${plannedChanges} planned changes; split it into smaller milestones`);
+        }
+    }
+    console.log(JSON.stringify({ valid: errors.length === 0, warnings, errors, milestones }, null, 2));
 }
 function archive() {
     const name = requireName("archive");

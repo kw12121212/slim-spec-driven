@@ -325,6 +325,7 @@ node dist/scripts/spec-driven.js propose <name>  # 创建变更脚手架
 node dist/scripts/spec-driven.js modify [name]   # 列出变更或显示 artifact 路径
 node dist/scripts/spec-driven.js apply <name>    # 解析 tasks.md → JSON 状态
 node dist/scripts/spec-driven.js verify <name>   # 验证 artifact 格式 → JSON
+node dist/scripts/spec-driven.js verify-roadmap [path]  # 验证 roadmap milestone 结构与大小 → JSON
 node dist/scripts/spec-driven.js archive <name>  # 移至 archive/YYYY-MM-DD-<name>/
 node dist/scripts/spec-driven.js cancel <name>   # 永久删除变更目录
 node dist/scripts/spec-driven.js init [path]     # 初始化 .spec-driven/ 脚手架

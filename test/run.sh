@@ -92,6 +92,71 @@ assert_contains "duplicate init reports index regeneration" "INDEX.md" "$out2"
 [ "$(cat "$INIT_DIR/.spec-driven/roadmap/INDEX.md")" = "# custom roadmap" ] && pass "duplicate init preserves roadmap index content" || fail "duplicate init overwrote roadmap index"
 rm -rf "$INIT_DIR"
 
+# ── 1a. verify-roadmap ────────────────────────────────────────────────────────
+echo -e "\n${BOLD}[1a] verify-roadmap${RESET}"
+
+ROADMAP_DIR="$(mktemp -d)"
+$CLI init "$ROADMAP_DIR" >/dev/null
+cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m1-foundation.md"
+# m1-foundation
+
+## Goal
+Ship the first roadmap milestone
+
+## Done Criteria
+- Roadmap scaffold exists
+- Validation exists
+
+## Candidate Ideas
+- roadmap priority scoring
+
+## Planned Changes
+- add-roadmap-milestones
+- add-roadmap-size-validation
+
+## Dependencies / Risks
+- roadmap must stay separate from changes
+
+## Status
+in-progress
+EOF
+
+out=$($CLI verify-roadmap "$ROADMAP_DIR" 2>&1)
+assert_json_field "verify-roadmap valid=true for bounded milestone" "valid" "true" "$out"
+assert_contains "verify-roadmap reports milestone summary" "\"plannedChanges\": 2" "$out"
+
+cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m2-too-large.md"
+# m2-too-large
+
+## Goal
+Too much work in one stage
+
+## Done Criteria
+- Everything ships
+
+## Candidate Ideas
+- optional cleanup
+
+## Planned Changes
+- change-1
+- change-2
+- change-3
+- change-4
+- change-5
+- change-6
+
+## Dependencies / Risks
+- too much scope
+
+## Status
+proposed
+EOF
+
+out=$($CLI verify-roadmap "$ROADMAP_DIR" 2>&1)
+assert_json_field "verify-roadmap valid=false for oversized milestone" "valid" "false" "$out"
+assert_contains "verify-roadmap reports split guidance" "split it into smaller milestones" "$out"
+rm -rf "$ROADMAP_DIR"
+
 # ── 1b. install ───────────────────────────────────────────────────────────────
 echo -e "\n${BOLD}[1b] install${RESET}"
 

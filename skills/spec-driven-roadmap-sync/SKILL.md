@@ -51,7 +51,14 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
      archived
    - keep the roadmap as planning state, not an implementation log
 
-5. **Report the sync result** — summarize:
+5. **Validate roadmap size before finish** — run:
+   ```
+   node {{SKILL_DIR}}/scripts/spec-driven.js verify-roadmap
+   ```
+   If validation reports that any milestone is too large, stop and tell the user
+   to split it instead of presenting roadmap sync as complete.
+
+6. **Report the sync result** — summarize:
    - milestones updated
    - planned changes whose state changed
    - missing or ambiguous references that still need human cleanup

@@ -69,6 +69,7 @@ All subcommands run as `node dist/scripts/spec-driven.js <cmd>` from the project
 | `modify [name]` | optional name | stdout: active change list, or paths to all five artifacts |
 | `apply <name>` | change name | stdout: JSON `{total, complete, remaining, tasks}` |
 | `verify <name>` | change name | stdout: JSON `{valid, warnings[], errors[]}` |
+| `verify-roadmap [path]` | optional path | stdout: JSON `{valid, warnings[], errors[], milestones[]}` for roadmap milestone validation |
 | `archive <name>` | change name | moves change to `.spec-driven/changes/archive/YYYY-MM-DD-<name>/` |
 | `cancel <name>` | change name | deletes `.spec-driven/changes/<name>/` |
 | `init [path]` | optional path | creates `.spec-driven/` scaffold at path (or CWD), including `roadmap/`, `specs/`, and `changes/` |
@@ -76,7 +77,7 @@ All subcommands run as `node dist/scripts/spec-driven.js <cmd>` from the project
 | `migrate [path]` | optional path | migrates `openspec/` artifacts to auto-spec-driven where supported |
 | `list` | none | stdout: all changes (active with status, archived) |
 
-All subcommands exit `0` on success, `1` on error (except `verify` which always exits `0` and reports errors in JSON).
+All subcommands exit `0` on success, `1` on error (except `verify` and `verify-roadmap`, which always exit `0` and report errors in JSON).
 
 ## The .spec-driven/ Workflow
 
