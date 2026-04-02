@@ -16,7 +16,7 @@ Explicitly distinguish script work from AI work when you run this skill.
 **Handled by CLI scripts**
 - `node {{SKILL_DIR}}/scripts/spec-driven.js modify` lists active changes
 - `node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>` reports task completion status
-- `node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>` moves the change directory into `.spec-driven/changes/archive/YYYY-MM-DD-<name>/`
+- `node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>` moves the change directory into `.spec-driven/changes/archive/YYYY-MM-DD-<name>/` and, when `.spec-driven/roadmap/` exists, reconciles any affected milestone declared status plus `.spec-driven/roadmap/INDEX.md`
 
 **Handled by the AI**
 - Ask the user which change to archive when needed
@@ -24,7 +24,7 @@ Explicitly distinguish script work from AI work when you run this skill.
 - Inspect `.spec-driven/changes/<name>/specs/`, merge delta specs into `.spec-driven/specs/`, and remove emptied main spec files when required by `REMOVED`
 - Ask for explicit confirmation if the change has no delta specs
 - Update `.spec-driven/specs/INDEX.md` to reflect created or deleted main spec files
-- Summarize the merged spec impact and final archive location
+- Summarize the merged spec impact, any roadmap status changes caused by archive, and the final archive location
 
 ## Prerequisites
 
@@ -62,9 +62,13 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>
    ```
    This moves the entire change directory (including questions.md) to the archive.
+   If `.spec-driven/roadmap/` exists, the command also reconciles milestone declared
+   status and regenerates `.spec-driven/roadmap/INDEX.md` for any milestone affected by
+   the archived change.
 
 6. **Confirm** — report the result:
    - Where the change was moved to (e.g. `.spec-driven/changes/archive/2024-01-15-<name>/`)
+   - Any milestone declared status or roadmap index entry that changed because of archive
    - Suggest running `/spec-driven-propose` if there's follow-up work
 
 ## Rules

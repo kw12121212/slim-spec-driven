@@ -67,12 +67,13 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    - SHOULD FIX and NITS: fix if straightforward, otherwise note in the final report
 
 7. **Archive** — close out the change:
-   - Confirm there are no incomplete tasks before archiving
-   - List all delta files in `specs/` and merge each into the corresponding main spec file
-   - If `changes/<name>/specs/` is empty, ask the user to confirm this change has no observable spec impact before continuing
-   - Update `.spec-driven/specs/INDEX.md` if new spec files were created
-   - Run `node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>`
-   - Report the final result: what was built, files changed, tests passing
+    - Confirm there are no incomplete tasks before archiving
+    - List all delta files in `specs/` and merge each into the corresponding main spec file
+    - If `changes/<name>/specs/` is empty, ask the user to confirm this change has no observable spec impact before continuing
+    - Update `.spec-driven/specs/INDEX.md` if new spec files were created
+    - Run `node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>`
+    - If `.spec-driven/roadmap/` exists, treat any milestone declared status or roadmap index updates performed by the archive command as part of archive closeout
+    - Report the final result: what was built, files changed, tests passing, archive location, and any roadmap status changes caused by archive
 
 ## Rules
 - The context reset in Step 1 is mandatory — never skip it
