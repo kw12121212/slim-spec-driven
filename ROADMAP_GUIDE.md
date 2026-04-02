@@ -20,7 +20,7 @@ The roadmap layer exists for work that spans multiple changes. It lives under:
 Use roadmap skills when:
 - you have more than one upcoming change
 - you need explicit phase boundaries
-- you want to track candidate ideas separately from approved work
+- you want one durable milestone-level work list above individual changes
 - you want milestone completion to follow archive history instead of chat memory
 
 Do not use roadmap files as a replacement for:
@@ -33,8 +33,8 @@ Do not use roadmap files as a replacement for:
 ## The Roadmap Skills
 
 There are five roadmap skills in practice: create structure, refine one
-milestone, recommend the next change, turn planned work into a normal change,
-and sync status back from execution history.
+milestone, recommend and scaffold the next change, directly scaffold already
+chosen planned work, and sync status back from execution history.
 
 ### `/roadmap-plan`
 
@@ -63,7 +63,6 @@ Use this when you only want to refine one milestone.
 
 Typical uses:
 - adjust one milestone's goal
-- move items between `Candidate Ideas` and `Planned Changes`
 - add or remove planned changes
 - tighten done criteria
 - rewrite dependencies or risks
@@ -82,10 +81,12 @@ Expected effect:
 ### `/roadmap-propose`
 
 Use this when a milestone item is already listed under `## Planned Changes` and
-you want to turn it into a normal change under `.spec-driven/changes/`.
+you already know that it should be turned into a normal change under
+`.spec-driven/changes/`.
 
 Typical uses:
-- take one planned item from a milestone and scaffold it as a change
+- take one planned item from a milestone and scaffold it as a change without
+  running the recommendation step first
 - keep roadmap planning separate from execution artifacts
 - move from milestone planning into apply/auto execution flow
 
@@ -99,16 +100,18 @@ Expected effect:
 - creates `.spec-driven/changes/add-roadmap-milestones/`
 - fills the standard five change artifacts
 - keeps the roadmap file as planning state while the change becomes execution state
+- asks you whether to continue with `/spec-driven-apply <name>` or `/spec-driven-auto`
 
 ### `/roadmap-recommend`
 
 Use this when you want the roadmap to recommend the next change before you
-decide whether to accept it, adjust it, or pick a different roadmap item.
+decide whether to accept it, adjust it, or pick a different roadmap item, and
+then scaffold the accepted recommendation directly.
 
 Typical uses:
 - ask which milestone item should come next
 - choose based on dependencies, urgency, or phase impact
-- review a recommendation before creating any change artifacts
+- review a recommendation before confirming the scaffold
 
 Example:
 
@@ -119,7 +122,9 @@ Example:
 Expected effect:
 - reads roadmap context and roadmap-status output
 - recommends one candidate change and explains why
-- waits for you to accept or modify it before handing off to `/roadmap-propose`
+- waits for you to accept or modify it before scaffolding
+- creates the standard five change artifacts after confirmation
+- asks you whether to continue with `/spec-driven-apply <name>` or `/spec-driven-auto`
 
 ### `/roadmap-sync`
 
@@ -165,15 +170,17 @@ you to split it into smaller milestones.
 A common pattern is:
 
 ```text
-roadmap-plan -> roadmap-milestone -> roadmap-recommend -> roadmap-propose -> auto/apply -> archive -> roadmap-sync
+roadmap-plan -> roadmap-milestone -> roadmap-recommend -> auto/apply -> archive -> roadmap-sync
 ```
 
 In practice:
 
 1. Create the roadmap shape.
 2. Refine the current milestone.
-3. Use roadmap-recommend if you want a recommendation for the next change.
-4. Use roadmap-propose to turn approved planned work into one or more changes.
+3. Use roadmap-recommend if you want a roadmap-specific brainstorm that
+   recommends the next change and scaffolds it after confirmation.
+4. Use roadmap-propose instead when the planned change is already chosen and
+   you want to skip the recommendation step.
 5. Implement and archive those changes.
 6. Run roadmap sync so milestone state reflects reality.
 
@@ -215,12 +222,9 @@ And one milestone might look like:
 - roadmap skills 可用
 - README / install / tests 已对齐
 
-## Candidate Ideas
-- roadmap priority scoring
-- roadmap dependency graph
-
 ## Planned Changes
 - add-roadmap-milestones
+- roadmap-priority-scoring
 - improve-sync-specs-reporting
 
 ## Dependencies / Risks
@@ -250,13 +254,13 @@ This is the right tool for structural changes across the roadmap.
 
 If you want to:
 - move one idea to a later milestone
-- promote one candidate idea into planned work
+- add one more planned change
 - rewrite done criteria
 
 use:
 
 ```bash
-/roadmap-milestone 调整 m1-foundation，把 roadmap priority scoring 保留在 candidate ideas，新增 improve-readme-onboarding 到 planned changes
+/roadmap-milestone 调整 m1-foundation，新增 improve-readme-onboarding 到 planned changes，并重写 done criteria
 ```
 
 This is the right tool for local edits.
@@ -271,22 +275,15 @@ If some changes have already been archived or are still active, run:
 
 This is the right tool for status reconciliation.
 
-## Candidate Ideas vs Planned Changes
-
-This distinction matters.
-
-`Candidate Ideas` means:
-- worth tracking
-- not yet approved as execution work
-- may move, merge, or disappear later
+## Planned Changes
 
 `Planned Changes` means:
 - concrete work expected to exist under `.spec-driven/changes/`
 - should eventually be proposed, implemented, and archived
 - contributes to milestone completion
 
-Do not mix these two sections together. If you do, milestone progress becomes
-ambiguous.
+Treat it as the milestone's only work list, not as a speculative someday
+backlog.
 
 ## How Milestone Completion Works
 
@@ -314,7 +311,7 @@ This rule is intentional. It keeps the roadmap tied to repository reality.
 2. Refine the first milestone:
 
 ```bash
-/roadmap-milestone 细化 m1-cli，把 migrate polish 保留为 candidate idea，把 add-roadmap-milestones 作为 planned change
+/roadmap-milestone 细化 m1-cli，把 add-roadmap-milestones 和 migrate-polish 作为 planned changes
 ```
 
 3. Ask for the next recommended change:
@@ -337,7 +334,7 @@ This rule is intentional. It keeps the roadmap tied to repository reality.
 ```
 
 Expected result:
-- the milestone file still carries the phase goal and remaining ideas
+- the milestone file still carries the phase goal and remaining planned work
 - archived planned changes are reflected as complete work
 - the milestone remains open until every listed planned change is archived
 
@@ -348,5 +345,5 @@ Expected result:
 - Use `roadmap-recommend` when you want a recommendation before you commit.
 - Use `roadmap-propose` to hand off planned work into a normal change.
 - Use `roadmap-sync` after real execution progress.
-- Keep `Candidate Ideas` and `Planned Changes` separate.
+- Keep `Planned Changes` concrete and execution-ready.
 - Do not manually treat a milestone as done if archive state does not support it.

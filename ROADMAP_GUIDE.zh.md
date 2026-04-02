@@ -22,7 +22,7 @@ roadmap 这一层用于管理跨多个 change 的长期规划。它位于：
 适合使用 roadmap skills 的情况：
 - 你接下来有多个 change 要做
 - 你需要明确的阶段边界
-- 你想把 candidate ideas 和已批准的工作分开追踪
+- 你想在单个 change 之上保留一个稳定的 milestone 工作列表
 - 你希望 milestone 完成状态依据 archive 历史，而不是聊天上下文
 
 不要把 roadmap 文件拿来替代这些 artifacts：
@@ -34,8 +34,9 @@ roadmap 这一层用于管理跨多个 change 的长期规划。它位于：
 
 ## Roadmap Skills
 
-实际上一共有五个 roadmap skills：建立结构、细化单个 milestone、先推荐
-下一个 change、把 planned work 转成普通 change，以及根据执行历史回填状态。
+实际上一共有五个 roadmap skills：建立结构、细化单个 milestone、推荐并
+scaffold 下一个 change、直接 scaffold 已选定的 planned work，以及根据
+执行历史回填状态。
 
 ### `/roadmap-plan`
 
@@ -64,7 +65,6 @@ roadmap 这一层用于管理跨多个 change 的长期规划。它位于：
 
 典型用途：
 - 调整某个 milestone 的目标
-- 在 `Candidate Ideas` 和 `Planned Changes` 之间移动条目
 - 新增或删除 planned changes
 - 收紧 done criteria
 - 重写 dependencies 或 risks
@@ -83,10 +83,10 @@ roadmap 这一层用于管理跨多个 change 的长期规划。它位于：
 ### `/roadmap-propose`
 
 当某个条目已经出现在 milestone 的 `## Planned Changes` 下，并且你想把它
-转成 `.spec-driven/changes/` 下的普通 change 时，用这个。
+直接转成 `.spec-driven/changes/` 下的普通 change 时，用这个。
 
 典型用途：
-- 把某个 planned item 脚手架成正式 change
+- 当 planned item 已经选定时，跳过 recommendation 直接脚手架成正式 change
 - 保持 roadmap 规划和执行 artifacts 分层
 - 从 milestone 规划切换到 apply/auto 执行流
 
@@ -100,16 +100,17 @@ roadmap 这一层用于管理跨多个 change 的长期规划。它位于：
 - 创建 `.spec-driven/changes/add-roadmap-milestones/`
 - 填充标准的五个 change artifacts
 - roadmap 文件继续保留规划角色，而 change 进入执行层
+- 明确询问你后续要走 `/spec-driven-apply <name>` 还是 `/spec-driven-auto`
 
 ### `/roadmap-recommend`
 
 当你希望 roadmap 先推荐下一个 change，再决定是否接受、修改或改选别的
-条目时，用这个。
+条目，并在确认后直接把它 scaffold 成普通 change 时，用这个。
 
 典型用途：
 - 问 roadmap 当前最适合推进哪个条目
 - 按依赖顺序、紧急程度或阶段价值来选下一个 change
-- 在创建任何 change artifacts 之前先看推荐
+- 在正式建 change 前先看推荐并收敛
 
 示例：
 
@@ -121,6 +122,8 @@ roadmap 这一层用于管理跨多个 change 的长期规划。它位于：
 - 读取 roadmap 上下文和 roadmap-status 输出
 - 推荐一个 candidate change 并解释原因
 - 在你接受或修改之前，不会创建任何 change 文件
+- 确认后创建标准的五个 change artifacts
+- 明确询问你后续要走 `/spec-driven-apply <name>` 还是 `/spec-driven-auto`
 
 ### `/roadmap-sync`
 
@@ -165,15 +168,16 @@ node dist/scripts/spec-driven.js verify-roadmap
 常见模式是：
 
 ```text
-roadmap-plan -> roadmap-milestone -> roadmap-recommend -> roadmap-propose -> auto/apply -> archive -> roadmap-sync
+roadmap-plan -> roadmap-milestone -> roadmap-recommend -> auto/apply -> archive -> roadmap-sync
 ```
 
 在实际操作里：
 
 1. 先建立 roadmap 结构。
 2. 再细化当前 milestone。
-3. 如果你想先看建议，用 roadmap-recommend 推荐下一个 change。
-4. 用 roadmap-propose 把已批准的 planned work 转成一个或多个 change。
+3. 如果你想先看建议，用 roadmap-recommend 先做 roadmap 专用的
+   brainstorm，确认后直接 scaffold 下一个 change。
+4. 如果 planned change 已经明确，则改用 roadmap-propose，跳过推荐步骤。
 5. 实现并 archive 这些 changes。
 6. 最后运行 roadmap sync，让 milestone 状态回到真实仓库状态。
 
@@ -215,12 +219,9 @@ roadmap-plan -> roadmap-milestone -> roadmap-recommend -> roadmap-propose -> aut
 - roadmap skills 可用
 - README / install / tests 已对齐
 
-## Candidate Ideas
-- roadmap priority scoring
-- roadmap dependency graph
-
 ## Planned Changes
 - add-roadmap-milestones
+- roadmap-priority-scoring
 - improve-sync-specs-reporting
 
 ## Dependencies / Risks
@@ -249,13 +250,13 @@ roadmap 在执行中途修改是正常的。
 
 如果你想：
 - 把一个 idea 移到后续 milestone
-- 把某个 candidate idea 提升为 planned work
+- 新增一个 planned change
 - 重写 done criteria
 
 就用：
 
 ```bash
-/roadmap-milestone 调整 m1-foundation，把 roadmap priority scoring 保留在 candidate ideas，新增 improve-readme-onboarding 到 planned changes
+/roadmap-milestone 调整 m1-foundation，新增 improve-readme-onboarding 到 planned changes，并重写 done criteria
 ```
 
 这是局部修改的正确入口。
@@ -270,21 +271,14 @@ roadmap 在执行中途修改是正常的。
 
 这是做状态对齐的正确入口。
 
-## Candidate Ideas 与 Planned Changes 的区别
-
-这两个区分很重要。
-
-`Candidate Ideas` 表示：
-- 值得追踪
-- 还没有被批准为执行工作
-- 后续可能移动、合并或消失
+## Planned Changes
 
 `Planned Changes` 表示：
 - 预期会在 `.spec-driven/changes/` 下落地成具体 change
 - 最终应该被 propose、实现并 archive
 - 会影响 milestone 完成状态
 
-不要把这两部分混在一起。否则 milestone 进度会变得含糊。
+它应该是 milestone 唯一的工作列表，而不是一个模糊的“以后也许会做”清单。
 
 ## Milestone 完成是如何判定的
 
@@ -311,7 +305,7 @@ Milestone 完成不是手工标记的。
 2. 再细化第一个 milestone：
 
 ```bash
-/roadmap-milestone 细化 m1-cli，把 migrate polish 保留为 candidate idea，把 add-roadmap-milestones 作为 planned change
+/roadmap-milestone 细化 m1-cli，把 add-roadmap-milestones 和 migrate-polish 作为 planned changes
 ```
 
 3. 先让 roadmap 推荐下一个 change：
@@ -334,7 +328,7 @@ Milestone 完成不是手工标记的。
 ```
 
 预期结果：
-- milestone 文件仍保留阶段目标和剩余 ideas
+- milestone 文件仍保留阶段目标和剩余 planned work
 - 已 archive 的 planned changes 会体现在完成状态里
 - 只要还有一个 listed planned change 没 archive，这个 milestone 就保持未完成
 
@@ -345,5 +339,5 @@ Milestone 完成不是手工标记的。
 - 用 `roadmap-recommend` 在真正创建 change 前先拿一个推荐。
 - 用 `roadmap-propose` 把 planned work 交接成普通 change。
 - 在真实执行进展发生后，用 `roadmap-sync` 做状态对齐。
-- 始终把 `Candidate Ideas` 和 `Planned Changes` 分开。
+- 始终让 `Planned Changes` 保持具体、可执行。
 - 如果 archive 状态不支持，不要手工把 milestone 当成 done。

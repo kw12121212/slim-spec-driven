@@ -17,6 +17,17 @@ that the change truly has no observable spec impact before continuing.
 After merging specs, `spec-driven-archive` MUST update `.spec-driven/specs/INDEX.md`
 for any created or deleted main spec files before archiving the change directory.
 
+### Requirement: archive-explicitly-splits-script-and-ai-responsibilities
+`spec-driven-archive` MUST explicitly tell the user which parts of the archive flow are
+performed by CLI scripts and which are performed by the AI.
+
+- CLI scripts are responsible for mechanical commands only, such as listing/selecting
+  active changes, reporting task completion state, and moving the change directory into
+  `archive/`.
+- The AI is responsible for workflow judgment and content edits, including blocking on
+  incomplete tasks, asking for empty-delta confirmation, merging delta specs into main
+  specs, updating `.spec-driven/specs/INDEX.md`, and summarizing the archive result.
+
 ### Requirement: cancel-requires-explicit-confirmation
 `spec-driven-cancel` MUST warn that cancellation permanently deletes the active change
 directory and MUST require explicit confirmation before running the delete command.

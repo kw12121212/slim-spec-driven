@@ -94,7 +94,7 @@ This repo uses its own workflow. To propose a change to this project:
 /spec-driven-apply     → implements tasks, marks [x]
 /spec-driven-verify    → checks completion and spec alignment
 /spec-driven-review    → reviews code quality
-/spec-driven-archive   → moves to archive/
+/spec-driven-archive   → AI merges delta specs + updates INDEX.md; archive command moves to archive/
 /spec-driven-auto      → runs the full workflow (propose→apply→verify→review→archive); suggests brainstorm for vague scope
 ```
 

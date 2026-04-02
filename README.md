@@ -25,7 +25,7 @@ When work spans multiple changes, the AI can maintain a roadmap under
 
 - `INDEX.md` tracks milestone ordering at a glance
 - Each milestone file defines a bounded stage with goal, done criteria,
-  candidate ideas, planned changes, dependencies, risks, and derived status
+  planned changes, dependencies, risks, and derived status
 - Milestone completion is derived from archived planned changes, not manual
   toggles
 
@@ -133,7 +133,7 @@ Choose based on the nature of your task:
 | Small issue, clear scope | **auto** (one-shot) | `/spec-driven-auto add user avatar` |
 | Regular ticket, defined requirements | **propose → apply → verify → archive** | `/spec-driven-propose` → `/spec-driven-apply` → ... |
 | Existing code is ahead of specs | **sync-specs** | `/spec-driven-sync-specs` |
-| Long-horizon planning across phases | **roadmap-plan → roadmap-milestone → roadmap-recommend → roadmap-propose → roadmap-sync** | `/roadmap-plan` → `/roadmap-milestone` → `/roadmap-recommend` → `/roadmap-propose` → `/roadmap-sync` |
+| Long-horizon planning across phases | **roadmap-plan → roadmap-milestone → roadmap-recommend → roadmap-sync** | `/roadmap-plan` → `/roadmap-milestone` → `/roadmap-recommend` → `/roadmap-sync` |
 | Fuzzy concept, needs exploration | **brainstorm → auto** | `/spec-driven-brainstorm` → confirm → `/spec-driven-auto` |
 
 ### 1. Auto Workflow (Small Issues)
@@ -159,7 +159,7 @@ For typical tasks with clear requirements but non-trivial implementation:
 
 Use `/spec-driven-modify` to adjust artifacts mid-flight, `/spec-driven-spec-content` to place spec content correctly, and `/spec-driven-sync-specs` when code has moved ahead of the specs and you need to catch them up.
 
-Use `/roadmap-plan`, `/roadmap-milestone`, `/roadmap-recommend`, `/roadmap-propose`, and `/roadmap-sync` when you need a persistent milestone-based roadmap above individual changes.
+Use `/roadmap-plan`, `/roadmap-milestone`, `/roadmap-recommend`, `/roadmap-propose`, and `/roadmap-sync` when you need a persistent milestone-based roadmap above individual changes. `roadmap-recommend` now behaves like a roadmap-specific brainstorm: after confirmation it scaffolds the accepted change directly, while `roadmap-propose` remains available as a direct path when the planned change is already chosen.
 
 ### 3. Sync Specs Workflow (Code Ahead of Spec)
 
@@ -200,10 +200,13 @@ boundaries:
 ```
 
 This creates and maintains `.spec-driven/roadmap/` as a milestone-based planning
-layer. Milestones separate `Candidate Ideas` from `Planned Changes`,
-`roadmap-recommend` recommends the next change to take, `roadmap-propose`
-turns planned work into a normal change scaffold, and completion is derived
-from whether the listed planned changes are archived.
+layer. Milestones keep a single `Planned Changes` work list,
+`roadmap-recommend` now recommends the next roadmap-backed change and, after
+explicit confirmation, scaffolds it directly into a normal change before asking
+the user to choose between `apply` and `auto` for execution. `roadmap-propose`
+remains available when the planned change is already known and the user wants
+to skip the recommendation step. Completion is derived from whether the listed
+planned changes are archived.
 
 See [ROADMAP_GUIDE.md](ROADMAP_GUIDE.md) for concrete examples, mid-flight edit
 patterns, and expected file-level effects.
@@ -221,9 +224,9 @@ init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose
 3. **propose** — read existing specs, scaffold all five artifacts, populate delta specs
 4. **apply** — implement tasks one by one; update delta specs to match what was built
 5. **verify** — check task completion, implementation evidence, spec format, and alignment
-6. **archive** — merge delta specs into `specs/` by file path, update INDEX.md, move to archive/
+6. **archive** — AI merges delta specs into `specs/` by file path and updates INDEX.md; the archive script then moves the change into `archive/`
 
-Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-propose**, and **roadmap-sync** for persistent milestone planning above the change layer. Use **modify** to refine any artifact mid-flight. Use **spec-content** when the content is clear but the correct spec category/file is not. Use **sync-specs** when the repository already contains behavior that needs to be reflected back into the specs. Use **cancel** to abandon a change.
+Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-propose**, and **roadmap-sync** for persistent milestone planning above the change layer. Use **roadmap-recommend** when you want a roadmap-specific brainstorm that recommends the next change and, after confirmation, scaffolds it directly. Use **roadmap-propose** when the planned change is already chosen and you want to scaffold it immediately. Use **modify** to refine any artifact mid-flight. Use **spec-content** when the content is clear but the correct spec category/file is not. Use **sync-specs** when the repository already contains behavior that needs to be reflected back into the specs. Use **cancel** to abandon a change.
 
 ## Skills
 
@@ -237,14 +240,14 @@ Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-pr
 | `/spec-driven-spec-content` | Read `specs/INDEX.md`, classify spec content, and place it in the correct delta spec file |
 | `/spec-driven-sync-specs` | Scan code and existing specs for drift, create a dedicated spec-only change, and report the gaps in chat |
 | `/roadmap-plan` | Create or restructure `.spec-driven/roadmap/` into milestone files with explicit stage goals |
-| `/roadmap-milestone` | Refine one milestone's goal, candidate ideas, planned changes, risks, and derived status |
-| `/roadmap-recommend` | Recommend the next roadmap-backed change for the user to accept or modify before any scaffold is created |
-| `/roadmap-propose` | Turn a milestone `Planned Changes` item into a normal change scaffold under `.spec-driven/changes/` |
+| `/roadmap-milestone` | Refine one milestone's goal, planned changes, risks, and derived status |
+| `/roadmap-recommend` | Recommend the next roadmap-backed change, then after confirmation scaffold it directly and offer an explicit `apply` vs `auto` execution handoff |
+| `/roadmap-propose` | Turn a milestone `Planned Changes` item into a normal change scaffold under `.spec-driven/changes/` when the planned change is already chosen |
 | `/roadmap-sync` | Reconcile roadmap milestone status against active and archived changes |
 | `/spec-driven-apply` | Implement tasks one by one, update delta specs when done |
 | `/spec-driven-verify` | Check completion, implementation evidence, and spec alignment |
 | `/spec-driven-review` | Review a completed change for code quality before archive |
-| `/spec-driven-archive` | Merge delta specs into specs/, update INDEX.md, move to archive/ |
+| `/spec-driven-archive` | AI merges delta specs and updates INDEX.md; script moves the change into archive/ |
 | `/spec-driven-cancel` | Permanently delete an in-progress change (with confirmation) |
 | `/spec-driven-auto` | Run full workflow automatically (propose → apply → verify → review → archive) with one confirmation checkpoint. For vague scope, suggests brainstorm first. |
 
@@ -293,7 +296,7 @@ continue refining.
 ├── roadmap/
 │   ├── INDEX.md             # Milestone ordering for long-horizon planning
 │   └── milestones/
-│       └── <milestone>.md   # Goal, done criteria, candidate ideas, planned changes, status
+│       └── <milestone>.md   # Goal, done criteria, planned changes, risks, status
 ├── specs/
 │   ├── INDEX.md             # Top-level index of all spec files
 │   ├── README.md            # Spec format and conventions

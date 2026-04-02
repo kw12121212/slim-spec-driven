@@ -118,7 +118,6 @@ For each roadmap milestone file, `verify-roadmap` MUST require the standard
 sections needed for scriptable roadmap validation:
 - `## Goal`
 - `## Done Criteria`
-- `## Candidate Ideas`
 - `## Planned Changes`
 - `## Dependencies / Risks`
 - `## Status`

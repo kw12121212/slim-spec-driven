@@ -38,8 +38,7 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    - the relevant main spec files the new change is likely to touch
 
 3. **Confirm it is already planned work** — verify that the selected name is
-   present under a milestone `## Planned Changes` section. Do not silently
-   promote items from `Candidate Ideas`.
+   present under a milestone `## Planned Changes` section before scaffolding.
 
 4. **Scaffold the change** — run:
    ```
@@ -62,14 +61,16 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    ```
    If the command reports repairable format issues, fix them and rerun verify.
 
-7. **Confirm the handoff** — report the new change path, note which milestone it
-   came from, and suggest `/spec-driven-apply <name>` or `/spec-driven-auto` for
-   execution.
+7. **Offer the execution handoff** — report the new change path, note which
+   milestone it came from, surface any open questions that must be resolved
+   before implementation, and ask the user whether they want to:
+   - enter `/spec-driven-apply <name>` for the stepwise execution path
+   - enter `/spec-driven-auto` for the end-to-end execution path
+   Do not auto-enter either execution path without the user's explicit choice.
 
 ## Rules
 
 - This skill creates planning artifacts only — do not implement product code
-- Only turn `Planned Changes` into change scaffolds; do not auto-promote
-  `Candidate Ideas`
+- Only turn `Planned Changes` into change scaffolds
 - Create the same five artifacts as `spec-driven-propose`
 - Before finishing, rerun `verify` until all repairable format issues are fixed

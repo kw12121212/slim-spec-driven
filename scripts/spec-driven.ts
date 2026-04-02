@@ -459,7 +459,6 @@ function roadmapStatus() {
   const requiredSections = [
     "Goal",
     "Done Criteria",
-    "Candidate Ideas",
     "Planned Changes",
     "Dependencies / Risks",
     "Status",
@@ -504,7 +503,6 @@ function verifyRoadmap() {
     file: string;
     goal: string;
     doneCriteria: number;
-    candidateIdeas: number;
     plannedChanges: number;
     status: string;
   }> = [];
@@ -531,7 +529,6 @@ function verifyRoadmap() {
   const requiredSections = [
     "Goal",
     "Done Criteria",
-    "Candidate Ideas",
     "Planned Changes",
     "Dependencies / Risks",
     "Status",
@@ -547,12 +544,11 @@ function verifyRoadmap() {
     }
 
     const doneCriteria = countBulletItems(sections.get("Done Criteria"));
-    const candidateIdeas = countBulletItems(sections.get("Candidate Ideas"));
     const plannedChanges = countBulletItems(sections.get("Planned Changes"));
     const status = firstNonEmptyLine(sections.get("Status"));
     const goal = firstNonEmptyLine(sections.get("Goal"));
 
-    milestones.push({ file, goal, doneCriteria, candidateIdeas, plannedChanges, status });
+    milestones.push({ file, goal, doneCriteria, plannedChanges, status });
 
     if (plannedChanges > 5) {
       errors.push(`roadmap/milestones/${file} has ${plannedChanges} planned changes; split it into smaller milestones`);

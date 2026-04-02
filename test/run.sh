@@ -107,9 +107,6 @@ Ship the first roadmap milestone
 - Roadmap scaffold exists
 - Validation exists
 
-## Candidate Ideas
-- roadmap priority scoring
-
 ## Planned Changes
 - add-roadmap-milestones
 - add-roadmap-size-validation
@@ -143,9 +140,6 @@ Detect missing change references
 ## Done Criteria
 - status command exists
 
-## Candidate Ideas
-- future cleanup
-
 ## Planned Changes
 - nonexistent-change
 
@@ -168,9 +162,6 @@ Too much work in one stage
 
 ## Done Criteria
 - Everything ships
-
-## Candidate Ideas
-- optional cleanup
 
 ## Planned Changes
 - change-1

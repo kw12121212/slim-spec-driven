@@ -44,8 +44,7 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
 3. **Converge on milestone boundaries before writing** — help the user settle:
    - milestone names and ordering
    - each milestone's goal and done criteria
-   - which items are still `Candidate Ideas`
-   - which items are concrete `Planned Changes`
+   - which concrete `Planned Changes` belong in each milestone
    - key dependencies, risks, and sequencing
 
 4. **Confirm the roadmap shape** — before editing files, summarize the intended
@@ -56,14 +55,14 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    - `.spec-driven/roadmap/milestones/<milestone>.md` for each milestone in scope
 
 6. **Preserve roadmap rules** — in every milestone file:
-   - keep `Candidate Ideas` separate from `Planned Changes`
    - use these standard section headings:
      - `## Goal`
      - `## Done Criteria`
-     - `## Candidate Ideas`
      - `## Planned Changes`
      - `## Dependencies / Risks`
      - `## Status`
+   - treat `Planned Changes` as the milestone's only work list and keep it
+     limited to concrete approved change work
    - derive milestone completion from archived planned changes rather than
      manual toggles
 
@@ -76,8 +75,8 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    - Do not present the roadmap as ready while size validation fails
 
 8. **Summarize the result** — report the milestone structure created or changed,
-   what moved between candidate ideas and planned changes, and any remaining
-   planning gaps.
+   what planned work was assigned to each milestone, and any remaining planning
+   gaps.
 
 ## Rules
 

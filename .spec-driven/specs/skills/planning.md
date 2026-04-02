@@ -36,16 +36,35 @@ files.
 `spec-driven-propose`: `proposal.md`, `specs/`, `design.md`, `tasks.md`, and
 `questions.md`. It MUST NOT implement product code while doing so.
 
+### Requirement: roadmap-propose-offers-execution-handoff-choice
+After presenting the new change and any open questions, `roadmap-propose`
+MUST ask the user whether to enter the stepwise execution path with
+`/spec-driven-apply <name>` or the end-to-end execution path with
+`/spec-driven-auto`. It MUST NOT auto-enter either execution path without the
+user's explicit choice.
+
 ### Requirement: roadmap-recommend-reads-roadmap-context-before-recommending
 `roadmap-recommend` MUST read `.spec-driven/config.yaml`,
 `.spec-driven/roadmap/INDEX.md`, the relevant milestone files, and
 `.spec-driven/specs/INDEX.md` before it recommends a change.
 
-### Requirement: roadmap-recommend-confirms-before-handoff
+### Requirement: roadmap-recommend-confirms-before-scaffolding
 `roadmap-recommend` MUST recommend a candidate change name and explain the
-reasoning, but it MUST NOT scaffold proposal artifacts. It MUST wait for the
-user to accept or modify the recommendation before handing off to
-`roadmap-propose`.
+reasoning, summarize the intended roadmap-backed change, and wait for the user
+to accept or modify the recommendation before it scaffolds proposal artifacts.
+
+### Requirement: roadmap-recommend-produces-standard-change-artifacts
+After confirmation, `roadmap-recommend` MUST create the same five artifacts as
+`spec-driven-propose`: `proposal.md`, `specs/`, `design.md`, `tasks.md`, and
+`questions.md`. It MUST follow the same validation standard as
+`roadmap-propose` and MUST NOT implement product code while doing so.
+
+### Requirement: roadmap-recommend-offers-execution-handoff
+After presenting the new change and any open questions, `roadmap-recommend`
+MUST ask the user whether to enter the stepwise execution path with
+`/spec-driven-apply <name>` or the end-to-end execution path with
+`/spec-driven-auto`. It MUST NOT auto-enter either execution path without the
+user's explicit choice.
 
 ### Requirement: propose-scaffolds-five-artifacts
 `spec-driven-propose` MUST scaffold a new change with `proposal.md`, `specs/`,

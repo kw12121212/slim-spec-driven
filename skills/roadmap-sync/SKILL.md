@@ -47,8 +47,6 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    based on the repository evidence you found.
 
 4. **Preserve roadmap rules** — during sync:
-   - do not convert candidate ideas into planned changes unless the repository
-     evidence clearly shows they now exist as concrete changes
    - do not mark a milestone complete unless every listed planned change is
      archived
    - keep the roadmap as planning state, not an implementation log
