@@ -133,7 +133,7 @@ Choose based on the nature of your task:
 | Small issue, clear scope | **auto** (one-shot) | `/spec-driven-auto add user avatar` |
 | Regular ticket, defined requirements | **propose → apply → verify → archive** | `/spec-driven-propose` → `/spec-driven-apply` → ... |
 | Existing code is ahead of specs | **sync-specs** | `/spec-driven-sync-specs` |
-| Long-horizon planning across phases | **roadmap-plan → roadmap-milestone → roadmap-sync** | `/spec-driven-roadmap-plan` → `/spec-driven-roadmap-milestone` → `/spec-driven-roadmap-sync` |
+| Long-horizon planning across phases | **roadmap-plan → roadmap-milestone → roadmap-sync** | `/roadmap-plan` → `/roadmap-milestone` → `/roadmap-sync` |
 | Fuzzy concept, needs exploration | **brainstorm → auto** | `/spec-driven-brainstorm` → confirm → `/spec-driven-auto` |
 
 ### 1. Auto Workflow (Small Issues)
@@ -159,7 +159,7 @@ For typical tasks with clear requirements but non-trivial implementation:
 
 Use `/spec-driven-modify` to adjust artifacts mid-flight, `/spec-driven-spec-content` to place spec content correctly, and `/spec-driven-sync-specs` when code has moved ahead of the specs and you need to catch them up.
 
-Use `/spec-driven-roadmap-plan`, `/spec-driven-roadmap-milestone`, and `/spec-driven-roadmap-sync` when you need a persistent milestone-based roadmap above individual changes.
+Use `/roadmap-plan`, `/roadmap-milestone`, and `/roadmap-sync` when you need a persistent milestone-based roadmap above individual changes.
 
 ### 3. Sync Specs Workflow (Code Ahead of Spec)
 
@@ -192,9 +192,9 @@ For long-horizon planning that spans multiple changes and needs durable stage
 boundaries:
 
 ```bash
-/spec-driven-roadmap-plan
-/spec-driven-roadmap-milestone
-/spec-driven-roadmap-sync
+/roadmap-plan
+/roadmap-milestone
+/roadmap-sync
 ```
 
 This creates and maintains `.spec-driven/roadmap/` as a milestone-based planning
@@ -232,9 +232,9 @@ Use **roadmap-plan**, **roadmap-milestone**, and **roadmap-sync** for persistent
 | `/spec-driven-modify` | Edit an existing change artifact |
 | `/spec-driven-spec-content` | Read `specs/INDEX.md`, classify spec content, and place it in the correct delta spec file |
 | `/spec-driven-sync-specs` | Scan code and existing specs for drift, create a dedicated spec-only change, and report the gaps in chat |
-| `/spec-driven-roadmap-plan` | Create or restructure `.spec-driven/roadmap/` into milestone files with explicit stage goals |
-| `/spec-driven-roadmap-milestone` | Refine one milestone's goal, candidate ideas, planned changes, risks, and derived status |
-| `/spec-driven-roadmap-sync` | Reconcile roadmap milestone status against active and archived changes |
+| `/roadmap-plan` | Create or restructure `.spec-driven/roadmap/` into milestone files with explicit stage goals |
+| `/roadmap-milestone` | Refine one milestone's goal, candidate ideas, planned changes, risks, and derived status |
+| `/roadmap-sync` | Reconcile roadmap milestone status against active and archived changes |
 | `/spec-driven-apply` | Implement tasks one by one, update delta specs when done |
 | `/spec-driven-verify` | Check completion, implementation evidence, and spec alignment |
 | `/spec-driven-review` | Review a completed change for code quality before archive |

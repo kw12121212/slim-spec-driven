@@ -58,7 +58,7 @@ remaining as a single stage.
   split the milestone
 
 ### Requirement: roadmap-plan-builds-or-restructures-milestones
-`spec-driven-roadmap-plan` MUST help the user create or restructure the roadmap
+`roadmap-plan` MUST help the user create or restructure the roadmap
 into milestone files with explicit phase goals, milestone boundaries, candidate
 ideas, and planned changes. Before writing or rewriting roadmap assets, it MUST
 read `.spec-driven/config.yaml`, any existing roadmap files, relevant specs, and
@@ -66,20 +66,20 @@ the currently active or archived changes needed to understand the repository's
 present state.
 
 ### Requirement: roadmap-milestone-refines-one-milestone-without-collapsing-the-roadmap
-`spec-driven-roadmap-milestone` MUST focus on one milestone at a time. It MUST
+`roadmap-milestone` MUST focus on one milestone at a time. It MUST
 refine that milestone's goal, done criteria, candidate ideas, planned changes,
 dependencies, and risks without collapsing multiple milestones into one oversized
 document.
 
 ### Requirement: roadmap-sync-reconciles-roadmap-state-with-change-history
-`spec-driven-roadmap-sync` MUST read roadmap milestone files together with
+`roadmap-sync` MUST read roadmap milestone files together with
 `.spec-driven/changes/` and `.spec-driven/changes/archive/` to reconcile status
 and listed change state. It MUST update roadmap status based on repository
 evidence rather than preserving stale manual labels.
 
 ### Requirement: roadmap-skills-run-size-validation-before-finish
-After `spec-driven-roadmap-plan`, `spec-driven-roadmap-milestone`, or
-`spec-driven-roadmap-sync` edit roadmap files, they MUST run the roadmap
+After `roadmap-plan`, `roadmap-milestone`, or `roadmap-sync` edit roadmap
+files, they MUST run the roadmap
 validation command. If roadmap validation reports that a milestone is too large,
 the skill MUST stop and tell the user to split the milestone rather than
 presenting the roadmap as ready.

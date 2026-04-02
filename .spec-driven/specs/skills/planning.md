@@ -14,14 +14,14 @@ After initialization, `spec-driven-init` MUST help draft a concise `context` val
 initial current-state specs under `.spec-driven/specs/`.
 
 ### Requirement: roadmap-skills-read-roadmap-context-before-editing
-`spec-driven-roadmap-plan`, `spec-driven-roadmap-milestone`, and
-`spec-driven-roadmap-sync` MUST read `.spec-driven/config.yaml`, existing
+`roadmap-plan`, `roadmap-milestone`, and `roadmap-sync` MUST read
+`.spec-driven/config.yaml`, existing
 `.spec-driven/roadmap/INDEX.md` and relevant milestone files when present, and
 the active or archived changes needed to understand current execution state
 before they decide what roadmap updates to make.
 
 ### Requirement: roadmap-plan-confirms-milestone-structure-before-writing
-Before `spec-driven-roadmap-plan` creates or substantially restructures roadmap
+Before `roadmap-plan` creates or substantially restructures roadmap
 artifacts, it MUST converge with the user on milestone boundaries, stage goals,
 and completion criteria, then confirm the intended roadmap shape before writing
 files.

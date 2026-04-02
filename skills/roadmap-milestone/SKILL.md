@@ -1,6 +1,6 @@
 ---
-skill_id: spec_driven_roadmap_milestone
-name: spec-driven-roadmap-milestone
+skill_id: roadmap_milestone
+name: roadmap-milestone
 description: Refine one roadmap milestone's goal, candidate ideas, planned changes, and derived status.
 author: auto-spec-driven
 type: agent_skill

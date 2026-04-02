@@ -1,6 +1,6 @@
 ---
-skill_id: spec_driven_roadmap_plan
-name: spec-driven-roadmap-plan
+skill_id: roadmap_plan
+name: roadmap-plan
 description: Create or restructure a persistent milestone-based roadmap under .spec-driven/roadmap/.
 author: auto-spec-driven
 type: agent_skill

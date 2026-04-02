@@ -32,7 +32,7 @@ Do not use roadmap files as a replacement for:
 
 ## The Three Skills
 
-### `/spec-driven-roadmap-plan`
+### `/roadmap-plan`
 
 Use this when you want to create or restructure the whole roadmap.
 
@@ -45,7 +45,7 @@ Typical uses:
 Example:
 
 ```bash
-/spec-driven-roadmap-plan 我想把 auto-spec-driven 的后续工作拆成 foundation、adoption、scale 三个 milestone
+/roadmap-plan 我想把 auto-spec-driven 的后续工作拆成 foundation、adoption、scale 三个 milestone
 ```
 
 Expected effect:
@@ -53,7 +53,7 @@ Expected effect:
 - creates or updates multiple files under `.spec-driven/roadmap/milestones/`
 - separates stage goals from concrete execution work
 
-### `/spec-driven-roadmap-milestone`
+### `/roadmap-milestone`
 
 Use this when you only want to refine one milestone.
 
@@ -67,7 +67,7 @@ Typical uses:
 Example:
 
 ```bash
-/spec-driven-roadmap-milestone 调整 m2-adoption，把 plugin marketplace 提前，把 telemetry 推迟到 m3-scale
+/roadmap-milestone 调整 m2-adoption，把 plugin marketplace 提前，把 telemetry 推迟到 m3-scale
 ```
 
 Expected effect:
@@ -75,7 +75,7 @@ Expected effect:
 - keeps the rest of the roadmap stable
 - preserves milestone-local planning instead of rewriting the whole roadmap
 
-### `/spec-driven-roadmap-sync`
+### `/roadmap-sync`
 
 Use this when roadmap files and real execution history may have drifted apart.
 
@@ -88,7 +88,7 @@ Typical uses:
 Example:
 
 ```bash
-/spec-driven-roadmap-sync
+/roadmap-sync
 ```
 
 Expected effect:
@@ -140,7 +140,7 @@ Suppose you want three stages:
 You might start with:
 
 ```bash
-/spec-driven-roadmap-plan 我想按 foundation、adoption、scale 三个 milestone 规划这个仓库
+/roadmap-plan 我想按 foundation、adoption、scale 三个 milestone 规划这个仓库
 ```
 
 After the skill runs, you would typically get:
@@ -194,7 +194,7 @@ If you want to split one milestone into two, reorder the phases, or rename the
 stages, use:
 
 ```bash
-/spec-driven-roadmap-plan 把现有 roadmap 从 3 个 milestone 改成 4 个，并重排顺序
+/roadmap-plan 把现有 roadmap 从 3 个 milestone 改成 4 个，并重排顺序
 ```
 
 This is the right tool for structural changes across the roadmap.
@@ -209,7 +209,7 @@ If you want to:
 use:
 
 ```bash
-/spec-driven-roadmap-milestone 调整 m1-foundation，把 roadmap priority scoring 保留在 candidate ideas，新增 improve-readme-onboarding 到 planned changes
+/roadmap-milestone 调整 m1-foundation，把 roadmap priority scoring 保留在 candidate ideas，新增 improve-readme-onboarding 到 planned changes
 ```
 
 This is the right tool for local edits.
@@ -219,7 +219,7 @@ This is the right tool for local edits.
 If some changes have already been archived or are still active, run:
 
 ```bash
-/spec-driven-roadmap-sync
+/roadmap-sync
 ```
 
 This is the right tool for status reconciliation.
@@ -261,13 +261,13 @@ This rule is intentional. It keeps the roadmap tied to repository reality.
 1. Plan the roadmap:
 
 ```bash
-/spec-driven-roadmap-plan 为 CLI、workflow、distribution 三个阶段建立 roadmap
+/roadmap-plan 为 CLI、workflow、distribution 三个阶段建立 roadmap
 ```
 
 2. Refine the first milestone:
 
 ```bash
-/spec-driven-roadmap-milestone 细化 m1-cli，把 migrate polish 保留为 candidate idea，把 add-roadmap-milestones 作为 planned change
+/roadmap-milestone 细化 m1-cli，把 migrate polish 保留为 candidate idea，把 add-roadmap-milestones 作为 planned change
 ```
 
 3. Turn planned work into a normal change:
@@ -280,7 +280,7 @@ This rule is intentional. It keeps the roadmap tied to repository reality.
 4. After archive, sync roadmap state:
 
 ```bash
-/spec-driven-roadmap-sync
+/roadmap-sync
 ```
 
 Expected result:

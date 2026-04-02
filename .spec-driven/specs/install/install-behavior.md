@@ -10,10 +10,9 @@ agent store and create the same CLI symlinks for it as for the other bundled
 `spec-driven-*` skills.
 
 ### Requirement: install-includes-roadmap-skills
-The installer MUST copy the shipped `spec-driven-roadmap-plan`,
-`spec-driven-roadmap-milestone`, and `spec-driven-roadmap-sync` skills into the
-agent store and create the same CLI symlinks for them as for the other bundled
-`spec-driven-*` skills.
+The installer MUST copy the shipped `roadmap-plan`, `roadmap-milestone`, and
+`roadmap-sync` skills into the agent store and create the same CLI symlinks for
+them as for the other bundled skills.
 
 ### Requirement: cli-symlinks
 The installer MUST create symlinks from CLI-specific directories into the agent store:

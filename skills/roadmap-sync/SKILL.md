@@ -1,6 +1,6 @@
 ---
-skill_id: spec_driven_roadmap_sync
-name: spec-driven-roadmap-sync
+skill_id: roadmap_sync
+name: roadmap-sync
 description: Reconcile roadmap milestone state against active and archived changes.
 author: auto-spec-driven
 type: agent_skill

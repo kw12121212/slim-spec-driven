@@ -44,7 +44,7 @@ intended project root.
 
    This step is important for existing projects — without initial specs, `propose` has nothing to read and cannot detect conflicts.
 
-5. **Confirm** — show the user what was created and suggest running `/spec-driven-propose` to create their first change.
+5. **Confirm** — show the user what was created and suggest running `/roadmap-plan` to shape the roadmap or `/spec-driven-propose` to create the first change.
 
 ## Rules
 - Do not create any changes — initialization only

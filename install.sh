@@ -8,9 +8,9 @@ SKILLS=(
   spec-driven-modify
   spec-driven-spec-content
   spec-driven-sync-specs
-  spec-driven-roadmap-plan
-  spec-driven-roadmap-milestone
-  spec-driven-roadmap-sync
+  roadmap-plan
+  roadmap-milestone
+  roadmap-sync
   spec-driven-apply
   spec-driven-verify
   spec-driven-archive
