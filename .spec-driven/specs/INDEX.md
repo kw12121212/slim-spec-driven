@@ -1,15 +1,15 @@
 # Specs Index
 
 ## install
-- [install-behavior.md](install/install-behavior.md) — install modes (global/project-local), CLI targeting, uninstall behavior
+- [install-behavior.md](install/install-behavior.md) - Install Behavior
 
 ## scripts
-- [behavior.md](scripts/behavior.md) — CLI subcommands: propose, modify, apply, verify, archive, cancel, init, run-maintenance, migrate
+- [behavior.md](scripts/behavior.md) - Scripts Behavior
 
 ## skills
-- [execution.md](skills/execution.md) — implementation, verification, and review behaviors for apply/verify/review
-- [lifecycle.md](skills/lifecycle.md) — archive, cancel, and end-to-end auto workflow behaviors
-- [maintenance.md](skills/maintenance.md) — manual maintenance execution behaviors for explicit safe auto-fixes
-- [planning.md](skills/planning.md) — initialization, proposal, and change-modification behaviors
-- [roadmap.md](skills/roadmap.md) — roadmap assets, milestone structure, and roadmap skill behaviors
-- [workflow.md](skills/workflow.md) — cross-skill workflow invariants and blocking rules
+- [execution.md](skills/execution.md) - Skills Execution
+- [lifecycle.md](skills/lifecycle.md) - Skills Lifecycle
+- [maintenance.md](skills/maintenance.md) - Skills Maintenance
+- [planning.md](skills/planning.md) - Skills Planning
+- [roadmap.md](skills/roadmap.md) - Skills Roadmap
+- [workflow.md](skills/workflow.md) - Skills Workflow
