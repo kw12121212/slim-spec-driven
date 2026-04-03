@@ -174,16 +174,15 @@ For each bullet under `## Planned Changes`, `verify-roadmap` MUST require the
 canonical entry format `- \`<change-name>\` - <summary>`.
 
 `<change-name>` MUST match the change naming rule
-`^[a-z0-9]+(-[a-z0-9]+)*$`. `<summary>` MUST be present and non-empty.
+`^[a-z0-9]+(-[a-z0-9]+)*$`. `<summary>` MUST be present, non-empty, and fully
+contained on the same line as the planned change bullet.
 
-If a planned change bullet omits the summary, uses a malformed change name, or
-does not follow the canonical format, the command MUST report the milestone as
-invalid.
+If a planned change bullet omits the summary, uses a malformed change name,
+does not follow the canonical format, or is followed by attached indented
+continuation lines, the command MUST report the milestone as invalid.
 
-Indented continuation lines MAY appear below a valid top-level planned change
-entry. They MUST belong to the immediately preceding planned change entry.
-Non-empty detail lines under `## Planned Changes` that are not indented and are
-not valid top-level planned change bullets MUST be reported as invalid.
+Any non-empty line under `## Planned Changes` that is not itself a valid
+top-level planned change bullet MUST be reported as invalid.
 
 #### Scenario: described-planned-change-is-valid
 - GIVEN a milestone lists a planned change entry in the form
@@ -193,12 +192,12 @@ not valid top-level planned change bullets MUST be reported as invalid.
 - AND `roadmap-status` can still resolve the change by the name
   `define-generated-artifact-schemas`
 
-#### Scenario: multiline-planned-change-detail-is-valid
+#### Scenario: multiline-planned-change-detail-is-invalid
 - GIVEN a milestone lists a valid planned change first line
 - AND one or more indented continuation lines immediately below it
 - WHEN `verify-roadmap` validates the file
-- THEN the milestone remains valid
-- AND `roadmap-status` resolves the planned change by the top-level first line
+- THEN the milestone is reported as invalid
+- AND the result explains that planned change descriptions must remain single-line
 
 ### Requirement: verify-roadmap-rejects-oversized-milestones
 If a roadmap milestone contains more than 5 bullet items under
@@ -226,9 +225,9 @@ When milestone files use planned change bullets in the canonical format
 the `<change-name>` portion and MUST ignore the trailing summary when matching
 active or archived changes.
 
-If a planned change entry includes additional indented continuation lines below
-that canonical first line, `roadmap-status` and archive reconciliation MUST
-continue to resolve roadmap state from the top-level first line only.
+`roadmap-status` and archive reconciliation MUST treat multiline planned change
+detail as invalid roadmap input rather than as attached metadata belonging to a
+valid planned change entry.
 
 ### Requirement: roadmap-status-includes-derived-status-and-mismatches
 For each roadmap milestone, `roadmap-status` MUST report the declared roadmap

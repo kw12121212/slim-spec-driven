@@ -44,9 +44,9 @@ combined `## Dependencies / Risks`, or missing scope and notes sections.
 `.spec-driven/roadmap/INDEX.md`, the relevant milestone file, and
 `.spec-driven/specs/INDEX.md` before it scaffolds a change.
 
-When the selected roadmap item includes indented continuation lines under the
-planned change entry, `roadmap-propose` MUST treat those detail lines as part of
-the planning context it reads before drafting artifacts.
+`roadmap-propose` MUST treat planned change entries as single-line roadmap input
+when reading milestone context. It MUST NOT rely on attached continuation lines
+under `## Planned Changes` as part of the planning context.
 
 ### Requirement: roadmap-propose-creates-standard-change-artifacts
 `roadmap-propose` MUST create the same five artifacts as
@@ -65,10 +65,9 @@ user's explicit choice.
 `.spec-driven/roadmap/INDEX.md`, the relevant milestone files, and
 `.spec-driven/specs/INDEX.md` before it recommends a change.
 
-When a candidate roadmap item includes indented continuation lines under the
-planned change entry, `roadmap-recommend` MUST treat those detail lines as part
-of the roadmap context it reads before making and summarizing the
-recommendation.
+`roadmap-recommend` MUST treat planned change entries as single-line roadmap
+input when reading milestone context. It MUST NOT rely on attached continuation
+lines under `## Planned Changes` as part of the recommendation context.
 
 ### Requirement: roadmap-recommend-confirms-before-scaffolding
 `roadmap-recommend` MUST recommend a candidate change name and explain the

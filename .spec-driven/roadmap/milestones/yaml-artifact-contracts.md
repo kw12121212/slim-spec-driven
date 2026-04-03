@@ -19,12 +19,8 @@ Define a strict, machine-checkable YAML contract for skill-generated planning ar
 - Validation failure behavior is specified at the artifact level so later script work can reject malformed content consistently.
 
 ## Planned Changes
-- `define-generated-artifact-schemas` - define the YAML-backed field schema for generated planning artifacts
-  Covers which artifact families participate first and which fields are required,
-  optional, or enum-constrained.
-- `spec-generated-document-validation-rules` - specify how malformed generated documents are reported and rejected
-  Clarifies repository-visible failure behavior so later CLI validation can stay
-  deterministic.
+- `define-generated-artifact-schemas` - define the YAML-backed field schema for generated planning artifacts, including which artifact families participate first and which fields are required, optional, or enum-constrained.
+- `spec-generated-document-validation-rules` - specify how malformed generated documents are reported and rejected so later CLI validation can stay deterministic.
 
 ## Dependencies
 - The contract should stay aligned with existing skill outputs so rollout does not immediately break all planning flows.

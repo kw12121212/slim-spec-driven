@@ -39,12 +39,9 @@ files MUST NOT use that section as a speculative backlog of unapproved ideas.
 Each planned change entry MUST use the canonical bullet format
 `- \`<change-name>\` - <summary>`.
 `<change-name>` MUST be the kebab-case change identifier. `<summary>` MUST be a
-short human-readable explanation of why that change belongs in the milestone.
-
-After that canonical first line, a planned change entry MAY include additional
-indented detail lines to capture richer milestone-local context. Those detail
-lines belong to the preceding planned change entry and MUST NOT introduce a new
-planned change unless they start a new top-level bullet.
+single-line human-readable explanation of why that change belongs in the
+milestone. Planned change entries MUST NOT include attached continuation lines
+or other multiline detail below the canonical bullet.
 
 ### Requirement: milestone-files-capture-stage-goals-and-risks
 Each roadmap milestone file MUST record the milestone goal, in-scope boundary,
@@ -135,9 +132,10 @@ planned changes. Before writing or rewriting roadmap assets, it MUST read
 currently active or archived changes needed to understand the repository's
 present state.
 
-When a planned change is complex enough that one summary line would leave the
-handoff underspecified, `roadmap-plan` SHOULD add indented continuation lines
-under that planned change entry to capture milestone-local detail.
+When milestone-local context is too large for one planned change summary line,
+`roadmap-plan` MUST keep the planned change entry itself single-line and place
+additional explanation elsewhere in the milestone file, such as `## Notes`,
+rather than adding attached continuation lines under `## Planned Changes`.
 
 When existing milestone files use an older structure, such as an extra
 `## Candidate Ideas` section, a combined `## Dependencies / Risks` section, or
@@ -161,9 +159,10 @@ instead of pretending the migration is exact.
 refine that milestone's goal, done criteria, planned changes, dependencies, and
 risks without collapsing multiple milestones into one oversized document.
 
-When a planned change needs more than the canonical first line to capture useful
-planning context, `roadmap-milestone` SHOULD add indented continuation lines
-that stay attached to that planned change entry.
+When a milestone author needs more context than one planned change summary line
+can carry, `roadmap-milestone` MUST preserve the planned change as a single-line
+entry and move additional explanation to another milestone section instead of
+adding attached continuation lines.
 
 When the user wants to migrate only one legacy milestone instead of
 restructuring the wider roadmap, `roadmap-milestone` MAY be used as a narrower
@@ -195,21 +194,14 @@ change scaffold under `.spec-driven/changes/<name>/`. It MUST require the target
 work item to already appear under a milestone `## Planned Changes` section
 before scaffolding.
 
-When the selected planned change entry includes indented continuation lines,
-`roadmap-propose` MUST read that attached detail block and use it as planning
-input while drafting the change proposal artifacts.
+`roadmap-propose` MUST treat each planned change entry as a single-line roadmap
+input. It MUST NOT depend on attached continuation lines below the planned
+change bullet when drafting change proposal artifacts.
 
 #### Scenario: planned-change-becomes-change-scaffold
 - GIVEN a roadmap milestone lists `add-auth-audit-log` under `## Planned Changes`
 - WHEN `roadmap-propose add-auth-audit-log` is used
 - THEN `.spec-driven/changes/add-auth-audit-log/` is scaffolded as a normal change
-
-#### Scenario: roadmap-propose-uses-planned-change-detail-block
-- GIVEN a milestone planned change entry has a canonical first line plus
-  indented detail lines
-- WHEN `roadmap-propose` scaffolds that change
-- THEN it uses the detail block as planning input for the generated proposal
-  artifacts
 
 ### Requirement: roadmap-workflow-can-handoff-from-milestone-to-change
 The roadmap workflow MUST support an explicit handoff from milestone planning to
@@ -230,22 +222,15 @@ proposed change name, the milestone it comes from, and why it is a good next
 step. The recommended candidate MUST already exist under a milestone
 `## Planned Changes` section.
 
-When the recommended planned change entry includes indented continuation lines,
-`roadmap-recommend` MUST use that attached detail block while explaining the
-recommendation and while summarizing the proposed roadmap-backed change before
-scaffolding.
+`roadmap-recommend` MUST treat each planned change entry as a single-line roadmap
+input. It MUST NOT depend on attached continuation lines below the planned
+change bullet when explaining or summarizing the recommended change.
 
 #### Scenario: recommend-a-planned-change
 - GIVEN a milestone contains multiple `Planned Changes`
 - WHEN `roadmap-recommend` is used
 - THEN it recommends one candidate change and explains the recommendation before
   any scaffolding occurs
-
-#### Scenario: roadmap-recommend-uses-planned-change-detail-block
-- GIVEN a recommended roadmap item has a canonical first line plus indented
-  detail lines
-- WHEN `roadmap-recommend` explains why it should come next
-- THEN the recommendation summary uses that detail block as supporting context
 
 ### Requirement: roadmap-recommend-scaffolds-accepted-recommendation
 After the user accepts or revises the recommendation, `roadmap-recommend`

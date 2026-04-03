@@ -122,10 +122,8 @@ Ship the first roadmap milestone
 - Validation exists
 
 ## Planned Changes
-- `add-roadmap-milestones` - create the milestone-based roadmap scaffold
-  This is the foundational roadmap change that establishes milestone files.
-- `add-roadmap-size-validation` - validate milestone structure and bounded size
-  It ensures oversized milestones are rejected before roadmap work drifts.
+- `add-roadmap-milestones` - create the milestone-based roadmap scaffold that establishes milestone files.
+- `add-roadmap-size-validation` - validate milestone structure and bounded size so oversized milestones are rejected before roadmap work drifts.
 
 ## Dependencies
 - roadmap must stay separate from changes
@@ -176,8 +174,7 @@ Detect missing change references
 - status command exists
 
 ## Planned Changes
-- `nonexistent-change` - exercise mismatch reporting when the change is missing
-  The change name is intentionally absent from both active and archived change state.
+- `nonexistent-change` - exercise mismatch reporting when the change is missing from both active and archived change state.
 
 ## Dependencies
 - planned change names must stay aligned with real change directories
@@ -200,16 +197,16 @@ cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m6-multiline.md"
 # m6-multiline
 
 ## Goal
-Accept richer planned change details
+Reject multiline planned change details
 
 ## In Scope
-- allow indented detail lines under a valid planned change entry
+- verify that indented detail lines under a valid planned change entry are rejected
 
 ## Out of Scope
-- freeform planned change prose without a canonical first line
+- accepting multiline planned change prose after a canonical first line
 
 ## Done Criteria
-- roadmap validation accepts multiline planned change entries
+- roadmap validation rejects multiline planned change entries
 
 ## Planned Changes
 - `multiline-change` - keep a parseable first line while allowing extra context
@@ -226,7 +223,7 @@ Accept richer planned change details
 - Declared: proposed
 
 ## Notes
-- This fixture verifies multiline planned change detail support.
+- This fixture verifies multiline planned change detail rejection.
 EOF
 
 cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/INDEX.md"
@@ -237,12 +234,14 @@ cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/INDEX.md"
 EOF
 
 out=$($CLI verify-roadmap "$ROADMAP_DIR" 2>&1)
-assert_json_field "verify-roadmap accepts multiline planned change details" "valid" "true" "$out"
+assert_json_field "verify-roadmap rejects multiline planned change details" "valid" "false" "$out"
+assert_contains "verify-roadmap reports multiline single-line guidance" "single line" "$out"
 
-mkdir -p "$ROADMAP_DIR/.spec-driven/changes/multiline-change"
 out=$($CLI roadmap-status "$ROADMAP_DIR" 2>&1)
-assert_contains "roadmap-status resolves multiline planned change by name" '"name": "multiline-change"' "$out"
-assert_contains "roadmap-status marks multiline planned change active" '"state": "active"' "$out"
+assert_json_field "roadmap-status rejects multiline planned change details" "valid" "false" "$out"
+assert_contains "roadmap-status reports multiline planned change format guidance" "single line" "$out"
+
+rm "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m6-multiline.md"
 
 cat <<'EOF' > "$ROADMAP_DIR/.spec-driven/roadmap/milestones/m2-too-large.md"
 # m2-too-large

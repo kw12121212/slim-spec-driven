@@ -33,8 +33,8 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
     - `.spec-driven/specs/INDEX.md`
     - the relevant main spec files the recommended change is likely to touch
     - `node {{SKILL_DIR}}/scripts/spec-driven.js roadmap-status`
-    - the full planned change entries for the candidates you are considering,
-      including any indented detail lines attached to their canonical first lines
+    - the planned change entries for the candidates you are considering as
+      single-line roadmap items
 
 2. **Understand what the user wants optimized** — determine whether the user
    wants the next change chosen for impact, urgency, dependency order, risk
@@ -48,10 +48,6 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
     The recommended candidate MUST already appear under a milestone
     `## Planned Changes` section.
 
-    When the candidate entry has indented continuation lines, use that detail
-    block as supporting context for the recommendation instead of relying only on
-    the one-line summary.
-
 4. **Present a proposal checkpoint** — before creating any files, summarize:
     - the proposed change name
     - which milestone it comes from
@@ -60,11 +56,8 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
     - why this item is the best next step
     - any unresolved questions that would go into `questions.md`
 
-    If the roadmap item has indented detail lines, fold the relevant parts of
-    that detail block into the scope and rationale summary.
-
-   Then ask for explicit confirmation. If the user wants revisions, continue the
-   recommendation discussion and re-summarize until confirmed.
+    Then ask for explicit confirmation. If the user wants revisions, continue the
+    recommendation discussion and re-summarize until confirmed.
 
 5. **Scaffold the change after confirmation** — run:
    ```
@@ -73,21 +66,20 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
    This creates `.spec-driven/changes/<name>/` with the seeded templates.
 
 6. **Fill the five proposal artifacts** — after scaffolding, complete the same
-    proposal workflow used by `/roadmap-propose`:
-   - write `proposal.md` with **What**, **Why**, **Scope**, and
-     **Unchanged Behavior**
-   - write `design.md` with **Approach**, **Key Decisions**, and
-     **Alternatives Considered**
-   - populate `changes/<name>/specs/` with delta spec files aligned by path with
-     the main `.spec-driven/specs/` structure
-   - write `tasks.md` with atomic checklist items under `## Implementation`,
-     `## Testing`, and `## Verification`
+   proposal workflow used by `/roadmap-propose`:
+    - write `proposal.md` with **What**, **Why**, **Scope**, and
+      **Unchanged Behavior**
+    - write `design.md` with **Approach**, **Key Decisions**, and
+      **Alternatives Considered**
+    - populate `changes/<name>/specs/` with delta spec files aligned by path with
+      the main `.spec-driven/specs/` structure
+    - write `tasks.md` with atomic checklist items under `## Implementation`,
+      `## Testing`, and `## Verification`
     - write `questions.md`, recording every unresolved point under `## Open`, or
       leave `<!-- No open questions -->` if nothing is unclear
 
-    Use the recommended item's planned change detail block as planning input when
-    it exists, but distill it into the generated artifacts instead of copying it
-    verbatim.
+    Use the recommended milestone context as planning input, but treat the
+    selected planned change itself as a single-line roadmap item.
 
 7. **Validate before presenting the proposal** — run:
    ```
@@ -112,8 +104,6 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
 - Use roadmap context and roadmap-status output as the basis for recommendation
 - Explain why the recommended change should come next
 - Recommend only work that already exists under `Planned Changes`
-- Use attached planned change detail lines when present to strengthen the
-  recommendation and handoff summary
 - Do not scaffold proposal artifacts until the user explicitly confirms the
   recommendation summary and change name
 - After confirmation, follow the same artifact-writing and validation standard as

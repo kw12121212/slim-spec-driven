@@ -36,19 +36,16 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
     - the milestone file that contains the target item
     - `.spec-driven/specs/INDEX.md`
     - the relevant main spec files the new change is likely to touch
-    - the full selected planned change entry, including any indented detail lines
-      attached to its canonical first line
+    - the selected planned change entry as a single-line roadmap input
 
 3. **Confirm it is already planned work** — verify that the selected name is
     present under a milestone `## Planned Changes` section before scaffolding.
 
 4. **Extract the roadmap handoff context** — treat the selected planned change
    entry as more than a name lookup:
-   - use the canonical first line to identify the change name and summary
-   - treat any indented continuation lines attached to that entry as milestone-local
-     planning context for scope, rationale, sequencing, or constraints
-   - distill that detail into the proposal artifacts instead of copying it
-     mechanically
+    - use the canonical first line to identify the change name and summary
+    - use the surrounding milestone sections as context for scope, rationale,
+      sequencing, or constraints when the one-line summary is not sufficient
 
 5. **Scaffold the change** — run:
     ```
@@ -62,9 +59,9 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
     - `tasks.md`
     - `questions.md`
     - delta specs under `changes/<name>/specs/`
-    Use the roadmap milestone as planning input, including the selected planned
-    change detail block when present, but write the artifacts as a normal
-    spec-driven change proposal.
+    Use the roadmap milestone as planning input, but treat the selected planned
+    change as a single-line item and derive any extra context from the milestone
+    sections rather than multiline planned change detail.
 
 7. **Validate artifact format** — run:
     ```
@@ -84,6 +81,4 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
 - This skill creates planning artifacts only — do not implement product code
 - Only turn `Planned Changes` into change scaffolds
 - Create the same five artifacts as `spec-driven-propose`
-- Use indented planned change continuation lines as planning input when they are
-  present under the selected roadmap item
 - Before finishing, rerun `verify` until all repairable format issues are fixed

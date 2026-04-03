@@ -46,14 +46,12 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
      `## Out of Scope`, or `## Notes` sections
 
 3. **Converge on milestone boundaries before writing** — help the user settle:
-    - milestone names and ordering
-    - each milestone's goal and done criteria
-    - which concrete `Planned Changes` belong in each milestone
-    - key dependencies, risks, and sequencing
-    - which planned changes need extra indented detail lines because the handoff
-      would be underspecified otherwise
-    - any non-obvious legacy-migration interpretation needed to rewrite older
-      milestone files into the canonical format
+     - milestone names and ordering
+     - each milestone's goal and done criteria
+     - which concrete `Planned Changes` belong in each milestone
+     - key dependencies, risks, and sequencing
+     - any non-obvious legacy-migration interpretation needed to rewrite older
+       milestone files into the canonical format
 
 4. **Confirm the roadmap shape** — before editing files, summarize the intended
    milestone structure and ask for explicit confirmation.
@@ -80,11 +78,10 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
       - `## Notes`
     - write each `Planned Changes` item with a canonical first line,
       `- \`<change-name>\` - <summary>`
-    - add optional indented continuation lines below that first line when a
-      milestone item needs richer local context
-    - prefer adding those detail lines when a future `roadmap-propose` or
-      `roadmap-recommend` handoff would otherwise lose important scope,
-      sequencing, or constraint information
+    - keep each planned change description on that same line; do not add
+      indented continuation lines below the bullet
+    - put extra milestone-local context in another section such as `## Notes`
+      instead of attaching multiline detail under `## Planned Changes`
     - treat `Planned Changes` as the milestone's only work list and keep it
       limited to concrete approved change work
     - derive milestone completion from archived planned changes rather than

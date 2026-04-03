@@ -666,7 +666,6 @@ function readPlannedChangeEntries(lines: string[] | undefined): PlannedChangeEnt
 function validatePlannedChangeLines(lines: string[] | undefined): string | null {
   if (!lines) return null;
 
-  let sawEntry = false;
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -675,13 +674,10 @@ function validatePlannedChangeLines(lines: string[] | undefined): string | null 
       if (!parsePlannedChangeEntry(line)) {
         return "expected '- `\\<change-name>\\` - <summary>'";
       }
-      sawEntry = true;
       continue;
     }
 
-    if (!/^\s+/.test(line) || !sawEntry) {
-      return "expected indented detail lines to follow a valid planned change entry";
-    }
+    return "planned change descriptions must remain on a single line";
   }
 
   return null;
@@ -750,7 +746,6 @@ function roadmapStatus() {
     }
 
     const declaredStatus = parsedStatus.declaredStatus;
-    const plannedChangeLines = readTopLevelBulletItems(sections.get("Planned Changes"));
     const plannedChangeEntries = readPlannedChangeEntries(sections.get("Planned Changes"));
     const plannedChangeError = validatePlannedChangeLines(sections.get("Planned Changes"));
     if (plannedChangeError) {
@@ -832,8 +827,6 @@ function verifyRoadmap() {
 
     const doneCriteria = countBulletItems(sections.get("Done Criteria"));
     const plannedChanges = countBulletItems(sections.get("Planned Changes"));
-    const plannedChangeLines = readTopLevelBulletItems(sections.get("Planned Changes"));
-    const plannedChangeEntries = readPlannedChangeEntries(sections.get("Planned Changes"));
     const parsedStatus = parseDeclaredRoadmapStatus(sections.get("Status"));
     const goal = firstNonEmptyLine(sections.get("Goal"));
 
