@@ -144,7 +144,7 @@ For small, well-scoped changes — single feature, few files, no cross-cutting c
 /spec-driven-auto add user avatar upload
 ```
 
-Runs propose → apply → verify → review → archive with one confirmation checkpoint. For vague scope, suggests brainstorm first, then auto.
+Runs propose → apply → verify → review → archive with one mandatory proposal checkpoint plus any additional confirmations required by blockers such as open questions or empty-delta archive decisions. For vague scope, suggests brainstorm first, then auto.
 
 ### 2. Standard Workflow (Regular Tickets)
 
@@ -250,7 +250,7 @@ Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-pr
 | `/spec-driven-review` | Review a completed change for code quality before archive |
 | `/spec-driven-archive` | AI merges delta specs and updates INDEX.md; script moves the change into archive/ |
 | `/spec-driven-cancel` | Permanently delete an in-progress change (with confirmation) |
-| `/spec-driven-auto` | Run full workflow automatically (propose → apply → verify → review → archive) with one confirmation checkpoint. For vague scope, suggests brainstorm first. |
+| `/spec-driven-auto` | Run full workflow automatically (propose → apply → verify → review → archive) with one mandatory proposal checkpoint plus any additional blocker-driven confirmations. For vague scope, suggests brainstorm first. |
 
 ### Auto Workflow
 

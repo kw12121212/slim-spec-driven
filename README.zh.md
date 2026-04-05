@@ -142,7 +142,7 @@ bash install.sh --project /path/to/project       # 项目本地，指定路径
 /spec-driven-auto 添加用户头像上传功能
 ```
 
-自动执行 propose → apply → verify → review → archive，仅需一次确认。若范围模糊，会建议先 brainstorm 再 auto。
+自动执行 propose → apply → verify → review → archive，包含一个强制的 proposal 确认点，以及由阻塞条件触发的额外确认（例如 open questions 或空 delta archive 决策）。若范围模糊，会建议先 brainstorm 再 auto。
 
 ### 2. 标准流程（普通 Ticket）
 
@@ -244,7 +244,7 @@ init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose
 | `/spec-driven-review` | 在归档前审查已完成变更的代码质量 |
 | `/spec-driven-archive` | 由 AI 合并 delta specs 并更新 INDEX.md；由脚本将 change 移入 archive/ |
 | `/spec-driven-cancel` | 永久删除进行中的变更（需确认） |
-| `/spec-driven-auto` | 自动运行完整工作流（propose → apply → verify → review → archive），仅需一次确认。范围模糊时建议先 brainstorm。 |
+| `/spec-driven-auto` | 自动运行完整工作流（propose → apply → verify → review → archive），包含一个强制的 proposal 确认点，以及由阻塞条件触发的额外确认。范围模糊时建议先 brainstorm。 |
 
 ### 自动工作流
 
@@ -266,7 +266,7 @@ init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose
 
 brainstorm 产出提案后，可进入 `/spec-driven-auto` 执行。
 
-唯一必须的确认点在 proposal 之后——其余步骤自动执行，除非遇到阻塞问题。
+默认必须的确认点在 proposal 之后；如果遇到 open questions、空 delta archive 决策等阻塞条件，还需要额外的显式确认。
 
 ### Brainstorm 工作流
 
