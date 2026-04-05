@@ -46,7 +46,8 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 4. **Apply** — implement all tasks:
    - Run `node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>` to show task summary
-   - Check questions.md for open `- [ ] Q:` entries — if any, ask the user and resolve before continuing
+   - Check questions.md for open `- [ ] Q:` entries — if any, list each unresolved question, ask the user to answer or confirm the decision needed, and stop until the user explicitly resolves them
+   - You MAY recommend a preferred answer, but only as a suggestion; you MUST NOT treat your own recommendation as a resolved answer or continue implementation until the user explicitly confirms it
    - Work through each `- [ ]` task in order: read code, implement, verify Unchanged Behavior, mark `- [x]`
    - For `## Testing` tasks: actually run the tests and confirm they pass
    - Run `node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>` to confirm `remaining === 0`
@@ -84,3 +85,4 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 - Follow all config.yaml rules (specs, change, code, test) throughout
 - If anything goes wrong mid-flow, stop and explain — do not silently continue
 - Mark tasks complete one at a time, not in bulk
+- Recommended answers do not count as question resolution without explicit user confirmation

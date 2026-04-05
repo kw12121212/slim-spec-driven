@@ -46,6 +46,8 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 4. **Check for open questions** — read `questions.md` and scan for `- [ ] Q:` entries:
    - If any open questions are found, list each one and **stop** — do not proceed to implementation
    - Ask the user to resolve the questions (edit questions.md directly or use `/spec-driven-modify`)
+   - You MAY recommend a preferred answer, but only as a suggestion
+   - You MUST NOT treat your own recommendation as the resolved answer
    - Only continue once all questions are resolved (moved to `## Resolved` with an `A:` answer)
 
 5. **Implement tasks** — work through each `- [ ]` task in order:
@@ -70,3 +72,4 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 - Mark tasks complete immediately after implementing them, not in bulk at the end
 - If a task is ambiguous, read proposal.md and design.md before asking the user
 - Do not implement tasks that are already marked `- [x]`
+- Open questions require explicit user confirmation before implementation continues
