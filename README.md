@@ -131,7 +131,7 @@ Choose based on the nature of your task:
 | Scenario | Workflow | Command |
 |----------|----------|---------|
 | Small issue, clear scope | **auto** (one-shot) | `/spec-driven-auto add user avatar` |
-| Regular ticket, defined requirements | **propose → apply → verify → archive** | `/spec-driven-propose` → `/spec-driven-apply` → ... |
+| Regular ticket, defined requirements | **propose → apply → verify → review → archive** | `/spec-driven-propose` → `/spec-driven-apply` → ... |
 | Existing code is ahead of specs | **sync-specs** | `/spec-driven-sync-specs` |
 | Long-horizon planning across phases | **roadmap-plan → roadmap-milestone → roadmap-recommend → roadmap-sync** | `/roadmap-plan` → `/roadmap-milestone` → `/roadmap-recommend` → `/roadmap-sync` |
 | Fuzzy concept, needs exploration | **brainstorm → auto** | `/spec-driven-brainstorm` → confirm → `/spec-driven-auto` |
@@ -154,6 +154,7 @@ For typical tasks with clear requirements but non-trivial implementation:
 /spec-driven-propose add order tracking
 /spec-driven-apply
 /spec-driven-verify
+/spec-driven-review
 /spec-driven-archive
 ```
 
@@ -217,7 +218,7 @@ patterns, and expected file-level effects.
 ## Full Workflow Reference
 
 ```
-init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose / roadmap-sync] → [brainstorm] → propose → apply → verify → archive
+init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose / roadmap-sync] → [brainstorm] → propose → apply → verify → review → archive
 ```
 
 1. **init** — create `.spec-driven/` with config.yaml, roadmap/, specs/INDEX.md, and specs/
@@ -225,7 +226,8 @@ init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose
 3. **propose** — read existing specs, scaffold all five artifacts, populate delta specs
 4. **apply** — implement tasks one by one; update delta specs to match what was built
 5. **verify** — check task completion, implementation evidence, spec format, and alignment
-6. **archive** — AI merges delta specs into `specs/` by file path and updates INDEX.md; the archive script then moves the change into `archive/`
+6. **review** — review the completed change for code quality before archive
+7. **archive** — AI merges delta specs into `specs/` by file path and updates INDEX.md; the archive script then moves the change into `archive/`
 
 Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-propose**, and **roadmap-sync** for persistent milestone planning above the change layer. Use **roadmap-recommend** when you want a roadmap-specific brainstorm that recommends the next change and, after confirmation, scaffolds it directly. Use **roadmap-propose** when the planned change is already chosen and you want to scaffold it immediately. Use **modify** to refine any artifact mid-flight. Use **spec-edit** to directly create or modify main spec files outside the change workflow. Use **sync-specs** when the repository already contains behavior that needs to be reflected back into the specs. Use **cancel** to abandon a change.
 
