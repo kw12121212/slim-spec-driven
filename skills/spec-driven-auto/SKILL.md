@@ -1,7 +1,7 @@
 ---
 skill_id: spec_driven_auto
 name: spec-driven-auto
-description: Run the full spec-driven workflow automatically. Proposes, implements, verifies, reviews, and archives a change with one mandatory proposal checkpoint plus any extra confirmations required by blocking conditions.
+description: Run the full spec-driven workflow automatically. Proposes, implements, verifies, reviews, and archives a change without mandatory confirmation — only stops for user input when open questions need resolution.
 author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
@@ -31,7 +31,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
     - Read `.spec-driven/specs/INDEX.md` and relevant spec files to understand the current system
     - Read the codebase files that the change will likely touch — estimate the number of files, modules, and cross-cutting concerns involved
    - **Classify the change into one of two tiers:**
-     - **Green** (proceed): clear scope and a concrete definition of done within a single repository, including changes that touch up to 15 modules or packages, modify up to 50 files, involve schema migrations with data transformation, modify existing auth/authz/payment logic, or make cross-cutting changes across multiple subsystems — proceed without additional confirmation beyond the standard proposal checkpoint
+     - **Green** (proceed): clear scope and a concrete definition of done within a single repository, including changes that touch up to 15 modules or packages, modify up to 50 files, involve schema migrations with data transformation, modify existing auth/authz/payment logic, or make cross-cutting changes across multiple subsystems — proceed automatically
      - **Red** (suggest brainstorm): requires coordinating across multiple services or repositories, scope is vague or open-ended (e.g. "refactor the codebase", "improve performance"), or has no clear definition of done — explain why and suggest running `/spec-driven-brainstorm` first to converge the idea, then entering `/spec-driven-auto` to execute the resulting proposal
    - If Red, stop and suggest brainstorm
    - If Green, proceed
@@ -40,9 +40,8 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    - Run `node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>`
    - Fill all artifacts: proposal.md (with Unchanged Behavior), specs/ delta files, design.md, tasks.md (with ## Testing), questions.md (open questions)
    - Show the user a summary: scope, key decisions, task count, unchanged behaviors, and any open questions
-   - **Wait for explicit confirmation** before proceeding — this is the only mandatory checkpoint
-   - If questions.md has open questions, list them and ask the user to resolve them before confirming
-   - If the user requests changes, apply them and re-confirm
+   - If questions.md has open questions, list them and **stop for user resolution** before proceeding — do not continue until every open question is explicitly resolved
+   - If there are no open questions, proceed directly to Step 4 without waiting for confirmation
 
 4. **Apply** — implement all tasks:
    - Run `node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>` to show task summary
@@ -79,7 +78,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 ## Rules
 - The context reset in Step 1 is mandatory — never skip it
 - The complexity check in Step 2 is mandatory — never skip it
-- The user confirmation in Step 3 is mandatory — never skip it
+- The workflow runs fully automatically — do not pause for confirmation except when open questions in questions.md need user resolution
 - Additional confirmations are required whenever the workflow is blocked by unresolved questions or an empty delta-spec archive decision
 - All other steps run automatically unless blocked by an unresolvable issue
 - Follow all config.yaml rules (specs, change, code, test) throughout
