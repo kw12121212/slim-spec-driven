@@ -1,6 +1,6 @@
 # spec-driven
 
-A lightweight spec-driven development framework: 15 agent skills + thin TypeScript scaffolding.
+A lightweight spec-driven development framework: 16 agent skills + thin TypeScript scaffolding.
 
 **[中文说明](README.zh.md)**
 
@@ -44,7 +44,7 @@ Every change is a folder with five files, each serving a distinct purpose:
 | `tasks.md` | `- [ ]` checklist | Controls pace — one task at a time, marked complete immediately |
 | `questions.md` | Open/resolved Q&A | Centralizes ambiguities; open questions block apply and archive |
 
-### Layer 4: 15 skills — explicit constraints on AI behavior
+### Layer 4: 16 skills — explicit constraints on AI behavior
 
 Each skill is a precise prompt that specifies:
 - Exactly which files to read (no vague "read the codebase")
@@ -132,6 +132,7 @@ Choose based on the nature of your task:
 |----------|----------|---------|
 | Small issue, clear scope | **auto** (one-shot) | `/spec-driven-auto add user avatar` |
 | Regular ticket, defined requirements | **propose → apply → verify → review → archive** | `/spec-driven-propose` → `/spec-driven-apply` → ... |
+| Quick fix, no formal change needed | **simple-task** | `/spec-driven-simple-task fix typo in README` |
 | Existing code is ahead of specs | **sync-specs** | `/spec-driven-sync-specs` |
 | Long-horizon planning across phases | **roadmap-plan → roadmap-milestone → roadmap-recommend → roadmap-sync** | `/roadmap-plan` → `/roadmap-milestone` → `/roadmap-recommend` → `/roadmap-sync` |
 | Fuzzy concept, needs exploration | **brainstorm → auto** | `/spec-driven-brainstorm` → confirm → `/spec-driven-auto` |
@@ -146,7 +147,17 @@ For small, well-scoped changes — single feature, few files, no cross-cutting c
 
 Runs propose → apply → verify → review → archive with one mandatory proposal checkpoint plus any additional confirmations required by blockers such as open questions or empty-delta archive decisions. For vague scope, suggests brainstorm first, then auto.
 
-### 2. Standard Workflow (Regular Tickets)
+### 2. Simple Task Workflow (Quick Fixes)
+
+For ad-hoc work that doesn't warrant a formal change — debugging, documentation tweaks, config adjustments:
+
+```bash
+/spec-driven-simple-task fix the broken date format in utils.ts
+```
+
+This executes the task directly with spec context loaded, then assesses whether specs were affected. It never creates entries under `.spec-driven/changes/`. If the task is too large, ambiguous, or urgent, it redirects to the appropriate workflow. Completed tasks are logged to `.spec-driven/simple-tasks/YYYY-MM-DD-<name>.md`.
+
+### 3. Standard Workflow (Regular Tickets)
 
 For typical tasks with clear requirements but non-trivial implementation:
 
@@ -162,7 +173,7 @@ Use `/spec-driven-modify` to adjust artifacts mid-flight, `/spec-driven-spec-edi
 
 Use `/roadmap-plan`, `/roadmap-milestone`, `/roadmap-recommend`, `/roadmap-propose`, and `/roadmap-sync` when you need a persistent milestone-based roadmap above individual changes. `roadmap-recommend` now behaves like a roadmap-specific brainstorm: after confirmation it scaffolds the accepted change directly, while `roadmap-propose` remains available as a direct path when the planned change is already chosen.
 
-### 3. Sync Specs Workflow (Code Ahead of Spec)
+### 4. Sync Specs Workflow (Code Ahead of Spec)
 
 For initialization and catch-up work when the repository already contains
 behavior that the specs do not fully describe:
@@ -177,7 +188,7 @@ a requested scope, creates a dedicated spec-only change, and summarizes
 confirmed gaps plus open questions in chat. It does not write product code and
 does not create a standalone report file.
 
-### 4. Brainstorm Workflow (Fuzzy Concepts)
+### 5. Brainstorm Workflow (Fuzzy Concepts)
 
 For exploratory work where scope, approach, or even the problem itself is unclear:
 
@@ -187,7 +198,7 @@ For exploratory work where scope, approach, or even the problem itself is unclea
 
 This enters a discussion phase — reads context, helps narrow scope and tradeoffs, proposes a change name. After explicit confirmation, it generates the same five artifacts as `/spec-driven-propose`, then offers to enter `/spec-driven-auto` to execute or `/spec-driven-modify` to continue refining.
 
-### 5. Roadmap Workflow (Milestone Planning)
+### 6. Roadmap Workflow (Milestone Planning)
 
 For long-horizon planning that spans multiple changes and needs durable stage
 boundaries:
@@ -219,6 +230,7 @@ patterns, and expected file-level effects.
 
 ```
 init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose / roadmap-sync] → [brainstorm] → propose → apply → verify → review → archive
+        ↘ simple-task (outside the change lifecycle)
 ```
 
 1. **init** — create `.spec-driven/` with config.yaml, roadmap/, specs/INDEX.md, and specs/
@@ -253,6 +265,7 @@ Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-pr
 | `/spec-driven-archive` | AI merges delta specs and updates INDEX.md; script moves the change into archive/ |
 | `/spec-driven-cancel` | Permanently delete an in-progress change (with confirmation) |
 | `/spec-driven-auto` | Run full workflow automatically (propose → apply → verify → review → archive) with one mandatory proposal checkpoint plus any additional blocker-driven confirmations. For vague scope, suggests brainstorm first. |
+| `/spec-driven-simple-task` | Execute a lightweight ad-hoc task (debugging, docs, config tweaks) without the formal change lifecycle. Assesses spec impact afterward and logs to `.spec-driven/simple-tasks/`. |
 
 ### Auto Workflow
 
