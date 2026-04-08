@@ -66,9 +66,16 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
 
 5. **Resolve open questions before scaffolding** — if any unresolved questions
    remain after the recommendation summary:
-    - list each open question explicitly
+    - present each open question as a structured block with:
+      - `Question`
+      - `Explanation`
+      - `Impact`
+      - `Recommendation`
     - ask the user to answer or confirm the decision needed
-    - you MAY recommend a preferred answer, but only as a suggestion
+    - `Explanation` must clarify why the issue is unresolved or what decision
+      is still blocking the proposal
+    - `Impact` must describe what part of the proposal depends on the answer
+    - `Recommendation` may suggest a preferred answer, but only as a suggestion
     - do not treat your recommendation as the resolved answer
     - do not continue until the user has given an exact answer or explicit
       confirmation
@@ -124,6 +131,8 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
 - Do not scaffold proposal artifacts until the user explicitly confirms the
   recommendation summary and change name
 - If open questions remain, ask the user to resolve them before scaffolding
+- For each open question, provide `Question`, `Explanation`, `Impact`, and
+  `Recommendation`
 - If testing commands are not knowable from repository context, record that as
   an open question instead of inventing commands
 - Recommended answers do not count as question resolution without explicit user
