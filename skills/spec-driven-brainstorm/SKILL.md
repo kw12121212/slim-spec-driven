@@ -1,7 +1,7 @@
 ---
 skill_id: spec_driven_brainstorm
 name: spec-driven-brainstorm
-description: Discuss and brainstorm a spec-driven change from a rough idea, then propose a change name and, after explicit confirmation, generate the same five proposal artifacts as spec-driven-propose.
+description: Turn a rough idea into a spec-driven change proposal by reading context, deriving scope and a change name, and generating the same five proposal artifacts as spec-driven-propose without a proposal-stage question loop.
 author: auto-spec-driven
 type: agent_skill
 version: 1.0.0
@@ -9,6 +9,11 @@ version: 1.0.0
 
 You are helping the user turn an early-stage idea into a spec-driven change
 proposal.
+
+Do not ask follow-up questions or require explicit confirmation during the
+proposal stage. Infer the best available scope from the user request, project
+context, and existing specs. Record any unresolved ambiguity in `questions.md`
+for `/spec-driven-apply` to surface before implementation begins.
 
 ## Prerequisites
 
@@ -21,9 +26,10 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 ## Steps
 
-1. **Start from the idea, not the artifact list** — ask the user what they want
-   to achieve, what problem they are trying to solve, and any known constraints
-   or preferences. Do not require a change name up front.
+1. **Start from the idea, not the artifact list** — infer what the user wants
+   to achieve, what problem they are trying to solve, and any likely constraints
+   or preferences from the request and repository context. Do not require a
+   change name up front, and do not stop to ask follow-up questions.
 
 2. **Read project context and existing specs early** — before narrowing scope,
    read:
@@ -34,30 +40,26 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    - Every relevant main spec file referenced by `INDEX.md` that appears related
      to the idea being discussed
 
-3. **Brainstorm until the change is decision-ready** — use the discussion to
-   converge on:
+3. **Brainstorm until the change is decision-ready** — use the available
+   request and repository context to converge on:
    - the desired outcome and user-visible behavior
    - what is in scope and explicitly out of scope
    - important tradeoffs, constraints, risks, and unchanged behavior
    - which existing spec files will likely be modified, or whether a new spec
      area is needed
-   - any questions that still need a human answer before implementation
+   - any questions that still need a human answer before implementation, which
+     should be recorded in `questions.md` instead of blocking proposal creation
 
-4. **Suggest the change name** — once the idea is coherent enough, propose a
-   short kebab-case change name. If the user already provided a valid name, keep
-   it. If not, suggest one that reflects the agreed change scope.
+4. **Derive the change name** — once the idea is coherent enough, choose a short
+   kebab-case change name. If the user already provided a valid name, keep it.
+   Otherwise, decide one yourself based on the proposal scope.
 
-5. **Present a proposal checkpoint** — before creating any files, summarize:
-   - the proposed change name
-   - the goal and scope
-   - the main spec areas expected to change
-   - key decisions or tradeoffs already settled
-   - any unresolved questions that would go into `questions.md`
+5. **Proceed directly once coherent** — once the scope is coherent enough from
+   available context, continue straight to scaffolding. Do not add a
+   pre-scaffolding confirmation gate; unresolved items belong in
+   `questions.md` for `/spec-driven-apply`.
 
-   Then ask for explicit confirmation. If the user wants revisions, continue the
-   brainstorm and re-summarize until confirmed.
-
-6. **Scaffold the change after confirmation** — run:
+6. **Scaffold the change** — run:
    ```
    node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>
    ```
@@ -91,23 +93,22 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 9. **Hand off like propose** — show the user the generated artifacts, summarize
    the final proposed scope, and list any open questions that must be answered
-   before `/spec-driven-apply`.
+   before `/spec-driven-apply`. Do not ask for proposal-stage confirmation.
 
-10. **Offer auto hand-off** — after the hand-off, ask the user whether to enter
-    `/spec-driven-auto` to execute the proposal end-to-end, or continue modifying
-    the proposal with `/spec-driven-modify`. Do not auto-enter auto without the
-    user's explicit choice.
+10. **Mention next steps** — after the hand-off, mention that the user can enter
+    `/spec-driven-auto` to execute the proposal end-to-end or use
+    `/spec-driven-modify` to revise the artifacts. Do not auto-enter either path.
 
 ## Rules
 
 - Do not implement code — this skill is planning only
-- Do not scaffold proposal artifacts until the user explicitly confirms the
-  brainstorm summary and change name
+- Do not ask follow-up questions or require pre-scaffolding confirmation during
+  the proposal stage
 - Read `.spec-driven/config.yaml`, `INDEX.md`, and relevant main specs before
   locking scope or writing delta specs
-- Suggest a kebab-case change name when the user starts with only a rough idea
+- Derive a kebab-case change name when the user starts with only a rough idea
 - Record unresolved ambiguity in `questions.md`; do not guess silently
 - If testing commands are not knowable from repository context, record that in
   `questions.md` instead of inventing them
-- After confirmation, follow the same artifact-writing and validation standard as
+- Follow the same artifact-writing and validation standard as
   `/spec-driven-propose`

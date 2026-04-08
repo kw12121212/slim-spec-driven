@@ -201,7 +201,7 @@ For exploratory work where scope, approach, or even the problem itself is unclea
 /spec-driven-brainstorm improve task planning for large changes
 ```
 
-This enters a discussion phase — reads context, helps narrow scope and tradeoffs, proposes a change name. After explicit confirmation, it generates the same five artifacts as `/spec-driven-propose`, then offers to enter `/spec-driven-auto` to execute or `/spec-driven-modify` to continue refining.
+This reads project context and relevant specs, narrows scope and tradeoffs, and derives a change name automatically. It generates the same five artifacts as `/spec-driven-propose` without a pre-scaffolding confirmation gate, then leaves any unresolved questions in `questions.md` for `/spec-driven-apply` to surface before implementation.
 
 ### 6. Roadmap Workflow (Milestone Planning)
 
@@ -239,7 +239,7 @@ init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose
 ```
 
 1. **init** — create `.spec-driven/` with config.yaml, roadmap/, specs/INDEX.md, and specs/
-2. **brainstorm** — discuss a rough idea, converge on scope, and confirm a proposed change name before scaffolding
+2. **brainstorm** — analyze a rough idea, converge on scope, derive a change name, and scaffold a proposal without a pre-scaffolding confirmation gate
 3. **propose** — read existing specs, scaffold all five artifacts, populate delta specs
 4. **apply** — implement tasks one by one; update delta specs to match what was built
 5. **verify** — check task completion, implementation evidence, spec format, and alignment
@@ -252,7 +252,7 @@ Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-pr
 
 | Skill | What it does |
 |-------|-------------|
-| `/spec-driven-brainstorm` | Discuss a rough idea, converge on scope and a change name, then generate the full five-artifact proposal after confirmation |
+| `/spec-driven-brainstorm` | Analyze a rough idea, derive scope and a change name, then generate the full five-artifact proposal without proposal-stage questions |
 | `/spec-driven-init` | Initialize `.spec-driven/` in a project and fill config.yaml |
 | `/spec-driven-maintenance` | Inspect or run the manual maintenance workflow for explicitly configured safe auto-fixes |
 | `/spec-driven-propose` | Read existing specs, scaffold a new change with all five artifacts |
@@ -304,10 +304,11 @@ The only mandatory checkpoint is after the proposal — everything else runs aut
 ```
 
 It reads project context and relevant specs, helps narrow scope and tradeoffs,
-proposes a kebab-case change name, and waits for explicit confirmation before it
-creates the same five proposal artifacts as `/spec-driven-propose`. After that,
-it offers to enter `/spec-driven-auto` to execute or `/spec-driven-modify` to
-continue refining.
+derives a kebab-case change name, and creates the same five proposal artifacts
+as `/spec-driven-propose` without a pre-scaffolding confirmation gate. Any
+remaining ambiguity is written to `questions.md` for `/spec-driven-apply` to
+surface before implementation. After that, `/spec-driven-auto` is available for
+end-to-end execution and `/spec-driven-modify` remains available for revisions.
 
 ## Project Structure
 

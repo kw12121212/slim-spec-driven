@@ -9,6 +9,11 @@ version: 1.0.0
 
 You are helping the user create a new spec-driven change proposal.
 
+Do not ask follow-up questions or require confirmation during the proposal stage.
+Derive the strongest proposal you can from the user request, project context, and
+existing specs. Record any remaining ambiguity in `questions.md` for
+`/spec-driven-apply` to surface before implementation begins.
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:
@@ -84,6 +89,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 ## Rules
 - Do not implement anything — this is planning only
 - Keep tasks atomic and verifiable
+- Do not ask follow-up questions or require a proposal-stage confirmation checkpoint
 - proposal.md describes *what and why*; design.md describes *how*; tasks.md is the checklist; questions.md is for open questions
 - Document ambiguities in questions.md — never guess at unclear requirements, and never use `[NEEDS CLARIFICATION]` inline markers
 - Do not add a post-proposal confirmation gate once the artifacts are written
