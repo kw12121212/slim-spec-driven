@@ -806,6 +806,17 @@ function runInstallSection() {
     fail("install missing roadmap-sync symlink for codex");
   }
 
+  assertContains("install reports ship skill copy", "copied: spec-driven-ship/", out);
+  assertFileExists(
+    "install copies ship skill into agent store",
+    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-ship", "SKILL.md"),
+  );
+  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-ship"))) {
+    pass("install links ship skill for codex");
+  } else {
+    fail("install missing ship symlink for codex");
+  }
+
   ensureDir(path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-content", "scripts"));
   writeFile(
     path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-content", "SKILL.md"),
@@ -829,6 +840,27 @@ function runInstallSection() {
   }
 
   rmrf(installHome);
+
+  const projectInstallDir = mktempDir("spec-driven-project-install-");
+  const projectInstallHome = mktempDir("spec-driven-project-home-");
+  out = runInstallScript(["--project", projectInstallDir], { env: { HOME: projectInstallHome } }).combined;
+  assertContains("project install reports ship skill copy", "copied: spec-driven-ship/", out);
+  assertFileExists(
+    "project install copies ship skill into agent store",
+    path.join(projectInstallDir, ".agent", "skills", "spec-driven-ship", "SKILL.md"),
+  );
+  if (isSymlink(path.join(projectInstallDir, ".agents", "skills", "spec-driven-ship"))) {
+    pass("project install links ship skill for agents");
+  } else {
+    fail("project install missing ship symlink for agents");
+  }
+  if (isSymlink(path.join(projectInstallDir, ".codex", "skills", "spec-driven-ship"))) {
+    pass("project install links ship skill for codex");
+  } else {
+    fail("project install missing ship symlink for codex");
+  }
+  rmrf(projectInstallDir);
+  rmrf(projectInstallHome);
 }
 
 function runMigrateSection() {

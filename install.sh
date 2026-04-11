@@ -17,6 +17,7 @@ SKILLS=(
   spec-driven-apply
   spec-driven-verify
   spec-driven-archive
+  spec-driven-ship
   spec-driven-init
   spec-driven-cancel
   spec-driven-review

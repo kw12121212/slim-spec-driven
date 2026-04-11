@@ -88,6 +88,7 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
     - Run `node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>`
     - If `.spec-driven/roadmap/` exists, treat any milestone declared status or roadmap index updates performed by the archive command as part of archive closeout
     - Report the final result: what was built, files changed, tests passing, archive location, and any roadmap status changes caused by archive
+    - If the user wants to commit and push the completed archived change, offer `/spec-driven-ship <name>` as the next explicit handoff. Do not enter that workflow, commit, or push unless the user explicitly chooses it.
 
 ## Rules
 - The context reset in Step 1 is mandatory — never skip it
@@ -101,3 +102,5 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 - Recommended answers do not count as question resolution without explicit user confirmation
 - Keep implementation and test mappings in frontmatter, not in requirement
   prose
+- Do not commit or push automatically. Shipping is handled only by the explicit
+  `/spec-driven-ship <name>` workflow after successful archive closeout.

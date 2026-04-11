@@ -20,7 +20,7 @@ Extend the spec-driven workflow with stronger review guidance and a lightweight 
 
 ## Planned Changes
 - `specialize-review-checklists` - Declared: complete - route review through change-type-specific checklists for security-sensitive, UI, DX, migration, API, and maintenance changes without immediately splitting review into many separate skills.
-- `add-basic-ship-step` - Declared: planned - add a lightweight ship stage that performs a simple commit and push after successful verification, review, archive, and roadmap reconciliation without introducing PR, deployment, or canary automation.
+- `add-basic-ship-step` - Declared: complete - add a lightweight ship stage that performs a simple commit and push after successful verification, review, archive, and roadmap reconciliation without introducing PR, deployment, or canary automation.
 
 ## Dependencies
 - These extensions should build on the existing review, archive, and roadmap reconciliation workflow.
@@ -31,8 +31,10 @@ Extend the spec-driven workflow with stronger review guidance and a lightweight 
 - A ship step can be risky if it runs before archive and roadmap reconciliation are complete or if it hides commit and push failures.
 
 ## Status
-- Declared: proposed
+- Declared: complete
 
 ## Notes
 - This milestone is intentionally separate from automatic milestone delivery so the first milestone can focus on core milestone execution and recovery semantics.
+
+
 

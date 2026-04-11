@@ -1,6 +1,6 @@
 # spec-driven
 
-A lightweight spec-driven development framework: 20 agent skills + thin TypeScript scaffolding.
+A lightweight spec-driven development framework: 21 agent skills + thin TypeScript scaffolding.
 
 **[中文说明](README.zh.md)**
 
@@ -47,7 +47,7 @@ Every change is a folder with five files, each serving a distinct purpose:
 | `tasks.md` | `- [ ]` checklist | Controls pace — one task at a time, marked complete immediately |
 | `questions.md` | Open/resolved Q&A | Centralizes ambiguities; propose may leave questions open, apply surfaces them as a structured blocker, and unresolved questions still block verify/archive |
 
-### Layer 4: 20 skills — explicit constraints on AI behavior
+### Layer 4: 21 skills — explicit constraints on AI behavior
 
 Each skill is a precise prompt that specifies:
 - Exactly which files to read (no vague "read the codebase")
@@ -243,7 +243,7 @@ patterns, and expected file-level effects.
 ## Full Workflow Reference
 
 ```
-init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose / roadmap-sync] → [brainstorm] → propose → apply → verify → review → archive
+init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose / roadmap-sync] → [brainstorm] → propose → apply → verify → review → archive → [ship]
         ↘ simple-task (outside the change lifecycle)
 ```
 
@@ -254,6 +254,7 @@ init → [roadmap-plan / roadmap-milestone / roadmap-recommend / roadmap-propose
 5. **verify** — check task completion, implementation evidence, spec format, and alignment
 6. **review** — review the completed change for code quality before archive
 7. **archive** — AI merges delta specs into `specs/` by file path and updates INDEX.md; the archive script then moves the change into `archive/`
+8. **ship** — optionally commit and push the archived, reconciled change after all quality gates have completed
 
 Use **roadmap-plan**, **roadmap-milestone**, **roadmap-recommend**, **roadmap-propose**, and **roadmap-sync** for persistent milestone planning above the change layer. Use **roadmap-recommend** when you want a roadmap-specific brainstorm that recommends the next change and, after confirmation, scaffolds it directly. Use **roadmap-propose** when the planned change is already chosen and you want to scaffold it immediately. Use **modify** to refine any artifact mid-flight. Use **spec-edit** to directly create or modify main spec files outside the change workflow. Use **sync-specs** when the repository already contains behavior that needs to be reflected back into the specs. Use **resync-code-mapping** when old specs need mapping frontmatter added or corrected. Use **cancel** to abandon a change.
 
@@ -282,6 +283,7 @@ Role split: use **resync-code-mapping** to repair legacy, stale, or malformed ma
 | `/spec-driven-archive` | AI merges delta specs and updates INDEX.md; script moves the change into archive/ |
 | `/spec-driven-cancel` | Permanently delete an in-progress change (with confirmation) |
 | `/spec-driven-auto` | Run full workflow automatically (propose → apply → verify → review → archive) with one mandatory proposal checkpoint plus any additional blocker-driven confirmations. For vague scope, suggests brainstorm first. |
+| `/spec-driven-ship` | Optionally commit and push an archived, roadmap-reconciled change after the normal workflow gates have completed. |
 | `/spec-driven-simple-task` | Execute a lightweight ad-hoc task (debugging, docs, config tweaks) without the formal change lifecycle. Assesses spec impact afterward and logs to `.spec-driven/simple-tasks/`. |
 
 ### Auto Workflow
@@ -305,7 +307,7 @@ Role split: use **resync-code-mapping** to repair legacy, stale, or malformed ma
 
 After brainstorm produces a proposal, you can enter `/spec-driven-auto` to execute it.
 
-The only mandatory checkpoint is after the proposal — everything else runs automatically unless blocked.
+The only mandatory checkpoint is after the proposal — everything else runs automatically unless blocked. Auto does not commit or push; use `/spec-driven-ship <name>` after archive when you want to ship the completed change.
 
 When roadmap planning skills use sub-agents, they are intended as bounded
 sidecars for analysis only. The parent agent still owns any confirmation gate,

@@ -1,9 +1,9 @@
 schema: spec-driven
 context: |
   auto-spec-driven is a lightweight spec-driven development framework.
-  It provides 20 agent skills (init, brainstorm, propose, modify, spec-edit,
+  It provides 21 agent skills (init, brainstorm, propose, modify, spec-edit,
   sync-specs, resync-code-mapping, maintenance, apply, verify, review, archive, cancel, auto, simple-task,
-  roadmap-plan, roadmap-milestone, roadmap-recommend, roadmap-propose, roadmap-sync) and thin TypeScript
+  ship, roadmap-plan, roadmap-milestone, roadmap-recommend, roadmap-propose, roadmap-sync) and thin TypeScript
   scaffolding scripts for filesystem operations.
   Skills are markdown files (skills/*/SKILL.md) following the Agent Skills standard.
   Scripts are in scripts/*.ts, compiled to dist/scripts/*.js via tsc.
