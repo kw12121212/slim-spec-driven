@@ -11,6 +11,18 @@ metadata:
 You are helping the user choose the next change from the roadmap and turn the
 accepted recommendation into a normal spec-driven change.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+init: node {{SKILL_DIR}}/scripts/spec-driven.js init
+roadmap-status: node {{SKILL_DIR}}/scripts/spec-driven.js roadmap-status
+propose: node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>
+verify: node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before

@@ -10,6 +10,15 @@ metadata:
 
 You are helping the user initialize the spec-driven workflow in a project.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+init: node {{SKILL_DIR}}/scripts/spec-driven.js init [path]
+```
+
 ## Prerequisites
 
 The target project directory must be accessible from the current environment.

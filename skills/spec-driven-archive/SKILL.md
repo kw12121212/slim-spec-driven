@@ -10,6 +10,18 @@ metadata:
 
 You are helping the user archive a completed spec-driven change.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+modify: node {{SKILL_DIR}}/scripts/spec-driven.js modify
+apply: node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+archive: node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>
+```
+
 ## Responsibility Split
 
 Explicitly distinguish script work from AI work when you run this skill.

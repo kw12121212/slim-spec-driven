@@ -10,6 +10,20 @@ metadata:
 
 You are helping the user verify a spec-driven change before archiving.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+modify: node {{SKILL_DIR}}/scripts/spec-driven.js modify
+verify: node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+apply: node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
+audit-spec-mapping-coverage: node {{SKILL_DIR}}/scripts/spec-driven.js audit-spec-mapping-coverage <spec-path> [--implementation <repo-path> ...] [--tests <repo-path> ...]
+audit-unmapped-spec-evidence: node {{SKILL_DIR}}/scripts/spec-driven.js audit-unmapped-spec-evidence [--implementation <repo-path> ...] [--tests <repo-path> ...]
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:

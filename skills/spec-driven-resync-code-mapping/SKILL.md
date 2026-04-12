@@ -11,6 +11,17 @@ metadata:
 You are helping the user retrofit or repair spec-code mapping frontmatter in
 `.spec-driven/specs/` files.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+audit-spec-mapping-coverage: node {{SKILL_DIR}}/scripts/spec-driven.js audit-spec-mapping-coverage <spec-path> [--implementation <repo-path> ...] [--tests <repo-path> ...]
+audit-unmapped-spec-evidence: node {{SKILL_DIR}}/scripts/spec-driven.js audit-unmapped-spec-evidence [--implementation <repo-path> ...] [--tests <repo-path> ...]
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before

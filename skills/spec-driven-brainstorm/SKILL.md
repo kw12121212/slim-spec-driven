@@ -11,6 +11,16 @@ metadata:
 You are helping the user turn an early-stage idea into a spec-driven change
 proposal.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+propose: node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>
+verify: node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before

@@ -13,6 +13,15 @@ You are helping the user create or modify main spec files under
 This is for lightweight corrections — fixing typos, correcting inaccurate
 requirements, or adding missing spec entries.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before

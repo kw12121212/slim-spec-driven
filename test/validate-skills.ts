@@ -214,6 +214,22 @@ function validateAllSkills(): void {
 
   const skillFiles = skillDirs.map((skillDir) => path.join(skillDir, "SKILL.md"));
 
+  const commandSectionErrors = validateSkillCommandSections(skillFiles);
+  if (commandSectionErrors.length > 0) {
+    printAndExit(
+      {
+        detected_type: null,
+        errors: commandSectionErrors,
+        file: "",
+        schema: path.resolve("test/skill-schema.yaml"),
+        section_titles: [],
+        valid: false,
+      },
+      1,
+    );
+    return;
+  }
+
   const symlinkErrors = validateSkillScriptSymlinks(skillDirs);
   if (symlinkErrors.length > 0) {
     printAndExit(
@@ -350,6 +366,111 @@ function validateExplicitCommandReferences(skillFiles: string[]): ValidationErro
   }
 
   return errors;
+}
+
+function validateSkillCommandSections(skillFiles: string[]): ValidationError[] {
+  const errors: ValidationError[] = [];
+  for (const skillFile of skillFiles) {
+    const content = fs.readFileSync(skillFile, "utf8");
+    const usedSubcommands = extractSkillCliSubcommands(content);
+    if (usedSubcommands.length === 0) {
+      continue;
+    }
+
+    const commandsSection = extractCommandsSection(content);
+    if (!commandsSection) {
+      errors.push({
+        code: "skill.commands_section.missing",
+        message: "Skills that use the shared spec-driven CLI must include a '## This Skill's Commands' section with a YAML-like command mapping",
+        path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+      });
+      continue;
+    }
+
+    const commandsIndex = content.indexOf("## This Skill's Commands");
+    const prerequisitesIndex = content.indexOf("## Prerequisites");
+    if (prerequisitesIndex !== -1 && commandsIndex > prerequisitesIndex) {
+      errors.push({
+        code: "skill.commands_section.order",
+        message: "Skill '## This Skill's Commands' section must appear before '## Prerequisites'",
+        path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+      });
+    }
+
+    const commandsMapping = extractCommandsMapping(commandsSection);
+    if (!commandsMapping) {
+      errors.push({
+        code: "skill.commands_section.invalid_format",
+        message: "Skill '## This Skill's Commands' section must contain a fenced yaml block with '<subcommand>: <command>' mappings",
+        path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+      });
+      continue;
+    }
+
+    const declaredSubcommands = new Set(Object.keys(commandsMapping));
+    const usedSubcommandSet = new Set(usedSubcommands);
+    for (const subcommand of usedSubcommands) {
+      if (declaredSubcommands.has(subcommand)) continue;
+      errors.push({
+        code: "skill.commands_section.incomplete",
+        message: `Skill '## This Skill's Commands' section must map the shared CLI command '${subcommand}' used by the skill`,
+        path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+      });
+    }
+
+    for (const subcommand of declaredSubcommands) {
+      if (usedSubcommandSet.has(subcommand)) continue;
+      errors.push({
+        code: "skill.commands_section.extra_entry",
+        message: `Skill '## This Skill's Commands' section must not list unused shared CLI command '${subcommand}'`,
+        path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+      });
+    }
+
+    for (const [subcommand, command] of Object.entries(commandsMapping)) {
+      const expectedPrefix = `node {{SKILL_DIR}}/scripts/spec-driven.js ${subcommand}`;
+      if (!command.startsWith(expectedPrefix)) {
+        errors.push({
+          code: "skill.commands_section.mismatched_command",
+          message: `Skill '## This Skill's Commands' entry '${subcommand}' must start with '${expectedPrefix}'`,
+          path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+        });
+      }
+    }
+  }
+
+  return errors;
+}
+
+function extractCommandsSection(content: string): string | null {
+  const match = content.match(/## This Skill's Commands\s*\n([\s\S]*?)(?=\n##\s+[^\n]+|$)/);
+  return match?.[1] ?? null;
+}
+
+function extractCommandsMapping(section: string): Record<string, string> | null {
+  const blockMatch = section.match(/```yaml\n([\s\S]*?)\n```/);
+  if (!blockMatch) return null;
+
+  const mapping: Record<string, string> = {};
+  const lines = blockMatch[1]
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  if (lines.length === 0) return null;
+
+  for (const line of lines) {
+    const match = line.match(/^([a-z0-9-]+):\s+(.+)$/);
+    if (!match) return null;
+    mapping[match[1]] = match[2];
+  }
+
+  return mapping;
+}
+
+function extractSkillCliSubcommands(content: string): string[] {
+  const matches = Array.from(content.matchAll(/node \{\{SKILL_DIR\}\}\/scripts\/spec-driven\.js ([a-z0-9-]+)/g));
+  return [...new Set(matches.map((match) => match[1]))];
 }
 
 function baseResult(

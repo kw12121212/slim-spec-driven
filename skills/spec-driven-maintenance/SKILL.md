@@ -10,6 +10,15 @@ metadata:
 
 You are helping the user manage the manual maintenance workflow.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+run-maintenance: node {{SKILL_DIR}}/scripts/spec-driven.js run-maintenance [path]
+```
+
 ## Prerequisites
 
 The target project must already contain `.spec-driven/` at the project root.

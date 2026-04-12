@@ -10,6 +10,15 @@ metadata:
 
 You are shipping a completed spec-driven change after the normal workflow gates have already succeeded.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+roadmap-status: node {{SKILL_DIR}}/scripts/spec-driven.js roadmap-status
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:

@@ -10,6 +10,16 @@ metadata:
 
 You are helping the user create or restructure the repository roadmap.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+init: node {{SKILL_DIR}}/scripts/spec-driven.js init
+verify-roadmap: node {{SKILL_DIR}}/scripts/spec-driven.js verify-roadmap
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before

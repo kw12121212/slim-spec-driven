@@ -10,6 +10,20 @@ metadata:
 
 You are running the full spec-driven workflow end-to-end for a single change.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+propose: node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>
+apply: node {{SKILL_DIR}}/scripts/spec-driven.js apply <name>
+verify: node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
+audit-unmapped-spec-evidence: node {{SKILL_DIR}}/scripts/spec-driven.js audit-unmapped-spec-evidence [--implementation <repo-path> ...] [--tests <repo-path> ...]
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+archive: node {{SKILL_DIR}}/scripts/spec-driven.js archive <name>
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:

@@ -10,6 +10,16 @@ metadata:
 
 You are helping the user cancel and remove an in-progress spec-driven change.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+modify: node {{SKILL_DIR}}/scripts/spec-driven.js modify
+cancel: node {{SKILL_DIR}}/scripts/spec-driven.js cancel <name>
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:

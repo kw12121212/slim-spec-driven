@@ -15,6 +15,16 @@ Derive the strongest proposal you can from the user request, project context, an
 existing specs. Record any remaining ambiguity in `questions.md` for
 `/spec-driven-apply` to surface before implementation begins.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+propose: node {{SKILL_DIR}}/scripts/spec-driven.js propose <name>
+verify: node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before proceeding, verify:

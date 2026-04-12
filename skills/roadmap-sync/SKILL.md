@@ -11,6 +11,17 @@ metadata:
 You are helping the user synchronize `.spec-driven/roadmap/` with the current
 change history.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+init: node {{SKILL_DIR}}/scripts/spec-driven.js init
+roadmap-status: node {{SKILL_DIR}}/scripts/spec-driven.js roadmap-status
+verify-roadmap: node {{SKILL_DIR}}/scripts/spec-driven.js verify-roadmap
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before

@@ -59,6 +59,35 @@ MUST reference the concrete script path and subcommand, such as
 `node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings`, instead of a
 generic phrase like "rerun the CLI mapping validator".
 
+If a skill uses one or more shared spec-driven CLI commands, it MUST include a
+`## This Skill's Commands` section containing a YAML-like command mapping in a fenced
+`yaml` block for the commands used by that skill.
+
+That `## This Skill's Commands` section MUST appear before `## Prerequisites`
+so the command map is visible early in the skill.
+
+Each mapping entry MUST use the shared CLI subcommand name as the key and the
+exact concrete invocation as the value, for example:
+
+```yaml
+verify: node {{SKILL_DIR}}/scripts/spec-driven.js verify <name>
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+```
+
+The skill MUST explicitly instruct the agent that if it cannot remember or infer
+the exact shared CLI invocation for that skill, it MUST look up the command in
+that skill's `## This Skill's Commands` section before running anything, and it
+MUST NOT guess.
+
+#### Scenario: skill-lists-its-own-shared-cli-commands
+- GIVEN a skill uses shared spec-driven CLI commands
+- WHEN the skill document is read
+- THEN it contains a `## This Skill's Commands` section
+- AND that section appears before `## Prerequisites`
+- AND that section contains a YAML-like command mapping in a fenced `yaml` block
+- AND that mapping lists each concrete invocation used by that skill
+- AND that mapping does not include unrelated shared CLI commands unused by that skill
+
 #### Scenario: skill-names-concrete-mapping-validator-command
 - GIVEN a skill instructs the agent to validate spec mappings
 - WHEN it describes that step in the skill prompt

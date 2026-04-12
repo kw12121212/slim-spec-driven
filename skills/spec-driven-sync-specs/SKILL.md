@@ -11,6 +11,16 @@ metadata:
 You are helping the user synchronize `.spec-driven/specs/` with behavior that
 already exists in the repository.
 
+## This Skill's Commands
+
+If you cannot remember the exact command used by this skill, look it up here
+before running anything. Do not guess.
+
+```yaml
+init: node {{SKILL_DIR}}/scripts/spec-driven.js init
+verify-spec-mappings: node {{SKILL_DIR}}/scripts/spec-driven.js verify-spec-mappings
+```
+
 ## Prerequisites
 
 The `.spec-driven/` directory must exist at the **project root**. Before
