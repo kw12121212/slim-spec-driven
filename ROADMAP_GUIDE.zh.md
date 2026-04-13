@@ -162,7 +162,7 @@ node dist/scripts/spec-driven.js verify-roadmap
 - `## Planned Changes` 条目是否使用
   `- \`<change-name>\` - Declared: <planned|complete> - <summary>` 的规范格式
 - `## Planned Changes` 描述是否保持单行，缩进 continuation lines 视为无效
-- `## Planned Changes` 下是否不超过 5 个 bullet items
+- `## Planned Changes` 下是否不超过 10 个 bullet items
 
 如果某个 milestone 超过这个大小，命令会报告无效，并提示你把它拆成更小的 milestones。
 

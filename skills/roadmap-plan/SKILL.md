@@ -107,10 +107,12 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
     - default new or unfinished planned changes to `Declared: planned`
     - put extra milestone-local context in another section such as `## Notes`
       instead of attaching multiline detail under `## Planned Changes`
-    - treat `Planned Changes` as the milestone's only work list and keep it
-      limited to concrete approved change work
-    - derive milestone completion from archived planned changes rather than
-      manual toggles
+     - treat `Planned Changes` as the milestone's only work list and keep it
+       limited to concrete approved change work
+     - keep each milestone at 10 or fewer planned changes; split larger scopes
+       into multiple milestones
+     - derive milestone completion from archived planned changes rather than
+       manual toggles
     - when migrating a legacy milestone, map content conservatively:
       - move clearly approved executable work into `## Planned Changes`
       - split a combined `## Dependencies / Risks` section only when the source

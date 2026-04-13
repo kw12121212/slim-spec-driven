@@ -6,6 +6,7 @@ const [command, ...args] = process.argv.slice(2);
 const changesDir = path.join(".spec-driven", "changes");
 const DECLARED_ROADMAP_STATUSES = ["proposed", "active", "blocked", "complete"];
 const DECLARED_PLANNED_CHANGE_STATUSES = ["planned", "complete"];
+const MAX_MILESTONE_PLANNED_CHANGES = 10;
 const INIT_CONFIG_YAML = [
     "schema: spec-driven",
     "context: |",
@@ -1271,7 +1272,7 @@ function verifyRoadmap() {
         }
         const status = parsedStatus.declaredStatus;
         milestones.push({ file, goal, doneCriteria, plannedChanges, status });
-        if (plannedChanges > 5) {
+        if (plannedChanges > MAX_MILESTONE_PLANNED_CHANGES) {
             errors.push(`roadmap/milestones/${file} has ${plannedChanges} planned changes; split it into smaller milestones`);
         }
     }

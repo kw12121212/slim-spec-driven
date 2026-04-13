@@ -87,6 +87,8 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
      - `planned`
      - `complete`
      Default new or unfinished planned changes to `Declared: planned`.
+     Keep the milestone at 10 or fewer planned changes; split larger scopes
+     into multiple milestones.
      Keep the full planned change description on that same line and do not add
      indented continuation lines below it. If the milestone needs richer local
      detail, move that context into another section such as `## Notes` rather

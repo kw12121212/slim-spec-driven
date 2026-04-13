@@ -154,13 +154,13 @@ mismatch.
 - AND the result reports a declared-versus-derived mismatch
 
 ### Requirement: milestones-limit-planned-change-count
-A roadmap milestone MUST contain no more than 5 bullet items under
+A roadmap milestone MUST contain no more than 10 bullet items under
 `## Planned Changes`. If the planned change count exceeds that limit, the
 milestone is too large and MUST be split into multiple milestones instead of
 remaining as a single stage.
 
 #### Scenario: too-many-planned-changes
-- GIVEN a milestone has 6 planned changes
+- GIVEN a milestone has 11 planned changes
 - WHEN roadmap validation is run
 - THEN the milestone is reported as invalid and the result tells the user to
   split the milestone

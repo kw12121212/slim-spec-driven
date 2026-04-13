@@ -373,7 +373,7 @@ top-level planned change bullet MUST be reported as invalid.
 - AND the result explains that planned change descriptions must remain single-line
 
 ### Requirement: verify-roadmap-rejects-oversized-milestones
-If a roadmap milestone contains more than 5 bullet items under
+If a roadmap milestone contains more than 10 bullet items under
 `## Planned Changes`, `verify-roadmap` MUST report that milestone as invalid and
 tell the user to split it into smaller milestones.
 

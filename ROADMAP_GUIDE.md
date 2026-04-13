@@ -163,7 +163,7 @@ Today it enforces:
 - described planned-change entries using
   `- \`<change-name>\` - Declared: <planned|complete> - <summary>`
 - single-line planned change descriptions only; indented continuation lines are invalid
-- no more than 5 bullet items under `## Planned Changes`
+- no more than 10 bullet items under `## Planned Changes`
 
 If a milestone exceeds that size, the command reports it as invalid and tells
 you to split it into smaller milestones.
