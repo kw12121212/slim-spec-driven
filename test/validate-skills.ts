@@ -262,6 +262,22 @@ function validateAllSkills(): void {
     return;
   }
 
+  const deltaSampleErrors = validateCanonicalDeltaSpecGuidance(skillFiles);
+  if (deltaSampleErrors.length > 0) {
+    printAndExit(
+      {
+        detected_type: null,
+        errors: deltaSampleErrors,
+        file: "",
+        schema: path.resolve("test/skill-schema.yaml"),
+        section_titles: [],
+        valid: false,
+      },
+      1,
+    );
+    return;
+  }
+
   let failed = 0;
   for (const skillPath of skillFiles) {
     const result = spawnSync(process.execPath, [scriptPath, skillPath], {
@@ -281,6 +297,50 @@ function validateAllSkills(): void {
   }
 
   console.log(`Validated ${skillFiles.length} skills.`);
+}
+
+function validateCanonicalDeltaSpecGuidance(skillFiles: string[]): ValidationError[] {
+  const errors: ValidationError[] = [];
+  const requiredSkillNames = new Set([
+    "spec-driven-propose",
+    "spec-driven-brainstorm",
+    "spec-driven-modify",
+    "roadmap-propose",
+    "roadmap-recommend",
+  ]);
+  const requiredFragments = [
+    "## ADDED Requirements",
+    "## MODIFIED Requirements",
+    "## REMOVED Requirements",
+    "Previously: The system MUST <old behavior>.",
+    "Reason: This behavior is removed because <reason>.",
+    ".spec-driven/specs/skills/planning.md",
+    ".spec-driven/changes/<name>/specs/skills/planning.md",
+    "prose-only delta file",
+    "Do not invent",
+  ];
+
+  for (const skillFile of skillFiles) {
+    const skillName = path.basename(path.dirname(skillFile));
+    if (!requiredSkillNames.has(skillName)) {
+      continue;
+    }
+
+    const content = fs.readFileSync(skillFile, "utf8");
+    for (const fragment of requiredFragments) {
+      if (content.includes(fragment)) {
+        continue;
+      }
+
+      errors.push({
+        code: "skill.delta_spec_sample.missing_fragment",
+        message: `Skill '${skillName}' must include canonical delta spec guidance fragment '${fragment}'`,
+        path: normalizeSkillPath(path.relative(path.resolve(), skillFile)),
+      });
+    }
+  }
+
+  return errors;
 }
 
 function normalizeSkillPath(value: string): string {

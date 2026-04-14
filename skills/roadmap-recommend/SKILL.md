@@ -112,6 +112,45 @@ node {{SKILL_DIR}}/scripts/spec-driven.js init
       **Alternatives Considered**
     - populate `changes/<name>/specs/` with delta spec files aligned by path with
       the main `.spec-driven/specs/` structure
+      - mirror the main spec path exactly, for example
+        `.spec-driven/specs/skills/planning.md` becomes
+        `.spec-driven/changes/<name>/specs/skills/planning.md`
+      - use this canonical sample as the format target:
+
+        ```markdown
+        ---
+        mapping:
+          implementation:
+            - path/to/implementation.ts
+          tests:
+            - test/path/to/test.ts
+        ---
+
+        ## ADDED Requirements
+
+        ### Requirement: new-capability
+        The system MUST provide <observable behavior>.
+
+        #### Scenario: success
+        - GIVEN <precondition>
+        - WHEN <action>
+        - THEN <result>
+
+        ## MODIFIED Requirements
+
+        ### Requirement: existing-capability
+        Previously: The system MUST <old behavior>.
+        The system MUST <new behavior>.
+
+        ## REMOVED Requirements
+
+        ### Requirement: old-capability
+        Reason: This behavior is removed because <reason>.
+        ```
+      - omit sections that do not apply instead of leaving blank placeholders
+      - if the change has no observable spec impact, leave `changes/<name>/specs/`
+        empty rather than creating a prose-only delta file
+      - Do not invent mapping paths when the repository evidence is unclear
     - include mapping frontmatter in delta spec files when implementation and
       test paths are knowable from repository context
     - write `tasks.md` with atomic checklist items under `## Implementation`,

@@ -76,16 +76,56 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 7. **Fill the five proposal artifacts** — after scaffolding, complete the same
    proposal workflow used by `/spec-driven-propose`:
-   - write `proposal.md` with **What**, **Why**, **Scope**, and
-     **Unchanged Behavior**
-   - write `design.md` with **Approach**, **Key Decisions**, and
-     **Alternatives Considered**
-   - populate `changes/<name>/specs/` with delta spec files aligned by path with
-     the main `.spec-driven/specs/` structure
-   - include `mapping.implementation` and `mapping.tests` frontmatter in delta
-     spec files when related files are knowable from repository context
-   - write `tasks.md` with atomic checklist items under `## Implementation`,
-     `## Testing`, and `## Verification`
+    - write `proposal.md` with **What**, **Why**, **Scope**, and
+      **Unchanged Behavior**
+    - write `design.md` with **Approach**, **Key Decisions**, and
+      **Alternatives Considered**
+    - populate `changes/<name>/specs/` with delta spec files aligned by path with
+      the main `.spec-driven/specs/` structure
+      - mirror the main spec path exactly, for example
+        `.spec-driven/specs/skills/planning.md` becomes
+        `.spec-driven/changes/<name>/specs/skills/planning.md`
+      - use this canonical sample as the format target:
+
+        ```markdown
+        ---
+        mapping:
+          implementation:
+            - path/to/implementation.ts
+          tests:
+            - test/path/to/test.ts
+        ---
+
+        ## ADDED Requirements
+
+        ### Requirement: new-capability
+        The system MUST provide <observable behavior>.
+
+        #### Scenario: success
+        - GIVEN <precondition>
+        - WHEN <action>
+        - THEN <result>
+
+        ## MODIFIED Requirements
+
+        ### Requirement: existing-capability
+        Previously: The system MUST <old behavior>.
+        The system MUST <new behavior>.
+
+        ## REMOVED Requirements
+
+        ### Requirement: old-capability
+        Reason: This behavior is removed because <reason>.
+        ```
+      - omit sections that do not apply instead of leaving blank placeholders
+      - if the change has no observable spec impact, leave `changes/<name>/specs/`
+        empty rather than creating a prose-only delta file
+      - Do not invent `mapping.implementation` or `mapping.tests` paths when the
+        repository evidence is unclear
+    - include `mapping.implementation` and `mapping.tests` frontmatter in delta
+      spec files when related files are knowable from repository context
+    - write `tasks.md` with atomic checklist items under `## Implementation`,
+      `## Testing`, and `## Verification`
    - make `## Testing` include at least one explicit lint or validation command
      task and one explicit unit test command task when those commands are
      knowable from repository context

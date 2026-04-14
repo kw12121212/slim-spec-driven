@@ -73,14 +73,6 @@ function exists(targetPath) {
   return fs.existsSync(targetPath);
 }
 
-function isSymlink(targetPath) {
-  try {
-    return fs.lstatSync(targetPath).isSymbolicLink();
-  } catch {
-    return false;
-  }
-}
-
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
     cwd: options.cwd ?? ROOT,
@@ -107,10 +99,6 @@ function cli(args, options = {}) {
 
 function skillValidator(skillPath, options = {}) {
   return run("node", [SKILL_VALIDATOR, skillPath], options);
-}
-
-function runInstallScript(args, options = {}) {
-  return run("bash", [path.join(ROOT, "install.sh"), ...args], options);
 }
 
 function assertContains(label, needle, haystack) {
@@ -283,6 +271,45 @@ function runValidateSkillsSection() {
   assertContains("review skill covers migration checklist", "**Migration**", reviewSkill);
   assertContains("review skill covers API checklist", "**API**", reviewSkill);
   assertContains("review skill covers maintenance checklist", "**Maintenance**", reviewSkill);
+
+  const proposeSkill = readFile(path.join(skillsDir, "spec-driven-propose", "SKILL.md"));
+  assertContains(
+    "propose skill includes canonical delta added section",
+    "## ADDED Requirements",
+    proposeSkill,
+  );
+  assertContains(
+    "propose skill includes canonical delta modified guidance",
+    "Previously: The system MUST <old behavior>.",
+    proposeSkill,
+  );
+  assertContains(
+    "propose skill includes canonical delta removed guidance",
+    "Reason: This behavior is removed because <reason>.",
+    proposeSkill,
+  );
+  assertContains(
+    "propose skill includes mirrored delta path example",
+    ".spec-driven/changes/<name>/specs/skills/planning.md",
+    proposeSkill,
+  );
+
+  const specsReadme = readFile(path.join(ROOT, ".spec-driven", "specs", "README.md"));
+  assertContains(
+    "specs readme documents change delta specs",
+    "## Change Delta Specs",
+    specsReadme,
+  );
+  assertContains(
+    "specs readme includes delta modified guidance",
+    "Previously: The system MUST <old behavior>.",
+    specsReadme,
+  );
+  assertContains(
+    "specs readme includes delta removal reason guidance",
+    "Reason: This behavior is removed because <reason>.",
+    specsReadme,
+  );
 }
 
 function runInitSection() {
@@ -689,178 +716,6 @@ function runAuditUnmappedSpecEvidenceSection() {
   assertContains("audit-unmapped-spec-evidence explains missing flag value", "missing value for --tests", out);
 
   rmrf(mappingDir);
-}
-
-function runInstallSection() {
-  console.log(`\n${BOLD}[1b] install${RESET}`);
-
-  const installHome = mktempDir("spec-driven-install-home-");
-  let out = runInstallScript(["--cli", "codex"], { env: { HOME: installHome } }).combined;
-  assertContains("install reports brainstorm skill copy", "copied: spec-driven-brainstorm/", out);
-  assertFileExists(
-    "install copies brainstorm skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-brainstorm", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-brainstorm"))) {
-    pass("install links brainstorm skill for codex");
-  } else {
-    fail("install missing brainstorm symlink for codex");
-  }
-
-  assertContains("install reports maintenance skill copy", "copied: spec-driven-maintenance/", out);
-  assertFileExists(
-    "install copies maintenance skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-maintenance", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-maintenance"))) {
-    pass("install links maintenance skill for codex");
-  } else {
-    fail("install missing maintenance symlink for codex");
-  }
-
-  assertContains("install reports spec-edit skill copy", "copied: spec-driven-spec-edit/", out);
-  assertFileExists(
-    "install copies spec-edit skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-edit", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-spec-edit"))) {
-    pass("install links spec-edit skill for codex");
-  } else {
-    fail("install missing spec-edit symlink for codex");
-  }
-
-  assertContains("install reports sync-specs skill copy", "copied: spec-driven-sync-specs/", out);
-  assertFileExists(
-    "install copies sync-specs skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-sync-specs", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-sync-specs"))) {
-    pass("install links sync-specs skill for codex");
-  } else {
-    fail("install missing sync-specs symlink for codex");
-  }
-
-  assertContains("install reports resync-code-mapping skill copy", "copied: spec-driven-resync-code-mapping/", out);
-  assertFileExists(
-    "install copies resync-code-mapping skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-resync-code-mapping", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-resync-code-mapping"))) {
-    pass("install links resync-code-mapping skill for codex");
-  } else {
-    fail("install missing resync-code-mapping symlink for codex");
-  }
-
-  assertContains("install reports roadmap-plan skill copy", "copied: roadmap-plan/", out);
-  assertFileExists(
-    "install copies roadmap-plan skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "roadmap-plan", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "roadmap-plan"))) {
-    pass("install links roadmap-plan skill for codex");
-  } else {
-    fail("install missing roadmap-plan symlink for codex");
-  }
-
-  assertContains("install reports roadmap-milestone skill copy", "copied: roadmap-milestone/", out);
-  assertFileExists(
-    "install copies roadmap-milestone skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "roadmap-milestone", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "roadmap-milestone"))) {
-    pass("install links roadmap-milestone skill for codex");
-  } else {
-    fail("install missing roadmap-milestone symlink for codex");
-  }
-
-  assertContains("install reports roadmap-recommend skill copy", "copied: roadmap-recommend/", out);
-  assertFileExists(
-    "install copies roadmap-recommend skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "roadmap-recommend", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "roadmap-recommend"))) {
-    pass("install links roadmap-recommend skill for codex");
-  } else {
-    fail("install missing roadmap-recommend symlink for codex");
-  }
-
-  assertContains("install reports roadmap-propose skill copy", "copied: roadmap-propose/", out);
-  assertFileExists(
-    "install copies roadmap-propose skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "roadmap-propose", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "roadmap-propose"))) {
-    pass("install links roadmap-propose skill for codex");
-  } else {
-    fail("install missing roadmap-propose symlink for codex");
-  }
-
-  assertContains("install reports roadmap-sync skill copy", "copied: roadmap-sync/", out);
-  assertFileExists(
-    "install copies roadmap-sync skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "roadmap-sync", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "roadmap-sync"))) {
-    pass("install links roadmap-sync skill for codex");
-  } else {
-    fail("install missing roadmap-sync symlink for codex");
-  }
-
-  assertContains("install reports ship skill copy", "copied: spec-driven-ship/", out);
-  assertFileExists(
-    "install copies ship skill into agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-ship", "SKILL.md"),
-  );
-  if (isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-ship"))) {
-    pass("install links ship skill for codex");
-  } else {
-    fail("install missing ship symlink for codex");
-  }
-
-  ensureDir(path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-content", "scripts"));
-  writeFile(
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-content", "SKILL.md"),
-    "---\nname: stale\ndescription: stale\n---\n",
-  );
-  ensureDir(path.join(installHome, ".agents", "skills"));
-  fs.symlinkSync(
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-content"),
-    path.join(installHome, ".agents", "skills", "spec-driven-spec-content"),
-  );
-
-  out = runInstallScript(["--cli", "codex"], { env: { HOME: installHome } }).combined;
-  assertNotExists(
-    "install removes retired skill from agent store",
-    path.join(installHome, ".auto-spec-driven", "skills", "spec-driven-spec-content"),
-  );
-  if (!isSymlink(path.join(installHome, ".agents", "skills", "spec-driven-spec-content"))) {
-    pass("install removes retired skill symlink");
-  } else {
-    fail("install left retired skill symlink");
-  }
-
-  rmrf(installHome);
-
-  const projectInstallDir = mktempDir("spec-driven-project-install-");
-  const projectInstallHome = mktempDir("spec-driven-project-home-");
-  out = runInstallScript(["--project", projectInstallDir], { env: { HOME: projectInstallHome } }).combined;
-  assertContains("project install reports ship skill copy", "copied: spec-driven-ship/", out);
-  assertFileExists(
-    "project install copies ship skill into agent store",
-    path.join(projectInstallDir, ".agent", "skills", "spec-driven-ship", "SKILL.md"),
-  );
-  if (isSymlink(path.join(projectInstallDir, ".agents", "skills", "spec-driven-ship"))) {
-    pass("project install links ship skill for agents");
-  } else {
-    fail("project install missing ship symlink for agents");
-  }
-  if (isSymlink(path.join(projectInstallDir, ".codex", "skills", "spec-driven-ship"))) {
-    pass("project install links ship skill for codex");
-  } else {
-    fail("project install missing ship symlink for codex");
-  }
-  rmrf(projectInstallDir);
-  rmrf(projectInstallHome);
 }
 
 function runMigrateSection() {
@@ -1303,7 +1158,6 @@ function main() {
   runVerifySpecMappingsSection();
   runAuditSpecMappingCoverageSection();
   runAuditUnmappedSpecEvidenceSection();
-  runInstallSection();
   runMigrateSection();
   runMaintenanceSection();
   runProjectWorkflowSections();

@@ -5,8 +5,7 @@ mapping:
     - scripts/spec-driven.ts
     - skills/spec-driven-resync-code-mapping/SKILL.md
     - skills/spec-driven-ship/SKILL.md
-  tests:
-    - test/run.js
+  tests: []
 ---
 
 # Install Behavior

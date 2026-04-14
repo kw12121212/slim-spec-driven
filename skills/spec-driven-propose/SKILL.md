@@ -61,6 +61,43 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
 
 6. **Populate specs/ delta files** — look at the project's `.spec-driven/specs/` directory structure. For each spec file that this change touches, create a corresponding file under `.spec-driven/changes/<name>/specs/` mirroring the same relative path (e.g. `specs/auth/login.md` → `changes/<name>/specs/auth/login.md`). If the change introduces a new spec area, create the new relative path that should exist under `.spec-driven/specs/` after archive.
 
+   Mirror the main spec path exactly. For example,
+   `.spec-driven/specs/skills/planning.md` maps to
+   `.spec-driven/changes/<name>/specs/skills/planning.md`.
+
+   Use this canonical sample as the format target:
+
+   ```markdown
+   ---
+   mapping:
+     implementation:
+       - path/to/implementation.ts
+     tests:
+       - test/path/to/test.ts
+   ---
+
+   ## ADDED Requirements
+
+   ### Requirement: new-capability
+   The system MUST provide <observable behavior>.
+
+   #### Scenario: success
+   - GIVEN <precondition>
+   - WHEN <action>
+   - THEN <result>
+
+   ## MODIFIED Requirements
+
+   ### Requirement: existing-capability
+   Previously: The system MUST <old behavior>.
+   The system MUST <new behavior>.
+
+   ## REMOVED Requirements
+
+   ### Requirement: old-capability
+   Reason: This behavior is removed because <reason>.
+   ```
+
    Each delta file uses ADDED/MODIFIED/REMOVED sections with the standard format:
    - YAML frontmatter with `mapping.implementation` and `mapping.tests` when
      related files are knowable from repository context
@@ -68,9 +105,9 @@ If this fails, the project is not initialized. Run `/spec-driven-init` first.
    - `#### Scenario:` blocks (GIVEN/WHEN/THEN) where helpful
    - **ADDED**: new requirements; **MODIFIED**: changed requirements (include `Previously:` note); **REMOVED**: removed requirements (include reason)
    - Omit sections that don't apply — do not leave empty sections
-   - If this change has no observable spec impact, leave `changes/<name>/specs/` empty — do not create a prose-only file that breaks the delta spec format
+   - If this change has no observable spec impact, leave `changes/<name>/specs/` empty — do not create a prose-only delta file that breaks the delta spec format
    - Do not invent mapping paths when the related implementation or test files
-     are not clear; leave mapping completion to `/spec-driven-apply`
+      are not clear; leave mapping completion to `/spec-driven-apply`
 
 7. **Fill tasks.md** — write a concrete implementation checklist:
    - Use `- [ ]` checkboxes for every task
